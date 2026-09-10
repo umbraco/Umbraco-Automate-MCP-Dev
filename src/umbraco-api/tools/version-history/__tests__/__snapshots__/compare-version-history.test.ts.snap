@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`compare-version-history should diff two versions of an entity 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "changes": [
+      {
+        "newValue": "_Test VerHist Compare Automation Renamed",
+        "oldValue": "_Test VerHist Compare Automation",
+        "path": "Name",
+      },
+    ],
+    "fromVersion": 1,
+    "toVersion": 2,
+  },
+}
+`;

@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`get-metrics should return overall run metrics in the empty-state shape, scoped to a fresh workspace with no runs 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "byStatus": {},
+    "successRate": 0,
+    "totalRuns": 0,
+  },
+}
+`;

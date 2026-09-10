@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`set-automation-trigger should set the automation's trigger 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "message": "Trigger set to "umbracoAutomate.manual".",
+  },
+}
+`;

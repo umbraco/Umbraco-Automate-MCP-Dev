@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`update-automation-step should update the step's settings by alias 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "message": "Step "delayStep" updated.",
+  },
+}
+`;

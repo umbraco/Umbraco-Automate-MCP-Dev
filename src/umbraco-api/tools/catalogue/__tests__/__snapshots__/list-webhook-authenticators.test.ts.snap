@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`list-catalogue-webhook-authenticators should list available webhook authenticator definitions 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "items": [
+      {
+        "alias": "plain-secret",
+        "description": null,
+        "name": "Plain Secret",
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": null,
+              "description": "Shared secret sent by the caller in the X-Webhook-Secret header or ?secret= query parameter.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.Automate.WebhookSecretField",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": true,
+              "key": "secret",
+              "label": "Secret",
+              "sortOrder": 0,
+              "supportsBindings": false,
+            },
+          ],
+        },
+      },
+      {
+        "alias": "hmac-sha256",
+        "description": null,
+        "name": "HMAC-SHA256 Signature",
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": null,
+              "description": "HMAC signing key. The caller must send X-Webhook-Signature: sha256=<hex> computed over the request body.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.Automate.WebhookSecretField",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": true,
+              "key": "signingKey",
+              "label": "Signing Key",
+              "sortOrder": 0,
+              "supportsBindings": false,
+            },
+          ],
+        },
+      },
+    ],
+  },
+}
+`;

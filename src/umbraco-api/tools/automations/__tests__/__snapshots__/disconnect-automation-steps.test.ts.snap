@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`disconnect-automation-steps should remove the connection between two steps 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "message": "Disconnected "delayStep" -> "delayStepTwo".",
+    "removedCount": 1,
+  },
+}
+`;

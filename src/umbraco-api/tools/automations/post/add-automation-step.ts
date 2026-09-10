@@ -1,0 +1,140 @@
+/**
+ * Add Automation Step Tool
+ *
+ * Appends a new step to an automation's graph without requiring the caller
+ * to construct or resend the rest of the definition. The step's id is
+ * generated server-side; refer to the step afterwards by the `alias` you
+ * gave it (in connect-automation-steps, update-automation-step,
+ * remove-automation-step).
+ */
+
+import { z } from "zod";
+import { randomUUID } from "node:crypto";
+import {
+  withStandardDecorators,
+  createToolResult,
+  type ToolDefinition,
+} from "@umbraco-cms/mcp-server-sdk";
+import type { StepConfigurationModel } from "../../../api/generated/umbracoAutomateManagementApi.js";
+import {
+  fetchAutomation,
+  toPutBody,
+  saveAutomation,
+  stripStepReadOnlyFields,
+} from "../_shared/automation-graph.js";
+
+const errorBehaviors = ["Retry", "Suspend", "Terminate", "Compensate"] as const;
+
+const inputSchema = {
+  automationId: z.string().uuid().describe("Id of the automation to add the step to."),
+  actionAlias: z
+    .string()
+    .min(1)
+    .describe(
+      "Alias of the action or control-flow step type to use, as returned by list-catalogue-actions or list-catalogue-control-flows."
+    ),
+  alias: z
+    .string()
+    .min(1)
+    .describe(
+      "Unique, code-friendly name for this step within the automation (e.g. 'send-welcome-email'). Use this to refer to the step later in connect-automation-steps, update-automation-step, and remove-automation-step."
+    ),
+  name: z.string().min(1).describe("Human-readable display name for this step."),
+  settings: z
+    .record(z.string(), z.unknown())
+    .optional()
+    .describe(
+      "The step's configuration, matching the shape described by that step type's settingsSchema (see list-catalogue-actions/list-catalogue-control-flows). Defaults to an empty object if omitted."
+    ),
+  inputMappings: z
+    .record(z.string(), z.string())
+    .optional()
+    .describe(
+      "Maps this step's input fields to expressions referencing earlier steps' output (e.g. trigger data or a prior step's result). Defaults to none if omitted - configure later with update-automation-step once you know what's available."
+    ),
+  errorBehavior: z
+    .enum(errorBehaviors)
+    .optional()
+    .describe(
+      "What happens if this step fails at runtime: Retry (per retryInterval/maxRetries), Suspend (pause the run for manual resume-run), Terminate (fail the run), or Compensate (run a compensating step). Defaults to Terminate."
+    ),
+  retryInterval: z
+    .string()
+    .regex(/^-?(\d+\.)?\d{2}:\d{2}:\d{2}(\.\d{1,7})?$/)
+    .optional()
+    .describe(
+      "Delay before retrying, as a d.hh:mm:ss duration string (e.g. '00:05:00' for 5 minutes). Only meaningful when errorBehavior is Retry."
+    ),
+  maxRetries: z
+    .number()
+    .int()
+    .optional()
+    .describe("Maximum retry attempts before giving up. Only meaningful when errorBehavior is Retry."),
+};
+
+type AddAutomationStepParams = {
+  automationId: string;
+  actionAlias: string;
+  alias: string;
+  name: string;
+  settings?: Record<string, unknown>;
+  inputMappings?: Record<string, string>;
+  errorBehavior?: (typeof errorBehaviors)[number];
+  retryInterval?: string;
+  maxRetries?: number;
+};
+
+const outputSchema = z.object({
+  message: z.string(),
+  stepId: z.string().uuid(),
+  alias: z.string(),
+});
+
+const addAutomationStepTool = {
+  name: "add-automation-step",
+  description:
+    "Adds a new step to an automation's graph. You only need to describe the new step - this tool reads the automation's current definition, appends the step, and saves it back, so nothing else is affected. The step is created unconnected: use connect-automation-steps afterwards to wire it into the flow (from the trigger, or from another step). Canvas position is assigned automatically; use the Umbraco backoffice canvas to rearrange steps visually if needed.",
+  inputSchema,
+  outputSchema,
+  slices: ["update"],
+  annotations: {
+    idempotentHint: false,
+  },
+  handler: async (params: AddAutomationStepParams) => {
+    const automation = await fetchAutomation(params.automationId);
+
+    if (automation.steps.some((s) => s.alias === params.alias)) {
+      throw new Error(
+        `A step with alias "${params.alias}" already exists on this automation - step aliases must be unique. Choose a different alias, or use update-automation-step to modify the existing one.`
+      );
+    }
+
+    const maxX = automation.steps.reduce((max, s) => Math.max(max, s.position.x), -1);
+    const stepId = randomUUID();
+    const newStep: StepConfigurationModel = {
+      id: stepId,
+      actionAlias: params.actionAlias,
+      name: params.name,
+      alias: params.alias,
+      settings: params.settings ?? {},
+      inputMappings: params.inputMappings ?? {},
+      position: { x: maxX + 1, y: 0 },
+      errorBehavior: params.errorBehavior ?? "Terminate",
+      retryInterval: params.retryInterval ?? null,
+      maxRetries: params.maxRetries ?? null,
+    };
+
+    const body = toPutBody(automation, {
+      steps: [...automation.steps.map(stripStepReadOnlyFields), newStep],
+    });
+    await saveAutomation(params.automationId, body);
+
+    return createToolResult({
+      message: `Step "${params.alias}" added.`,
+      stepId,
+      alias: params.alias,
+    });
+  },
+} satisfies ToolDefinition<typeof inputSchema, typeof outputSchema>;
+
+export default withStandardDecorators(addAutomationStepTool);

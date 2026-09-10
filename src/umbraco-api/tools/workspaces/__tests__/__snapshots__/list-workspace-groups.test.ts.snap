@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`list-workspace-groups should list only top-level groups when parentGroupId is omitted 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "items": [
+      {
+        "dateCreated": "NORMALIZED_DATE",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "name": "_Test List Groups Parent",
+        "parentId": null,
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+      },
+    ],
+  },
+}
+`;
+
+exports[`list-workspace-groups should scope to children of a given parent group 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "items": [
+      {
+        "dateCreated": "NORMALIZED_DATE",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "name": "_Test List Groups Child",
+        "parentId": "00000000-0000-0000-0000-000000000000",
+        "workspaceId": "00000000-0000-0000-0000-000000000000",
+      },
+    ],
+  },
+}
+`;

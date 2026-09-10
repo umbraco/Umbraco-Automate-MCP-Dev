@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`export-automation should export a portable definition of the automation 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "automation": {
+      "alias": "_test_export_automation",
+      "canvasState": null,
+      "connections": [],
+      "description": null,
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "_Test Export Automation",
+      "notificationSettings": null,
+      "steps": [
+        {
+          "actionAlias": "umbracoAutomate.delay",
+          "alias": "delayStep",
+          "connectionAlias": null,
+          "errorBehavior": "Terminate",
+          "id": "00000000-0000-0000-0000-000000000000",
+          "inputMappings": {},
+          "maxRetries": null,
+          "name": "Delay Step",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
+          "retryInterval": null,
+          "settings": {
+            "duration": "00:00:05",
+          },
+        },
+      ],
+      "trigger": {
+        "settings": {},
+        "triggerAlias": "umbracoAutomate.manual",
+      },
+    },
+    "connectionReferences": [],
+    "exportedAt": "NORMALIZED_DATE",
+    "exportedFrom": {
+      "product": "Umbraco.Automate",
+      "version": "18.4.0+6323387",
+    },
+    "formatVersion": "1.0",
+  },
+}
+`;

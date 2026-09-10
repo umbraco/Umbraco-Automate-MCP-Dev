@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`list-workspaces should list workspaces filtered by alias 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "items": [
+      {
+        "alias": "_testListWorkspace",
+        "dateCreated": "NORMALIZED_DATE",
+        "dateModified": "NORMALIZED_DATE",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "name": "_Test List Workspace",
+        "serviceAccountKey": "92bce462-d4b4-441f-9056-17f283f63cc8",
+        "version": 1,
+      },
+    ],
+    "nextCursor": undefined,
+    "total": 1,
+  },
+}
+`;

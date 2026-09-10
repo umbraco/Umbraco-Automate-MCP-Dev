@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`get-run-by-id should return the full detail of a run by id, including its step-by-step state 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "automationId": "00000000-0000-0000-0000-000000000000",
+    "automationVersion": 3,
+    "completedUtc": null,
+    "correlationId": "00000000-0000-0000-0000-000000000000",
+    "error": null,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "initiatedBy": "user",
+    "startedUtc": "NORMALIZED_DATE",
+    "status": "Running",
+    "stepRuns": [],
+  },
+}
+`;

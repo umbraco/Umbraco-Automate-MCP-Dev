@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`get-workspace-group should return a top-level group by id 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "dateCreated": "NORMALIZED_DATE",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "_Test Get Group",
+    "parentId": null,
+    "workspaceId": "00000000-0000-0000-0000-000000000000",
+  },
+}
+`;

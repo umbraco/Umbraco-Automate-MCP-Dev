@@ -1,0 +1,42 @@
+/**
+ * List Catalogue Step Types Tool
+ *
+ * Lists all step type definitions across every category (actions,
+ * control-flows, triggers, etc.) in a single flat list.
+ */
+
+import {
+  withStandardDecorators,
+  executeGetItemsApiCall,
+  CAPTURE_RAW_HTTP_RESPONSE,
+  type ToolDefinition,
+} from "@umbraco-cms/mcp-server-sdk";
+import { z } from "zod";
+import type { getUmbracoAutomateManagementAPI } from "../../../api/generated/umbracoAutomateManagementApi.js";
+import {
+  getCatalogueStepTypesQueryParams,
+  getCatalogueStepTypesResponse,
+} from "../../../api/generated/umbracoAutomateManagementApi.zod.js";
+
+type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
+
+const outputSchema = z.object({ items: getCatalogueStepTypesResponse });
+
+const listCatalogueStepTypesTool = {
+  name: "list-catalogue-step-types",
+  description:
+    "Lists all step type definitions available for building an automation, across every category (actions, control-flows, triggers, and more) in one flat list. Each item's `alias` is the identifier used when adding a step to an automation, and `type` identifies which category it belongs to. Optionally pass `type` to filter to a single category. Prefer the category-specific tools (list-catalogue-actions, list-catalogue-control-flows, list-catalogue-triggers) when you already know the category you need; use this tool when you need an overview across all categories or don't know which category a step belongs to.",
+  inputSchema: getCatalogueStepTypesQueryParams.shape,
+  outputSchema,
+  slices: ["read"],
+  annotations: {
+    readOnlyHint: true,
+  },
+  handler: async (params) => {
+    return executeGetItemsApiCall<ReturnType<ApiClient["getCatalogueStepTypes"]>, ApiClient>(
+      (client) => client.getCatalogueStepTypes(params, CAPTURE_RAW_HTTP_RESPONSE)
+    );
+  },
+} satisfies ToolDefinition<typeof getCatalogueStepTypesQueryParams.shape, typeof outputSchema>;
+
+export default withStandardDecorators(listCatalogueStepTypesTool);

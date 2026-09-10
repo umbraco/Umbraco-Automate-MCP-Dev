@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`list-version-history should list recorded versions for an entity that has been edited 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "currentVersion": 4,
+    "publishedVersion": null,
+    "totalVersions": 5,
+    "versions": [
+      {
+        "changeDescription": null,
+        "createdByUserId": "00000000-0000-0000-0000-000000000000",
+        "dateCreated": "NORMALIZED_DATE",
+        "entityId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isPublished": false,
+        "version": 4,
+      },
+      {
+        "changeDescription": null,
+        "createdByUserId": "00000000-0000-0000-0000-000000000000",
+        "dateCreated": "NORMALIZED_DATE",
+        "entityId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isPublished": false,
+        "version": 3,
+      },
+      {
+        "changeDescription": null,
+        "createdByUserId": "00000000-0000-0000-0000-000000000000",
+        "dateCreated": "NORMALIZED_DATE",
+        "entityId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isPublished": false,
+        "version": 2,
+      },
+      {
+        "changeDescription": "Created",
+        "createdByUserId": "00000000-0000-0000-0000-000000000000",
+        "dateCreated": "NORMALIZED_DATE",
+        "entityId": "00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isPublished": false,
+        "version": 1,
+      },
+    ],
+  },
+}
+`;

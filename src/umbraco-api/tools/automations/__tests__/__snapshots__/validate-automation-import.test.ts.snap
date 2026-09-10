@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`validate-automation-import should validate a real exported definition against the workspace without changing anything 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "automationAlias": "_test_validate_import_automation",
+    "automationId": null,
+    "errors": [
+      "An automation with ID '00000000-0000-0000-0000-000000000000' already exists. Use the overwrite endpoint to update it.",
+    ],
+    "success": false,
+    "warnings": [],
+  },
+}
+`;

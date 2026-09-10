@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`get-automation should return the full definition of an automation by id 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "alias": "_test_get_automation",
+    "canvasState": null,
+    "connections": [],
+    "dateCreated": "NORMALIZED_DATE",
+    "dateModified": "NORMALIZED_DATE",
+    "description": null,
+    "disabledUtc": null,
+    "groupId": null,
+    "health": "Healthy",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "_Test Get Automation",
+    "notificationSettings": null,
+    "publishedVersion": null,
+    "status": "Draft",
+    "steps": [],
+    "trigger": null,
+    "version": 1,
+    "warningIssuedUtc": null,
+    "workspaceId": "00000000-0000-0000-0000-000000000000",
+  },
+}
+`;

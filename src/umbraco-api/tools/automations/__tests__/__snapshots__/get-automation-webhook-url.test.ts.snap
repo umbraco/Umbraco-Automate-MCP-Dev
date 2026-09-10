@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`get-automation-webhook-url should return the inbound webhook URL for an automation 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "url": "https://localhost:44320/automate/webhook/00000000-0000-0000-0000-000000000000",
+  },
+}
+`;

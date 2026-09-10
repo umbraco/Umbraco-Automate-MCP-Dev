@@ -1,0 +1,38 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`get-automation-ancestors should list the workspace/group ancestry above an automation 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "items": [
+      {
+        "entityType": "ua:workspace",
+        "hasChildren": true,
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isFolder": false,
+        "name": "_Test Workspace Auto Ancestors",
+        "parentEntityType": "ua:workspace-root",
+        "parentId": null,
+      },
+      {
+        "entityType": "ua:automation-group",
+        "hasChildren": true,
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isFolder": true,
+        "name": "_Test Ancestors Group",
+        "parentEntityType": "ua:workspace",
+        "parentId": "00000000-0000-0000-0000-000000000000",
+      },
+      {
+        "entityType": "ua:automation",
+        "hasChildren": false,
+        "id": "00000000-0000-0000-0000-000000000000",
+        "isFolder": false,
+        "name": "_Test Ancestors Automation",
+        "parentEntityType": "ua:automation-group",
+        "parentId": "00000000-0000-0000-0000-000000000000",
+      },
+    ],
+  },
+}
+`;

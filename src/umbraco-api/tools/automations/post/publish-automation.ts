@@ -1,0 +1,37 @@
+/**
+ * Publish Automation Tool
+ *
+ * Publishes the current draft version of an automation, making it live so its
+ * trigger becomes active. Has a real side effect: once published, the
+ * automation's trigger can fire and start runs. Use unpublish-automation to
+ * take it offline again, or re-enable-automation if it was auto-disabled.
+ */
+
+import {
+  withStandardDecorators,
+  executeVoidApiCall,
+  CAPTURE_RAW_HTTP_RESPONSE,
+  type ToolDefinition,
+} from "@umbraco-cms/mcp-server-sdk";
+import type { getUmbracoAutomateManagementAPI } from "../../../api/generated/umbracoAutomateManagementApi.js";
+import { postAutomationsByIdPublishParams } from "../../../api/generated/umbracoAutomateManagementApi.zod.js";
+
+type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
+
+const publishAutomationTool = {
+  name: "publish-automation",
+  description:
+    "Publishes an automation, making its current version live. This activates the trigger so the automation can start running for real - only use when the automation's trigger, steps and connections are ready. Use unpublish-automation to stop it from running without deleting it.",
+  inputSchema: postAutomationsByIdPublishParams.shape,
+  slices: ["publish"],
+  annotations: {
+    idempotentHint: true,
+  },
+  handler: async ({ id }) => {
+    return executeVoidApiCall<ApiClient>((client) =>
+      client.postAutomationsByIdPublish(id, CAPTURE_RAW_HTTP_RESPONSE),
+    );
+  },
+} satisfies ToolDefinition<typeof postAutomationsByIdPublishParams.shape>;
+
+export default withStandardDecorators(publishAutomationTool);

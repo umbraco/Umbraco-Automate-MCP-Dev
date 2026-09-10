@@ -1,0 +1,1614 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`list-catalogue-actions should list available action step definitions 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "items": [
+      {
+        "alias": "umbracoAutomate.delay",
+        "connectionTypeAlias": null,
+        "description": "Pauses execution for a specified duration.",
+        "group": "Core",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-time",
+        "name": "Delay",
+        "outputSchema": {
+          "properties": {
+            "delayedFor": {
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "00:00:30",
+              "description": "How long to wait before proceeding (e.g. 00:05:00 for 5 minutes, 00:00:30 for 30 seconds).",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "duration",
+              "label": "Duration",
+              "sortOrder": 0,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.findContent",
+        "connectionTypeAlias": null,
+        "description": "Finds content items by name, optionally filtered by content type.",
+        "group": "Content",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-search",
+        "name": "Find Content",
+        "outputSchema": {
+          "$defs": {
+            "dateTime": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "findContentMatch": {
+              "properties": {
+                "contentKey": {
+                  "format": "uuid",
+                  "type": "string",
+                },
+                "contentTypeAlias": {
+                  "type": "string",
+                },
+                "contentTypeKey": {
+                  "format": "uuid",
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+                "createDate": {
+                  "$ref": "#/$defs/dateTime",
+                },
+                "culture": {
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+                "level": {
+                  "type": "integer",
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+                "parentKey": {
+                  "format": "uuid",
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+                "path": {
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+                "updateDate": {
+                  "$ref": "#/$defs/dateTime",
+                },
+                "url": {
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+              },
+              "type": "object",
+            },
+          },
+          "properties": {
+            "count": {
+              "readOnly": true,
+              "type": "integer",
+            },
+            "first": {
+              "$ref": "#/$defs/findContentMatch",
+              "readOnly": true,
+            },
+            "limitReached": {
+              "type": "boolean",
+            },
+            "matches": {
+              "items": {
+                "$ref": "#/$defs/findContentMatch",
+              },
+              "type": "array",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The content name to search for.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "name",
+              "label": "Name",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Restrict the search to these content types. Leave empty to search all types.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.DocumentTypePicker",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "contentTypes",
+              "label": "Content types",
+              "sortOrder": 1,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": "Exact",
+              "description": "Exact (default) requires the whole name to match. StartsWith and Contains are token-based — Contains does not match substrings within a word.",
+              "editorConfig": "[{ "alias": "items", "value": ["Exact", "StartsWith", "Contains"] }]",
+              "editorUiAlias": "Umb.PropertyEditorUi.Dropdown",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "matchMode",
+              "label": "Match mode",
+              "sortOrder": 2,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": null,
+              "description": "Culture code (e.g. en-US) for matching variant content names. Leave empty for invariant.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "culture",
+              "label": "Culture",
+              "sortOrder": 3,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": false,
+              "description": "Include draft and unpublished content in the search.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.Toggle",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "includeUnpublished",
+              "label": "Include unpublished",
+              "sortOrder": 4,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": 50,
+              "description": "Maximum number of matches to return (1–500).",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.Integer",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "limit",
+              "label": "Limit",
+              "sortOrder": 5,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.findMedia",
+        "connectionTypeAlias": null,
+        "description": "Finds media items by name, optionally filtered by media type.",
+        "group": "Media",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-search",
+        "name": "Find Media",
+        "outputSchema": {
+          "$defs": {
+            "dateTime": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "findMediaMatch": {
+              "properties": {
+                "createDate": {
+                  "$ref": "#/$defs/dateTime",
+                },
+                "level": {
+                  "type": "integer",
+                },
+                "mediaKey": {
+                  "format": "uuid",
+                  "type": "string",
+                },
+                "mediaTypeAlias": {
+                  "type": "string",
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+                "parentKey": {
+                  "format": "uuid",
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+                "path": {
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+                "updateDate": {
+                  "$ref": "#/$defs/dateTime",
+                },
+                "url": {
+                  "type": [
+                    "string",
+                    "null",
+                  ],
+                },
+              },
+              "type": "object",
+            },
+          },
+          "properties": {
+            "count": {
+              "readOnly": true,
+              "type": "integer",
+            },
+            "first": {
+              "$ref": "#/$defs/findMediaMatch",
+              "readOnly": true,
+            },
+            "limitReached": {
+              "type": "boolean",
+            },
+            "matches": {
+              "items": {
+                "$ref": "#/$defs/findMediaMatch",
+              },
+              "type": "array",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The media name to search for.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "name",
+              "label": "Name",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Restrict the search to these media types. Leave empty to search all types.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.MediaTypePicker",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "mediaTypes",
+              "label": "Media types",
+              "sortOrder": 1,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": "Exact",
+              "description": "Exact (default) requires the whole name to match. StartsWith and Contains are token-based — Contains does not match substrings within a word.",
+              "editorConfig": "[{ "alias": "items", "value": ["Exact", "StartsWith", "Contains"] }]",
+              "editorUiAlias": "Umb.PropertyEditorUi.Dropdown",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "matchMode",
+              "label": "Match mode",
+              "sortOrder": 2,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": 50,
+              "description": "Maximum number of matches to return (1–500).",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.Integer",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "limit",
+              "label": "Limit",
+              "sortOrder": 3,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.getContent",
+        "connectionTypeAlias": null,
+        "description": "Fetches a published content item and exposes its properties for use in later steps.",
+        "group": "Content",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-document",
+        "name": "Get Content",
+        "outputSchema": {
+          "$defs": {
+            "dateTime": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "guid": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+          "properties": {
+            "availableCultures": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+            "contentKey": {
+              "$ref": "#/$defs/guid",
+            },
+            "contentTypeAlias": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "contentTypeKey": {
+              "$ref": "#/$defs/guid",
+            },
+            "createDate": {
+              "$ref": "#/$defs/dateTime",
+            },
+            "creatorKey": {
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "culture": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "level": {
+              "type": "integer",
+            },
+            "name": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "parentKey": {
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "path": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "properties": {
+              "additionalProperties": true,
+              "type": "object",
+            },
+            "sortOrder": {
+              "type": "integer",
+            },
+            "updateDate": {
+              "$ref": "#/$defs/dateTime",
+            },
+            "url": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "writerKey": {
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The key of the content item to fetch.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "contentKey",
+              "label": "Content Key",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Culture code (e.g. en-US) for variant content. Leave blank for invariant.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "culture",
+              "label": "Culture",
+              "sortOrder": 1,
+              "supportsBindings": true,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.getContentProperty",
+        "connectionTypeAlias": null,
+        "description": "Fetches a single property value from a published content item.",
+        "group": "Content",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-document",
+        "name": "Get Content Property",
+        "outputSchema": {
+          "properties": {
+            "contentKey": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "culture": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "hasValue": {
+              "type": "boolean",
+            },
+            "propertyAlias": {
+              "type": "string",
+            },
+            "value": true,
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The key of the content item to read from.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "contentKey",
+              "label": "Content Key",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "",
+              "description": "The alias of the property to read.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "propertyAlias",
+              "label": "Property Alias",
+              "sortOrder": 1,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Culture code (e.g. en-US) for variant content. Leave blank for invariant.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "culture",
+              "label": "Culture",
+              "sortOrder": 2,
+              "supportsBindings": true,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.getMedia",
+        "connectionTypeAlias": null,
+        "description": "Fetches a media item and exposes its properties for use in later steps.",
+        "group": "Media",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-picture",
+        "name": "Get Media",
+        "outputSchema": {
+          "$defs": {
+            "dateTime": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "guid": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+          "properties": {
+            "availableCultures": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+            "createDate": {
+              "$ref": "#/$defs/dateTime",
+            },
+            "creatorKey": {
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "culture": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "level": {
+              "type": "integer",
+            },
+            "mediaKey": {
+              "$ref": "#/$defs/guid",
+            },
+            "mediaTypeAlias": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "mediaTypeKey": {
+              "$ref": "#/$defs/guid",
+            },
+            "name": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "parentKey": {
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "path": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "properties": {
+              "additionalProperties": true,
+              "type": "object",
+            },
+            "sortOrder": {
+              "type": "integer",
+            },
+            "updateDate": {
+              "$ref": "#/$defs/dateTime",
+            },
+            "url": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "writerKey": {
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The key of the media item to fetch.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "mediaKey",
+              "label": "Media Key",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Culture code (e.g. en-US) for variant media. Leave blank for invariant.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "culture",
+              "label": "Culture",
+              "sortOrder": 1,
+              "supportsBindings": true,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.getMediaProperty",
+        "connectionTypeAlias": null,
+        "description": "Fetches a single property value from a media item.",
+        "group": "Media",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-picture",
+        "name": "Get Media Property",
+        "outputSchema": {
+          "properties": {
+            "culture": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "hasValue": {
+              "type": "boolean",
+            },
+            "mediaKey": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "propertyAlias": {
+              "type": "string",
+            },
+            "value": true,
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The key of the media item to read from.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "mediaKey",
+              "label": "Media Key",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "",
+              "description": "The alias of the property to read.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "propertyAlias",
+              "label": "Property Alias",
+              "sortOrder": 1,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Culture code (e.g. en-US) for variant media. Leave blank for invariant.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "culture",
+              "label": "Culture",
+              "sortOrder": 2,
+              "supportsBindings": true,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.httpRequest",
+        "connectionTypeAlias": null,
+        "description": "Sends an HTTP request to an external URL.",
+        "group": "Core",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-cloud-upload",
+        "name": "HTTP Request",
+        "outputSchema": {
+          "properties": {
+            "isSuccess": {
+              "type": "boolean",
+            },
+            "responseBody": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "statusCode": {
+              "type": "integer",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The URL to send the request to.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "url",
+              "label": "URL",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "GET",
+              "description": "The HTTP method to use.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "method",
+              "label": "Method",
+              "sortOrder": 1,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": null,
+              "description": "The request body content.",
+              "editorConfig": "[
+    { "alias": "language", "value": "plaintext" },
+    { "alias": "height", "value": 150 },
+    { "alias": "wordWrap", "value": true }
+]",
+              "editorUiAlias": "Umb.PropertyEditorUi.CodeEditor",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "body",
+              "label": "Body",
+              "sortOrder": 2,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "application/json",
+              "description": "The Content-Type header value.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "contentType",
+              "label": "Content Type",
+              "sortOrder": 3,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": null,
+              "description": "Custom headers as JSON object (e.g. {"Authorization": "Bearer token"}).",
+              "editorConfig": "[
+    { "alias": "language", "value": "json" },
+    { "alias": "height", "value": 120 },
+    { "alias": "wordWrap", "value": true }
+]",
+              "editorUiAlias": "Umb.PropertyEditorUi.CodeEditor",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": true,
+              "key": "headers",
+              "label": "Headers",
+              "sortOrder": 4,
+              "supportsBindings": true,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.logMessage",
+        "connectionTypeAlias": null,
+        "description": "Writes a message to the application log.",
+        "group": "Core",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-notepad",
+        "name": "Log Message",
+        "outputSchema": {
+          "properties": {
+            "message": {
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The message to write to the log.",
+              "editorConfig": "[
+    { "alias": "language", "value": "plaintext" },
+    { "alias": "wordWrap", "value": true }
+]",
+              "editorUiAlias": "Umb.PropertyEditorUi.CodeEditor",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "message",
+              "label": "Message",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "Information",
+              "description": "The severity level used when writing the message to the log.",
+              "editorConfig": "[{ "alias": "items", "value": ["Debug", "Information", "Warning", "Error"] }]",
+              "editorUiAlias": "Umb.PropertyEditorUi.Dropdown",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "logLevel",
+              "label": "Log Level",
+              "sortOrder": 1,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.notifyEditor",
+        "connectionTypeAlias": null,
+        "description": "Sends a realtime toast to any backoffice user currently editing the specified content item.",
+        "group": "Content",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-megaphone",
+        "name": "Notify Editor",
+        "outputSchema": {
+          "properties": {
+            "contentKey": {
+              "format": "uuid",
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The key of the content item whose editor should be notified.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "contentKey",
+              "label": "Content Key",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Headline shown on the toast. Defaults to the automation name when left blank.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "title",
+              "label": "Title",
+              "sortOrder": 1,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Body shown on the toast. Optional — when empty only the title is shown.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextArea",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "message",
+              "label": "Message",
+              "sortOrder": 2,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "Default",
+              "description": "Severity of the notification — controls the toast colour.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.Automate.EditorNotificationSeverityPicker",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "severity",
+              "label": "Severity",
+              "sortOrder": 3,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.publishContent",
+        "connectionTypeAlias": null,
+        "description": "Publishes a content item in Umbraco CMS.",
+        "group": "Content",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-globe",
+        "name": "Publish Content",
+        "outputSchema": {
+          "properties": {
+            "contentKey": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "cultures": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The key of the content item to publish.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "contentKey",
+              "label": "Content Key",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Comma-separated culture codes to publish (e.g. en-US,da-DK). Leave empty for invariant content.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "cultures",
+              "label": "Cultures",
+              "sortOrder": 1,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.requestApproval",
+        "connectionTypeAlias": null,
+        "description": "Pauses the automation and waits for a human to approve or reject before continuing.",
+        "group": "Core",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-operator",
+        "name": "Request Approval",
+        "outputSchema": {
+          "properties": {
+            "approved": {
+              "type": "boolean",
+            },
+            "approvedByUserKey": {
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "comment": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "decisionUtc": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "outcome": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "outcome",
+          ],
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": null,
+              "description": "The message shown to approvers explaining what needs approval.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "prompt",
+              "label": "Prompt",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Optional: auto-reject after this many hours. Leave empty for no timeout.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.Integer",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "timeoutHours",
+              "label": "Timeout (hours)",
+              "sortOrder": 1,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.runScript",
+        "connectionTypeAlias": null,
+        "description": "Runs a JavaScript function against the step inputs and returns its result.",
+        "group": "Core",
+        "hasDynamicOutputSchema": true,
+        "icon": "icon-script",
+        "name": "Run Script",
+        "outputSchema": {
+          "properties": {
+            "result": true,
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "export default function (data) {
+    return data;
+}",
+              "description": "JavaScript module. Export a default function that receives the step inputs as its single \`data\` argument and returns a result. The returned value becomes this step's output (as JSON) for later steps to bind to.
+
+\`\`\`js
+export default function (data) {
+    return { upper: data.name.toUpperCase() };
+}
+\`\`\`",
+              "editorConfig": "[{ "alias": "language", "value": "javascript" },{ "alias": "height", "value": 300 },{ "alias": "lineNumbers", "value": true },{ "alias": "minimap", "value": false },{ "alias": "wordWrap", "value": true }]",
+              "editorUiAlias": "Umb.PropertyEditorUi.CodeEditor",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "script",
+              "label": "Script",
+              "sortOrder": 0,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": null,
+              "description": "Optional JSON Schema describing what the script returns. Leave empty to expose the result as a single value. When set, later steps can bind to the individual properties, e.g. \`result.upper\`.
+
+\`\`\`json
+{
+    "type": "object",
+    "properties": { "upper": { "type": "string" } }
+}
+\`\`\`",
+              "editorConfig": "[{ "alias": "language", "value": "json" },{ "alias": "height", "value": 200 },{ "alias": "lineNumbers", "value": true },{ "alias": "minimap", "value": false },{ "alias": "wordWrap", "value": true }]",
+              "editorUiAlias": "Umb.PropertyEditorUi.CodeEditor",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "outputSchema",
+              "label": "Output schema",
+              "sortOrder": 1,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": true,
+              "description": "Allow the script to make outbound HTTP requests using fetch(). Requests are SSRF-protected.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.Toggle",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "allowFetch",
+              "label": "Allow fetch",
+              "sortOrder": 2,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.sendEmail",
+        "connectionTypeAlias": null,
+        "description": "Sends an email to one or more recipients.",
+        "group": "Core",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-message",
+        "name": "Send Email",
+        "outputSchema": {
+          "properties": {
+            "recipientCount": {
+              "type": "integer",
+            },
+            "subject": {
+              "type": "string",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "Recipient email addresses, separated by commas.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "to",
+              "label": "To",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "",
+              "description": "The email subject line.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "subject",
+              "label": "Subject",
+              "sortOrder": 1,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "",
+              "description": "The email body content. HTML is supported.",
+              "editorConfig": "[
+    { "alias": "language", "value": "html" },
+    { "alias": "height", "value": 250 },
+    { "alias": "wordWrap", "value": true }
+]",
+              "editorUiAlias": "Umb.PropertyEditorUi.CodeEditor",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "body",
+              "label": "Body",
+              "sortOrder": 2,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": true,
+              "description": "Whether the body contains HTML.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.Toggle",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "isHtml",
+              "label": "HTML Body",
+              "sortOrder": 3,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.setVariable",
+        "connectionTypeAlias": null,
+        "description": "Sets a named variable for use in downstream steps.",
+        "group": "Utilities",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-brackets",
+        "name": "Set Variable",
+        "outputSchema": {
+          "properties": {
+            "name": {
+              "type": "string",
+            },
+            "value": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The name of the variable to set.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "name",
+              "label": "Name",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "",
+              "description": "The value to assign to the variable.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "value",
+              "label": "Value",
+              "sortOrder": 1,
+              "supportsBindings": true,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.unpublishContent",
+        "connectionTypeAlias": null,
+        "description": "Unpublishes a content item in Umbraco CMS.",
+        "group": "Content",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-globe",
+        "name": "Unpublish Content",
+        "outputSchema": {
+          "properties": {
+            "contentKey": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "cultures": {
+              "items": {
+                "type": "string",
+              },
+              "type": [
+                "array",
+                "null",
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The key of the content item to unpublish.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "contentKey",
+              "label": "Content Key",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Comma-separated culture codes to unpublish (e.g. en-US,da-DK). Leave empty for invariant content.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "cultures",
+              "label": "Cultures",
+              "sortOrder": 1,
+              "supportsBindings": false,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.updateContentProperty",
+        "connectionTypeAlias": null,
+        "description": "Writes a single property value on a content item (draft save).",
+        "group": "Content",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-edit",
+        "name": "Update Content Property",
+        "outputSchema": {
+          "properties": {
+            "contentKey": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "culture": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "previousValue": true,
+            "propertyAlias": {
+              "type": "string",
+            },
+            "segment": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The key of the content item to update.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "contentKey",
+              "label": "Content Key",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "",
+              "description": "The alias of the property to update.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "propertyAlias",
+              "label": "Property Alias",
+              "sortOrder": 1,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "The value to write. Must match the shape expected by the target property editor.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "value",
+              "label": "Value",
+              "sortOrder": 2,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Culture code (e.g. en-US) for variant content. Leave blank for invariant.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "culture",
+              "label": "Culture",
+              "sortOrder": 3,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Segment for segmented content. Leave blank for the default segment.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "segment",
+              "label": "Segment",
+              "sortOrder": 4,
+              "supportsBindings": true,
+            },
+          ],
+        },
+        "type": "action",
+      },
+      {
+        "alias": "umbracoAutomate.updateMediaProperty",
+        "connectionTypeAlias": null,
+        "description": "Writes a single property value on a media item.",
+        "group": "Media",
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-edit",
+        "name": "Update Media Property",
+        "outputSchema": {
+          "properties": {
+            "culture": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "mediaKey": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "previousValue": true,
+            "propertyAlias": {
+              "type": "string",
+            },
+            "segment": {
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": "",
+              "description": "The key of the media item to update.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "mediaKey",
+              "label": "Media Key",
+              "sortOrder": 0,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": "",
+              "description": "The alias of the property to update.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "propertyAlias",
+              "label": "Property Alias",
+              "sortOrder": 1,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "The value to write. Must match the shape expected by the target property editor.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "value",
+              "label": "Value",
+              "sortOrder": 2,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Culture code (e.g. en-US) for variant media. Leave blank for invariant.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "culture",
+              "label": "Culture",
+              "sortOrder": 3,
+              "supportsBindings": true,
+            },
+            {
+              "defaultValue": null,
+              "description": "Segment for segmented media. Leave blank for the default segment.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "segment",
+              "label": "Segment",
+              "sortOrder": 4,
+              "supportsBindings": true,
+            },
+          ],
+        },
+        "type": "action",
+      },
+    ],
+  },
+}
+`;

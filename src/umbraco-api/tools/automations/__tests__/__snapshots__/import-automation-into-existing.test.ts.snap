@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`import-automation-into-existing should restore a previously-exported definition onto the same automation 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "automationAlias": "_test_import_existing_automation",
+    "automationId": "00000000-0000-0000-0000-000000000000",
+    "errors": [],
+    "success": true,
+    "warnings": [],
+  },
+}
+`;

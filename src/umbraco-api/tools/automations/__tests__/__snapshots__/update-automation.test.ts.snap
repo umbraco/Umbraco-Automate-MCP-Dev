@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`update-automation should rename an automation, leaving the rest of its definition unchanged 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "message": "Automation "_Test Update Automation Renamed" updated.",
+  },
+}
+`;

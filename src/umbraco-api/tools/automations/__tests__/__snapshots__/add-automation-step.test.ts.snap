@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`add-automation-step should add a step to the automation's graph 1`] = `
+{
+  "alias": "delayStep",
+  "message": "Step "delayStep" added.",
+  "stepId": "00000000-0000-0000-0000-000000000000",
+}
+`;

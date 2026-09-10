@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`list-catalogue-notification-channels should list available notification channel definitions 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "items": [
+      {
+        "alias": "umbracoAutomate.email",
+        "description": "Sends an email notification.",
+        "icon": "icon-message",
+        "name": "Email",
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": null,
+              "description": "Comma-separated email addresses.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "recipients",
+              "label": "Recipients",
+              "sortOrder": 0,
+              "supportsBindings": false,
+            },
+          ],
+        },
+      },
+      {
+        "alias": "umbracoAutomate.webhook",
+        "description": "Sends a JSON POST to a webhook URL when a run fails.",
+        "icon": "icon-webhook",
+        "name": "Webhook",
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": null,
+              "description": "The URL to POST the notification to.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.TextBox",
+              "group": null,
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "url",
+              "label": "URL",
+              "sortOrder": 0,
+              "supportsBindings": false,
+            },
+            {
+              "defaultValue": null,
+              "description": "Optional shared secret for HMAC-SHA256 signing.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.Automate.SensitiveField",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": true,
+              "key": "secret",
+              "label": "Secret",
+              "sortOrder": 1,
+              "supportsBindings": false,
+            },
+          ],
+        },
+      },
+    ],
+  },
+}
+`;

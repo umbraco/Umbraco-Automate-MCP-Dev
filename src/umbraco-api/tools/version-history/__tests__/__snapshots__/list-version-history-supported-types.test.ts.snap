@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`list-version-history-supported-types should list the supported entityType values 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "items": [
+      "Automation",
+      "Workspace",
+      "Connection",
+    ],
+  },
+}
+`;

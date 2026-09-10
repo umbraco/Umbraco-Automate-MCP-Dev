@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`remove-automation-step should remove the step from the automation's graph 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "message": "Step "delayStep" removed.",
+    "removedConnectionCount": 0,
+  },
+}
+`;

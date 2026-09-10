@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`connect-automation-steps should connect a step directly off the automation's trigger 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "message": "Connected "trigger" -> "delayStep".",
+  },
+}
+`;
+
+exports[`connect-automation-steps should connect one step's output to another step's input 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "message": "Connected "delayStep" -> "delayStepTwo".",
+  },
+}
+`;

@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`import-automation should create an automation in a workspace from a real exported definition 1`] = `
+{
+  "content": [],
+  "structuredContent": {
+    "automationAlias": "_test_import_automation",
+    "automationId": "00000000-0000-0000-0000-000000000000",
+    "errors": [],
+    "success": true,
+    "warnings": [],
+  },
+}
+`;
