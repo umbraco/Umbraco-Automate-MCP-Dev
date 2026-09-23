@@ -31,6 +31,13 @@ const CLIENT_SECRET = "1234567890";
 const ADMIN_GROUP_KEY = "e5e7f6c8-7f9c-4b5b-8d5d-9e1e5a4f7e4d";
 const SWAGGER_CLIENT_ID = "umbraco-swagger";
 
+// Fixed user key so the API user doubles as the workspace service account the
+// test builders and snapshots expect (TEST_SERVICE_ACCOUNT_KEY in
+// workspace-builder.ts). A random key makes publish fail with
+// "Service account ... not found".
+const API_USER_KEY =
+  process.env.TEST_SERVICE_ACCOUNT_KEY ?? "92bce462-d4b4-441f-9056-17f283f63cc8";
+
 const TOKEN_PATH = "/umbraco/management/api/v1/security/back-office/token";
 const LOGIN_PATH = "/umbraco/management/api/v1/security/back-office/login";
 const AUTHORIZE_PATH = "/umbraco/management/api/v1/security/back-office/authorize";
@@ -153,6 +160,7 @@ async function createApiUser(bearerToken) {
       Authorization: `Bearer ${bearerToken}`,
     },
     body: JSON.stringify({
+      id: API_USER_KEY,
       email: "mcp-api@localhost",
       userName: "mcp-api@localhost",
       name: "MCP API User",
@@ -173,6 +181,12 @@ async function createApiUser(bearerToken) {
   const userId = location?.split("/").pop();
   if (!userId) {
     throw new Error("Could not extract user ID from Location header");
+  }
+  if (userId.toLowerCase() !== API_USER_KEY.toLowerCase()) {
+    throw new Error(
+      `API user was created with id ${userId}, expected ${API_USER_KEY} — ` +
+        "the Management API ignored the requested id"
+    );
   }
   return userId;
 }
