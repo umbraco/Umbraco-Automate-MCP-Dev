@@ -48,9 +48,8 @@ describe("Server Config", () => {
           },
         },
         custom: {
-          experimentalFeatures: true,
-          externalApiKey: "my-api-key",
-          customEndpoints: ["ep1", "ep2"],
+          disableMcpChaining: true,
+          expectedUmbracoMajor: "18",
         },
       });
 
@@ -62,9 +61,8 @@ describe("Server Config", () => {
       expect(umbraco.readonly).toBe(true);
 
       // Verify custom config
-      expect(custom.experimentalFeatures).toBe(true);
-      expect(custom.externalApiKey).toBe("my-api-key");
-      expect(custom.customEndpoints).toEqual(["ep1", "ep2"]);
+      expect(custom.disableMcpChaining).toBe(true);
+      expect(custom.expectedUmbracoMajor).toBe("18");
     });
 
     it("should pass isStdioMode to getServerConfig", async () => {
@@ -99,10 +97,8 @@ describe("Server Config", () => {
         true,
         expect.objectContaining({
           additionalFields: expect.arrayContaining([
-            expect.objectContaining({ name: "experimentalFeatures" }),
-            expect.objectContaining({ name: "customEndpoints" }),
-            expect.objectContaining({ name: "externalApiKey" }),
-            expect.objectContaining({ name: "maxPageSize" }),
+            expect.objectContaining({ name: "disableMcpChaining" }),
+            expect.objectContaining({ name: "expectedUmbracoMajor" }),
           ]),
         })
       );
@@ -114,7 +110,7 @@ describe("Server Config", () => {
           auth: { clientId: "cached", clientSecret: "x", baseUrl: "x" },
           configSources: { clientId: "env", clientSecret: "env", baseUrl: "env", envFile: "default" },
         },
-        custom: { externalApiKey: "cached-key" },
+        custom: { expectedUmbracoMajor: "cached-major" },
       });
 
       // First call
@@ -128,8 +124,8 @@ describe("Server Config", () => {
       // Both should return same data
       expect(first.umbraco.auth.clientId).toBe("cached");
       expect(second.umbraco.auth.clientId).toBe("cached");
-      expect(first.custom.externalApiKey).toBe("cached-key");
-      expect(second.custom.externalApiKey).toBe("cached-key");
+      expect(first.custom.expectedUmbracoMajor).toBe("cached-major");
+      expect(second.custom.expectedUmbracoMajor).toBe("cached-major");
     });
 
     it("should reload config after clearConfigCache", async () => {
@@ -172,10 +168,8 @@ describe("Server Config", () => {
 
       const { custom } = await loadServerConfig(true);
 
-      expect(custom.experimentalFeatures).toBeUndefined();
-      expect(custom.externalApiKey).toBeUndefined();
-      expect(custom.customEndpoints).toBeUndefined();
-      expect(custom.maxPageSize).toBeUndefined();
+      expect(custom.disableMcpChaining).toBeUndefined();
+      expect(custom.expectedUmbracoMajor).toBeUndefined();
     });
 
     it("should type custom values correctly", async () => {
@@ -185,25 +179,19 @@ describe("Server Config", () => {
           configSources: { clientId: "env", clientSecret: "env", baseUrl: "env", envFile: "default" },
         },
         custom: {
-          experimentalFeatures: true,
-          customEndpoints: ["a", "b"],
-          externalApiKey: "key",
-          maxPageSize: "50",
+          disableMcpChaining: true,
+          expectedUmbracoMajor: "18",
         },
       });
 
       const { custom } = await loadServerConfig(true);
 
       // TypeScript type checks (these verify the interface is correct)
-      const boolVal: boolean | undefined = custom.experimentalFeatures;
-      const arrVal: string[] | undefined = custom.customEndpoints;
-      const strVal: string | undefined = custom.externalApiKey;
-      const pageSize: string | undefined = custom.maxPageSize;
+      const boolVal: boolean | undefined = custom.disableMcpChaining;
+      const strVal: string | undefined = custom.expectedUmbracoMajor;
 
       expect(typeof boolVal).toBe("boolean");
-      expect(Array.isArray(arrVal)).toBe(true);
       expect(typeof strVal).toBe("string");
-      expect(typeof pageSize).toBe("string");
     });
   });
 
@@ -211,30 +199,20 @@ describe("Server Config", () => {
     it("should return all custom field definitions", () => {
       const fields = getCustomFieldDefinitions();
 
-      expect(fields).toHaveLength(6);
+      expect(fields).toHaveLength(2);
       expect(fields.map(f => f.name)).toEqual([
         "disableMcpChaining",
         "expectedUmbracoMajor",
-        "experimentalFeatures",
-        "customEndpoints",
-        "externalApiKey",
-        "maxPageSize",
       ]);
     });
 
     it("should return field definitions with correct types", () => {
       const fields = getCustomFieldDefinitions();
 
-      const experimental = fields.find(f => f.name === "experimentalFeatures");
-      expect(experimental?.type).toBe("boolean");
-      expect(experimental?.envVar).toBe("MY_EXPERIMENTAL_FEATURES");
-      expect(experimental?.cliFlag).toBe("my-experimental-features");
-
-      const endpoints = fields.find(f => f.name === "customEndpoints");
-      expect(endpoints?.type).toBe("csv");
-
-      const apiKey = fields.find(f => f.name === "externalApiKey");
-      expect(apiKey?.type).toBe("string");
+      const chaining = fields.find(f => f.name === "disableMcpChaining");
+      expect(chaining?.type).toBe("boolean");
+      expect(chaining?.envVar).toBe("DISABLE_MCP_CHAINING");
+      expect(chaining?.cliFlag).toBe("disable-mcp-chaining");
 
       const expectedMajor = fields.find(f => f.name === "expectedUmbracoMajor");
       expect(expectedMajor?.type).toBe("string");

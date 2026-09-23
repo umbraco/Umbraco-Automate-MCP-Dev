@@ -37,6 +37,7 @@ import { getUmbracoAutomateManagementAPI } from "./umbraco-api/api/generated/umb
 
 // Import tool collections
 import chainedCollection from "./umbraco-api/tools/chained/index.js";
+import umbracoServerCollection from "./umbraco-api/tools/umbraco-server/index.js";
 import approvalsCollection from "./umbraco-api/tools/approvals/index.js";
 import automationsCollection from "./umbraco-api/tools/automations/index.js";
 import catalogueCollection from "./umbraco-api/tools/catalogue/index.js";
@@ -64,7 +65,7 @@ import {
 
 // Initialize the SDK's fetch client for real Umbraco API calls.
 // This enables the Orval-generated client to authenticate via client_credentials.
-const baseUrl = process.env.UMBRACO_BASE_URL || "http://localhost:44391";
+const baseUrl = process.env.UMBRACO_BASE_URL || "https://localhost:44320";
 const clientId = process.env.UMBRACO_CLIENT_ID || "";
 const clientSecret = process.env.UMBRACO_CLIENT_SECRET || "";
 if (clientId) {
@@ -101,6 +102,7 @@ const filterConfig: CollectionConfiguration = configLoader.loadFromConfig(server
 
 const collections = [
   chainedCollection,
+  umbracoServerCollection,
   approvalsCollection,
   automationsCollection,
   catalogueCollection,

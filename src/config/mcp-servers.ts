@@ -47,9 +47,9 @@ const mockCmsServer: McpServerConfig = {
 const realCmsServer: McpServerConfig = {
   name: "cms",
   command: "npx",
-  args: ["-y", "@umbraco-cms/mcp-dev@17"],
+  args: ["-y", "@umbraco-cms/mcp-dev@18"],
   env: {
-    UMBRACO_BASE_URL: process.env.UMBRACO_BASE_URL || "http://localhost:44391",
+    UMBRACO_BASE_URL: process.env.UMBRACO_BASE_URL || "https://localhost:44320",
     UMBRACO_CLIENT_ID: process.env.UMBRACO_CLIENT_ID || "",
     UMBRACO_CLIENT_SECRET: process.env.UMBRACO_CLIENT_SECRET || "",
   },

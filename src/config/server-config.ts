@@ -35,20 +35,12 @@ export interface MyServerCustomConfig {
    * and blocks the first tool call until the user retries.
    *
    * Leave unset (the normal case) to use `UMBRACO_TARGET_MAJOR` from
-   * `config/umbraco-target.generated.ts`, which `npm run generate` derives from
-   * the OpenAPI spec's `info.version` — i.e. the Umbraco version the tools were
-   * actually generated against. Set this only to deliberately point the server
-   * at a different Umbraco major.
+   * `config/umbraco-target.generated.ts`, which `npm run generate` reads from
+   * the connected instance's `server/information` endpoint — i.e. the Umbraco
+   * version the tools were actually generated against. Set this only to
+   * deliberately point the server at a different Umbraco major.
    */
   expectedUmbracoMajor?: string;
-  /** Enable experimental features */
-  experimentalFeatures?: boolean;
-  /** Custom API endpoints to enable */
-  customEndpoints?: string[];
-  /** External service API key */
-  externalApiKey?: string;
-  /** Maximum items per page for list operations */
-  maxPageSize?: string;
 }
 
 // ============================================================================
@@ -58,8 +50,8 @@ export interface MyServerCustomConfig {
 /**
  * Define additional config fields for this server.
  * Each field automatically gets:
- * - A CLI argument (--my-experimental-features)
- * - An environment variable (MY_EXPERIMENTAL_FEATURES)
+ * - A CLI argument (--disable-mcp-chaining)
+ * - An environment variable (DISABLE_MCP_CHAINING)
  * - Automatic parsing based on type
  */
 const customFields: ConfigFieldDefinition[] = [
@@ -73,30 +65,6 @@ const customFields: ConfigFieldDefinition[] = [
     name: "expectedUmbracoMajor",
     envVar: "UMBRACO_EXPECTED_MAJOR",
     cliFlag: "umbraco-expected-major",
-    type: "string",
-  },
-  {
-    name: "experimentalFeatures",
-    envVar: "MY_EXPERIMENTAL_FEATURES",
-    cliFlag: "my-experimental-features",
-    type: "boolean",
-  },
-  {
-    name: "customEndpoints",
-    envVar: "MY_CUSTOM_ENDPOINTS",
-    cliFlag: "my-custom-endpoints",
-    type: "csv",
-  },
-  {
-    name: "externalApiKey",
-    envVar: "MY_EXTERNAL_API_KEY",
-    cliFlag: "my-external-api-key",
-    type: "string",
-  },
-  {
-    name: "maxPageSize",
-    envVar: "MY_MAX_PAGE_SIZE",
-    cliFlag: "my-max-page-size",
     type: "string",
   },
 ];
@@ -131,8 +99,8 @@ let cachedConfig: ServerConfig | null = null;
  * console.log(umbraco.readonly);
  *
  * // Access custom config
- * if (custom.experimentalFeatures) {
- *   enableExperimentalFeatures();
+ * if (custom.disableMcpChaining) {
+ *   skipChainedServers();
  * }
  * ```
  */

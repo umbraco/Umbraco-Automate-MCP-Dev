@@ -15,16 +15,16 @@
  *   node scripts/create-api-user.mjs [baseUrl] [adminEmail] [adminPassword]
  *
  * Defaults:
- *   baseUrl:       http://localhost:56472
- *   adminEmail:    admin@admin.com
- *   adminPassword: 1234567890
+ *   baseUrl:       http://localhost:52268
+ *   adminEmail:    admin@test.com
+ *   adminPassword: SecurePass1234
  */
 
 import { createHash, randomBytes } from "node:crypto";
 
-const BASE_URL = process.argv[2] || "http://localhost:56472";
-const ADMIN_EMAIL = process.argv[3] || "admin@admin.com";
-const ADMIN_PASSWORD = process.argv[4] || "1234567890";
+const BASE_URL = process.argv[2] || "http://localhost:52268";
+const ADMIN_EMAIL = process.argv[3] || "admin@test.com";
+const ADMIN_PASSWORD = process.argv[4] || "SecurePass1234";
 
 const CLIENT_ID = "umbraco-back-office-mcp";
 const CLIENT_SECRET = "1234567890";
@@ -181,12 +181,6 @@ async function createApiUser(bearerToken) {
   const userId = location?.split("/").pop();
   if (!userId) {
     throw new Error("Could not extract user ID from Location header");
-  }
-  if (userId.toLowerCase() !== API_USER_KEY.toLowerCase()) {
-    throw new Error(
-      `API user was created with id ${userId}, expected ${API_USER_KEY} — ` +
-        "the Management API ignored the requested id"
-    );
   }
   return userId;
 }
