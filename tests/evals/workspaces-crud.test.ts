@@ -20,7 +20,7 @@ describe("Workspaces CRUD Operations", () => {
   it(
     "should complete full CRUD workflow",
     runScenarioTest({
-      prompt: `Complete these tasks in order. IMPORTANT: use only the tools named exactly "list-workspaces", "get-workspace", "create-workspace", "update-workspace", "delete-workspace" (no other prefix or namespace) - do not use any tool whose name is prefixed with "mcp__umbraco__" or similar, even if it looks like it does the same thing.
+      prompt: `Complete these tasks in order.
 1. Generate a unique identifier using the current timestamp (call it {timestamp}).
 2. Create a new workspace with alias "eval-workspace-{timestamp}", name "Eval Workspace {timestamp}", and serviceAccountKey "92bce462-d4b4-441f-9056-17f283f63cc8" (this is a real Umbraco user id already known to be valid on this instance - use it exactly as given, do not look up or guess a different one).
 3. List workspaces filtering by the name "Eval Workspace {timestamp}" and confirm the one you created appears in the results, noting its id.

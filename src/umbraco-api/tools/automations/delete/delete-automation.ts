@@ -18,11 +18,18 @@ import { deleteAutomationsByIdParams } from "../../../api/generated/umbracoAutom
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...deleteAutomationsByIdParams.shape,
+  id: deleteAutomationsByIdParams.shape.id.describe(
+    "Id of the automation to delete permanently.",
+  ),
+};
+
 const deleteAutomationTool = {
   name: "delete-automation",
   description:
     "Permanently deletes an automation by id, including its run history. This cannot be undone. Use export-automation first if you might want to restore it later, or unpublish-automation instead if you only want to stop it from running.",
-  inputSchema: deleteAutomationsByIdParams.shape,
+  inputSchema,
   annotations: {
     destructiveHint: true,
   },
@@ -32,6 +39,6 @@ const deleteAutomationTool = {
       client.deleteAutomationsById(id, CAPTURE_RAW_HTTP_RESPONSE),
     );
   },
-} satisfies ToolDefinition<typeof deleteAutomationsByIdParams.shape>;
+} satisfies ToolDefinition<typeof inputSchema>;
 
 export default withStandardDecorators(deleteAutomationTool);

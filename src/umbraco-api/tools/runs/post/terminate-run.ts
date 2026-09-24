@@ -18,11 +18,18 @@ import { postRunsByIdTerminateParams } from "../../../api/generated/umbracoAutom
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...postRunsByIdTerminateParams.shape,
+  id: postRunsByIdTerminateParams.shape.id.describe(
+    "Id of the Pending, Running or Suspended run to stop.",
+  ),
+};
+
 const terminateRunTool = {
   name: "terminate-run",
   description:
     "Force-stops a workflow run that is Pending, Running, or Suspended, cancelling it immediately. This is irreversible — a terminated run cannot be resumed or replayed; the automation must be triggered again to start a new run. Use suspend-run instead if you only want to pause the run temporarily.",
-  inputSchema: postRunsByIdTerminateParams.shape,
+  inputSchema,
   slices: ["action"],
   annotations: {
     destructiveHint: true,
@@ -32,6 +39,6 @@ const terminateRunTool = {
       client.postRunsByIdTerminate(id, CAPTURE_RAW_HTTP_RESPONSE),
     );
   },
-} satisfies ToolDefinition<typeof postRunsByIdTerminateParams.shape, undefined>;
+} satisfies ToolDefinition<typeof inputSchema, undefined>;
 
 export default withStandardDecorators(terminateRunTool);

@@ -27,8 +27,12 @@ import type { AutomationExportModel } from "../../../api/generated/umbracoAutoma
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
 const inputSchema = {
-  id: putAutomationsByIdImportParams.shape.id,
-  exportModel: z.object(putAutomationsByIdImportBody.shape),
+  id: putAutomationsByIdImportParams.shape.id.describe(
+    "Id of the existing automation to overwrite.",
+  ),
+  exportModel: z.object(putAutomationsByIdImportBody.shape).describe(
+    "The exact object returned by export-automation, passed through unmodified. Not meant to be written by hand.",
+  ),
 };
 
 const importAutomationIntoExistingTool = {

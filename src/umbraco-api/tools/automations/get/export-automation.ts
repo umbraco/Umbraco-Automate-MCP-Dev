@@ -27,6 +27,12 @@ type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 const inputSchema = {
   ...getAutomationsByIdExportParams.shape,
   ...getAutomationsByIdExportQueryParams.shape,
+  id: getAutomationsByIdExportParams.shape.id.describe(
+    "Id of the automation to export.",
+  ),
+  include: getAutomationsByIdExportQueryParams.shape.include.describe(
+    "Optional. Limits which parts of the automation are exported. Omit to export everything.",
+  ),
 };
 
 const exportAutomationTool = {

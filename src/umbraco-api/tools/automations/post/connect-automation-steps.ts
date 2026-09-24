@@ -75,7 +75,7 @@ const outputSchema = z.object({ message: z.string() });
 const connectAutomationStepsTool = {
   name: "connect-automation-steps",
   description:
-    "Connects one step's output to another step's input, so the target step runs after the source step (optionally only for a specific outcome, and/or only when conditions are met). The target step must already exist on the automation - use add-automation-step first. Pass sourceStep: \"trigger\" to run the target step directly off the automation's trigger instead of another step (every automation needs at least one such connection to actually run). Adding a connection does not remove any existing connections between other steps. Also re-lays out every step's canvas position top-down by distance from the trigger, so the graph reads as a flow instead of piling up wherever add-automation-step happened to place it.",
+    "Connects one step's output to another step's input, so the target step runs after the source step (optionally only for a specific outcome, and/or only when conditions are met). The target step must already exist on the automation - use add-automation-step first. Pass sourceStep: \"trigger\" to run the target step directly off the automation's trigger instead of another step. Adding a connection does not remove any existing connections between other steps. Also re-lays out every step's canvas position top-down by distance from the trigger, so the graph reads as a flow instead of piling up wherever add-automation-step happened to place it.",
   inputSchema,
   outputSchema,
   slices: ["update"],

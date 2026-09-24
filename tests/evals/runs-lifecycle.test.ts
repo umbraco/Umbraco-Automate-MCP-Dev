@@ -34,9 +34,7 @@ describe("Runs Lifecycle", () => {
   it(
     "should trigger a run and drive it through suspend, resume, and terminate",
     runScenarioTest({
-      prompt: `IMPORTANT: You may see two sets of tools with the same names but different prefixes (e.g. "mcp__my-umbraco-mcp__create-workspace" and "mcp__umbraco__create-workspace"). Always call the ones prefixed "mcp__my-umbraco-mcp__" - never call any tool prefixed "mcp__umbraco__".
-
-Complete these tasks in order:
+      prompt: `Complete these tasks in order:
 1. Generate a unique identifier using the current timestamp (call it {timestamp}).
 2. Create a new workspace with alias "eval-ws-runs-{timestamp}", name "Eval Runs Workspace {timestamp}", and serviceAccountKey "92bce462-d4b4-441f-9056-17f283f63cc8" (this is a real Umbraco user id already known to be valid on this instance - use it exactly as given). Note its id.
 3. Create a new automation in that workspace with alias "eval-automation-runs-{timestamp}" and name "Eval Runs Automation {timestamp}". Note its id.

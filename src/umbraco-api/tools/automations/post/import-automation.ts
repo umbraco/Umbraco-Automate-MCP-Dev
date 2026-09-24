@@ -28,8 +28,12 @@ import type { ImportAutomationRequestModel } from "../../../api/generated/umbrac
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
 const inputSchema = {
-  workspaceId: postAutomationsImportBody.shape.workspaceId,
-  exportModel: z.object(postAutomationsImportBody.shape.exportModel.shape),
+  workspaceId: postAutomationsImportBody.shape.workspaceId.describe(
+    "Id of the workspace to create the automation in (from list-workspaces).",
+  ),
+  exportModel: z.object(postAutomationsImportBody.shape.exportModel.shape).describe(
+    "The exact object returned by export-automation, passed through unmodified. Not meant to be written by hand.",
+  ),
 };
 
 const importAutomationTool = {

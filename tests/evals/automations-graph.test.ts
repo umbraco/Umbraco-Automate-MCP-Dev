@@ -51,12 +51,12 @@ describe("Automations Graph Workflow", () => {
   it(
     "should build out a trigger/step graph, publish it, and manually trigger a run",
     runScenarioTest({
-      prompt: `Complete these tasks in order. IMPORTANT: use only the tools named exactly "create-workspace", "create-automation", "set-automation-trigger", "add-automation-step", "publish-automation", "trigger-automation", "list-automation-runs", "delete-automation", "delete-workspace" (no other prefix or namespace) - do not use any tool whose name is prefixed with "mcp__umbraco__" or similar, even if it looks like it does the same thing.
+      prompt: `Complete these tasks in order.
 1. Generate a unique suffix using the current timestamp (e.g. the numeric epoch millis).
-2. Create a new workspace with alias "evalGraphWs{timestamp}" (letters/digits only), name "Eval Graph Workspace {timestamp}", and serviceAccountKey "92bce462-d4b4-441f-9056-17f283f63cc8" (this is the real Umbraco user id to use - do not look it up or invent another one). Leave userGroups and allowedConnections empty.
-3. Create a new automation with alias "evalGraphAuto{timestamp}" (letters/digits only), name "Eval Graph Automation {timestamp}", inside the workspace you just created.
+2. Create a new workspace with alias "evalGraphWs{timestamp}", name "Eval Graph Workspace {timestamp}", and serviceAccountKey "92bce462-d4b4-441f-9056-17f283f63cc8" (this is the real Umbraco user id to use - do not look it up or invent another one). Leave userGroups and allowedConnections empty.
+3. Create a new automation with alias "evalGraphAuto{timestamp}", name "Eval Graph Automation {timestamp}", inside the workspace you just created.
 4. Set the automation's trigger to triggerAlias "umbracoAutomate.manual". This trigger has no settings schema, so omit settings entirely.
-5. Add a single step to the automation with actionAlias "umbracoAutomate.delay", alias "delayStep{timestamp-digits-only}" (this alias MUST be pure alphanumeric - letters and digits only, starting with a letter, NO hyphens or underscores - strip any non-alphanumeric characters from the timestamp when building it), name "Delay Step", and settings { "duration": "00:00:05" }. Do not call connect-automation-steps - a single step with no incoming connection runs directly off the trigger, so no connection is needed.
+5. Add a single step to the automation with actionAlias "umbracoAutomate.delay", an alias of your choice based on "delayStep", name "Delay Step", and settings { "duration": "00:00:05" }.
 6. Publish the automation.
 7. Manually trigger the automation to start a new run.
 8. List the automation's runs and confirm at least one run appears.

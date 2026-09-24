@@ -36,7 +36,6 @@ import {
 import { getUmbracoAutomateManagementAPI } from "./umbraco-api/api/generated/umbracoAutomateManagementApi.js";
 
 // Import tool collections
-import chainedCollection from "./umbraco-api/tools/chained/index.js";
 import umbracoServerCollection from "./umbraco-api/tools/umbraco-server/index.js";
 import approvalsCollection from "./umbraco-api/tools/approvals/index.js";
 import automationsCollection from "./umbraco-api/tools/automations/index.js";
@@ -101,7 +100,6 @@ const filterConfig: CollectionConfiguration = configLoader.loadFromConfig(server
 // ============================================================================
 
 const collections = [
-  chainedCollection,
   umbracoServerCollection,
   approvalsCollection,
   automationsCollection,
