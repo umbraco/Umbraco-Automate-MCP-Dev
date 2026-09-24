@@ -3,8 +3,7 @@
 An [MCP](https://modelcontextprotocol.io) server for **Umbraco Automate**. Point it at an Umbraco
 instance and your AI assistant can build and publish automations, wire up their steps and
 triggers, manage connections and workspaces, inspect and control runs, handle approvals, and roll
-back to earlier versions — 62 Automate tools across 8 collections, plus server-info and
-chaining tools.
+back to earlier versions — 62 Automate tools across 8 collections, plus a server-info tool.
 
 Built on [`@umbraco-cms/mcp-server-sdk`](https://www.npmjs.com/package/@umbraco-cms/mcp-server-sdk).
 
@@ -114,7 +113,7 @@ Every option is an environment variable, and most also have a CLI flag (`--help`
 
 ### Limiting the tool surface
 
-64 tools is a lot of context. Narrow it down:
+63 tools is a lot of context. Narrow it down:
 
 | Variable | Purpose |
 |----------|---------|
@@ -153,7 +152,6 @@ Available modes:
 | `approvals` | 2 | Runs paused on an approval step, and approving/rejecting them |
 | `metrics` | 2 | Run metrics overall and per automation |
 | `umbraco-server` | 1 | Umbraco server information (version, runtime) |
-| `chained` | 1 | Info about the chained CMS server |
 
 Run `--list-tools` for the full list with descriptions.
 

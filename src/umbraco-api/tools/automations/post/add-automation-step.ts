@@ -37,7 +37,7 @@ const inputSchema = {
     .string()
     .min(1)
     .describe(
-      "Unique, code-friendly name for this step within the automation (e.g. 'send-welcome-email'). Use this to refer to the step later in connect-automation-steps, update-automation-step, and remove-automation-step."
+      "Unique name for this step within the automation. Letters and digits only, starting with a letter - no hyphens, underscores or spaces (e.g. 'sendWelcomeEmail'). Use this to refer to the step later in connect-automation-steps, update-automation-step, and remove-automation-step."
     ),
   name: z.string().min(1).describe("Human-readable display name for this step."),
   settings: z
@@ -93,7 +93,7 @@ const outputSchema = z.object({
 const addAutomationStepTool = {
   name: "add-automation-step",
   description:
-    "Adds a new step to an automation's graph. You only need to describe the new step - this tool reads the automation's current definition, appends the step, and saves it back, so nothing else is affected. The step is created unconnected: use connect-automation-steps afterwards to wire it into the flow (from the trigger, or from another step). Canvas position is assigned automatically; use the Umbraco backoffice canvas to rearrange steps visually if needed.",
+    "Adds a new step to an automation's graph. You only need to describe the new step - this tool reads the automation's current definition, appends the step, and saves it back, so nothing else is affected. A step with no incoming connection runs directly off the trigger, so a one-step automation needs no connect-automation-steps call; use connect-automation-steps to make a step run after another step. Canvas position is assigned automatically; use the Umbraco backoffice canvas to rearrange steps visually if needed.",
   inputSchema,
   outputSchema,
   slices: ["update"],

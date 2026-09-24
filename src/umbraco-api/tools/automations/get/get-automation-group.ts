@@ -20,11 +20,18 @@ import {
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...getAutomationsGroupsByGroupIdParams.shape,
+  groupId: getAutomationsGroupsByGroupIdParams.shape.groupId.describe(
+    "Id of the workspace group (an automation's groupId, or an id from list-workspace-groups).",
+  ),
+};
+
 const getAutomationGroupTool = {
   name: "get-automation-group",
   description:
     "Gets a single workspace group (folder used to organize automations) by id, including its parent group and owning workspace. Use list-automations with groupId to list the automations inside this group.",
-  inputSchema: getAutomationsGroupsByGroupIdParams.shape,
+  inputSchema,
   outputSchema: getAutomationsGroupsByGroupIdResponse,
   slices: ["read"],
   annotations: {
@@ -39,7 +46,7 @@ const getAutomationGroupTool = {
     );
   },
 } satisfies ToolDefinition<
-  typeof getAutomationsGroupsByGroupIdParams.shape,
+  typeof inputSchema,
   typeof getAutomationsGroupsByGroupIdResponse
 >;
 

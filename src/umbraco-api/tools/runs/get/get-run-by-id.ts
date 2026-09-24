@@ -20,11 +20,18 @@ import {
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...getRunsByIdParams.shape,
+  id: getRunsByIdParams.shape.id.describe(
+    "Id of the run (from list-runs or list-automation-runs).",
+  ),
+};
+
 const getRunByIdTool = {
   name: "get-run-by-id",
   description:
     "Gets the full detail of a single workflow run by id, including the automation it belongs to, its overall status (Pending, Running, Completed, Failed, Suspended, Cancelled, Rejected), and the step-by-step execution state (stepRuns) with each step's own status, timing, and error if any. A step in status WaitingForInput is blocked on a human decision — check list-pending-approvals (approvals collection) for the matching approval.",
-  inputSchema: getRunsByIdParams.shape,
+  inputSchema,
   outputSchema: getRunsByIdResponse,
   slices: ["read"],
   annotations: {
@@ -36,7 +43,7 @@ const getRunByIdTool = {
     );
   },
 } satisfies ToolDefinition<
-  typeof getRunsByIdParams.shape,
+  typeof inputSchema,
   typeof getRunsByIdResponse
 >;
 

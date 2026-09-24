@@ -20,11 +20,24 @@ import {
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...getAutomationsQueryParams.shape,
+  filter: getAutomationsQueryParams.shape.filter.describe(
+    "Optional text matched against automation name and alias.",
+  ),
+  groupId: getAutomationsQueryParams.shape.groupId.describe(
+    "Optional. Only return automations filed in this workspace group.",
+  ),
+  workspaceId: getAutomationsQueryParams.shape.workspaceId.describe(
+    "Optional. Only return automations in this workspace (id from list-workspaces).",
+  ),
+};
+
 const listAutomationsTool = {
   name: "list-automations",
   description:
-    "Lists automations with optional filtering by name/alias (filter), workspaceId, or groupId, plus skip/take paging. Each item is a summary (id, alias, name, status, health, triggerAlias, version) - use get-automation with the returned id to fetch the full step/connection graph before editing.",
-  inputSchema: getAutomationsQueryParams.shape,
+    "Lists automations with optional filtering by name/alias (filter), workspaceId, or groupId, with cursor paging (pass nextCursor from the previous response). Each item is a summary (id, alias, name, status, health, triggerAlias, version) - use get-automation with the returned id to fetch the full step/connection graph before editing.",
+  inputSchema,
   outputSchema: getAutomationsResponse,
   slices: ["list"],
   annotations: {
@@ -36,7 +49,7 @@ const listAutomationsTool = {
     );
   },
 } satisfies ToolDefinition<
-  typeof getAutomationsQueryParams.shape,
+  typeof inputSchema,
   typeof getAutomationsResponse
 >;
 

@@ -20,7 +20,7 @@ describe("Connections CRUD Operations", () => {
   it(
     "should complete full CRUD workflow",
     runScenarioTest({
-      prompt: `Complete these tasks in order. IMPORTANT: use only the tools named exactly "list-connections", "get-connection", "create-connection", "update-connection", "delete-connection" (no other prefix or namespace) - do not use any tool whose name is prefixed with "mcp__umbraco__" or similar, even if it looks like it does the same thing.
+      prompt: `Complete these tasks in order.
 1. Generate a unique identifier using the current timestamp (call it {timestamp}).
 2. Create a new connection with alias "eval-connection-{timestamp}", name "Eval Connection {timestamp}", type "http", and settings { "baseUrl": "https://example.com", "apiKey": "eval-test-key" }. Do not look up the connection-types catalogue first - "http" with these settings is already known to be accepted by this instance for testing purposes.
 3. List connections filtering by the name "Eval Connection {timestamp}" and confirm the one you created appears in the results, noting its id.

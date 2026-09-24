@@ -16,11 +16,18 @@ import { postRunsByIdResumeParams } from "../../../api/generated/umbracoAutomate
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...postRunsByIdResumeParams.shape,
+  id: postRunsByIdResumeParams.shape.id.describe(
+    "Id of the Suspended run to continue.",
+  ),
+};
+
 const resumeRunTool = {
   name: "resume-run",
   description:
     "Resumes a workflow run that is currently Suspended, continuing execution from where it was paused. Only valid when the run's status is Suspended — check status via get-run-by-id first. Not the same as replay-run, which starts a finished run over from the beginning.",
-  inputSchema: postRunsByIdResumeParams.shape,
+  inputSchema,
   slices: ["action"],
   annotations: {},
   handler: async ({ id }) => {
@@ -28,6 +35,6 @@ const resumeRunTool = {
       client.postRunsByIdResume(id, CAPTURE_RAW_HTTP_RESPONSE),
     );
   },
-} satisfies ToolDefinition<typeof postRunsByIdResumeParams.shape, undefined>;
+} satisfies ToolDefinition<typeof inputSchema, undefined>;
 
 export default withStandardDecorators(resumeRunTool);

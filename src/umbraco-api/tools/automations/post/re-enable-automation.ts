@@ -18,17 +18,24 @@ import { postAutomationsByIdReEnableParams } from "../../../api/generated/umbrac
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...postAutomationsByIdReEnableParams.shape,
+  id: postAutomationsByIdReEnableParams.shape.id.describe(
+    "Id of the automation to re-enable.",
+  ),
+};
+
 const reEnableAutomationTool = {
   name: "re-enable-automation",
   description:
     "Re-enables an automation that was automatically disabled by Umbraco after repeated failures (health = Disabled), allowing its trigger to fire again. Check list-automation-runs first to understand why it was disabled - re-enabling without fixing the cause will likely lead to it being disabled again.",
-  inputSchema: postAutomationsByIdReEnableParams.shape,
+  inputSchema,
   slices: ["action"],
   handler: async ({ id }) => {
     return executeVoidApiCall<ApiClient>((client) =>
       client.postAutomationsByIdReEnable(id, CAPTURE_RAW_HTTP_RESPONSE),
     );
   },
-} satisfies ToolDefinition<typeof postAutomationsByIdReEnableParams.shape>;
+} satisfies ToolDefinition<typeof inputSchema>;
 
 export default withStandardDecorators(reEnableAutomationTool);

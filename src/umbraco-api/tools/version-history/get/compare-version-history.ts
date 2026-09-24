@@ -19,13 +19,27 @@ import {
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionParams.shape,
+  entityType: getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionParams.shape.entityType.describe(
+    "Entity type in PascalCase, e.g. 'Automation'. See list-version-history-supported-types for the accepted values.",
+  ),
+  entityId: getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionParams.shape.entityId.describe(
+    "Id of the entity whose history to read, e.g. an automation id.",
+  ),
+  fromEntityVersion: getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionParams.shape.fromEntityVersion.describe(
+    "The older version number to compare from, from list-version-history.",
+  ),
+  toEntityVersion: getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionParams.shape.toEntityVersion.describe(
+    "The newer version number to compare to, from list-version-history.",
+  ),
+};
+
 const compareVersionHistoryTool = {
   name: "compare-version-history",
   description:
-    "Compares two versions of an entity (fromEntityVersion vs toEntityVersion) and returns the list of field-level changes between them, each with the field path, oldValue, and newValue. Use list-version-history first to find valid version numbers for the entity. Use get-version-history-supported-types to confirm a valid entityType (PascalCase, e.g. 'Automation' - see list-version-history-supported-types for the full list). Review the diff here before deciding whether to call rollback-version-history.",
-  inputSchema:
-    getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionParams
-      .shape,
+    "Compares two versions of an entity (fromEntityVersion vs toEntityVersion) and returns the list of field-level changes between them, each with the field path, oldValue, and newValue. Use list-version-history first to find valid version numbers for the entity. Use list-version-history-supported-types to confirm a valid entityType (PascalCase, e.g. 'Automation'). Review the diff here before deciding whether to call rollback-version-history.",
+  inputSchema,
   outputSchema:
     getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionResponse,
   slices: ["read"],
@@ -54,7 +68,7 @@ const compareVersionHistoryTool = {
     );
   },
 } satisfies ToolDefinition<
-  typeof getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionParams.shape,
+  typeof inputSchema,
   typeof getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionResponse
 >;
 

@@ -20,11 +20,18 @@ import {
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...getAutomationsByIdWebhookUrlParams.shape,
+  id: getAutomationsByIdWebhookUrlParams.shape.id.describe(
+    "Id of the automation (from list-automations or create-automation).",
+  ),
+};
+
 const getAutomationWebhookUrlTool = {
   name: "get-automation-webhook-url",
   description:
     "Gets the inbound webhook URL for an automation whose trigger is webhook-based. Share this URL with the external system that should invoke the automation. For automations with a different trigger type, this endpoint is not meaningful.",
-  inputSchema: getAutomationsByIdWebhookUrlParams.shape,
+  inputSchema,
   outputSchema: getAutomationsByIdWebhookUrlResponse,
   slices: ["read"],
   annotations: {
@@ -37,7 +44,7 @@ const getAutomationWebhookUrlTool = {
     >((client) => client.getAutomationsByIdWebhookUrl(id, CAPTURE_RAW_HTTP_RESPONSE));
   },
 } satisfies ToolDefinition<
-  typeof getAutomationsByIdWebhookUrlParams.shape,
+  typeof inputSchema,
   typeof getAutomationsByIdWebhookUrlResponse
 >;
 

@@ -22,11 +22,18 @@ type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
 const outputSchema = z.object({ items: getCatalogueActionsResponse });
 
+const inputSchema = {
+  ...getCatalogueActionsQueryParams.shape,
+  workspaceId: getCatalogueActionsQueryParams.shape.workspaceId.describe(
+    "Optional. Only return items usable with connections configured in this workspace (id from list-workspaces).",
+  ),
+};
+
 const listCatalogueActionsTool = {
   name: "list-catalogue-actions",
   description:
     "Lists the available action step definitions that can be added to an automation. Each item's `alias` is the identifier used to reference that action when adding a step to an automation in the automations collection, and `connectionTypeAlias` (when present) identifies which connection type a step of this action requires. Optionally pass a `workspaceId` to only return actions usable with connections configured in that workspace. Call this before adding an action step to discover valid aliases and their settings schema.",
-  inputSchema: getCatalogueActionsQueryParams.shape,
+  inputSchema,
   outputSchema,
   slices: ["read"],
   annotations: {
@@ -37,6 +44,6 @@ const listCatalogueActionsTool = {
       (client) => client.getCatalogueActions(params, CAPTURE_RAW_HTTP_RESPONSE)
     );
   },
-} satisfies ToolDefinition<typeof getCatalogueActionsQueryParams.shape, typeof outputSchema>;
+} satisfies ToolDefinition<typeof inputSchema, typeof outputSchema>;
 
 export default withStandardDecorators(listCatalogueActionsTool);

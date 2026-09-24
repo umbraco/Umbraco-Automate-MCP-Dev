@@ -21,13 +21,18 @@ import {
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
-const inputSchema = getWorkspacesQueryParams.shape;
+const inputSchema = {
+  ...getWorkspacesQueryParams.shape,
+  filter: getWorkspacesQueryParams.shape.filter.describe(
+    "Optional text matched against workspace name and alias.",
+  ),
+};
 const outputSchema = getWorkspacesResponse;
 
 const listWorkspacesTool = {
   name: "list-workspaces",
   description:
-    "Lists workspaces, optionally filtered by name/alias, with pagination. Each result includes the workspace id, alias, name, and version needed to fetch, update, or list groups within it. Use list-workspace-groups afterwards to see how a specific workspace organizes its automations into groups.",
+    "Lists workspaces, optionally filtered by name/alias, with cursor paging (pass nextCursor from the previous response). Each result includes the workspace id, alias, name, and version needed to fetch, update, or list groups within it. Use list-workspace-groups afterwards to see how a specific workspace organizes its automations into groups.",
   inputSchema,
   outputSchema,
   slices: ["list"],

@@ -34,9 +34,7 @@ describe("Version History Workflow", () => {
   it(
     "should accumulate real versions of an automation, compare them, and roll back",
     runScenarioTest({
-      prompt: `IMPORTANT: You may see two sets of tools with the same names but different prefixes (e.g. "mcp__my-umbraco-mcp__create-workspace" and "mcp__umbraco__create-workspace"). Always call the ones prefixed "mcp__my-umbraco-mcp__" - never call any tool prefixed "mcp__umbraco__".
-
-Complete these tasks in order:
+      prompt: `Complete these tasks in order:
 1. Generate a unique identifier using the current timestamp (call it {timestamp}).
 2. Create a new workspace with alias "eval-ws-verhist-{timestamp}", name "Eval VerHist Workspace {timestamp}", and serviceAccountKey "92bce462-d4b4-441f-9056-17f283f63cc8" (this is a real Umbraco user id already known to be valid on this instance - use it exactly as given). Note its id.
 3. Create a new automation in that workspace with alias "eval-automation-verhist-{timestamp}" and name "Eval VerHist Automation {timestamp}" (remember this exact original name - you will need it later). Note its id. This creation is version 1 of the automation.

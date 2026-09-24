@@ -22,6 +22,12 @@ const inputSchema = {
   workspaceId: z.string().describe("The id of the workspace the group belongs to."),
   groupId: z.string().describe("The id of the group to update."),
   ...putWorkspacesByIdGroupsByGroupIdBody.shape,
+  name: putWorkspacesByIdGroupsByGroupIdBody.shape.name.describe(
+    "Display name for the group. Pass the current name to keep it.",
+  ),
+  parentId: putWorkspacesByIdGroupsByGroupIdBody.shape.parentId.describe(
+    "Optional id of the parent group to nest under. Omit or pass null to make it a top-level group.",
+  ),
 };
 
 const updateWorkspaceGroupTool = {

@@ -23,11 +23,18 @@ type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
 const outputSchema = z.object({ items: getAutomationsByIdAncestorsResponse });
 
+const inputSchema = {
+  ...getAutomationsByIdAncestorsParams.shape,
+  id: getAutomationsByIdAncestorsParams.shape.id.describe(
+    "Id of the automation (from list-automations or create-automation).",
+  ),
+};
+
 const getAutomationAncestorsTool = {
   name: "get-automation-ancestors",
   description:
     "Lists the ancestor entities (workspace groups/folders) above an automation, ordered from the immediate parent up to the root. Use this to build breadcrumbs or to discover the groupId hierarchy an automation lives in.",
-  inputSchema: getAutomationsByIdAncestorsParams.shape,
+  inputSchema,
   outputSchema,
   slices: ["tree"],
   annotations: {
@@ -39,6 +46,6 @@ const getAutomationAncestorsTool = {
       ApiClient
     >((client) => client.getAutomationsByIdAncestors(id, CAPTURE_RAW_HTTP_RESPONSE));
   },
-} satisfies ToolDefinition<typeof getAutomationsByIdAncestorsParams.shape, typeof outputSchema>;
+} satisfies ToolDefinition<typeof inputSchema, typeof outputSchema>;
 
 export default withStandardDecorators(getAutomationAncestorsTool);

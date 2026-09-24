@@ -24,12 +24,15 @@ type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 const inputSchema = {
   ...getAutomationsByIdRunsParams.shape,
   ...getAutomationsByIdRunsQueryParams.shape,
+  id: getAutomationsByIdRunsParams.shape.id.describe(
+    "Id of the automation whose runs to list.",
+  ),
 };
 
 const listAutomationRunsTool = {
   name: "list-automation-runs",
   description:
-    "Lists runs (executions) of an automation, newest first, with skip/take paging. Each run includes its status, timing, correlation id, error (if any), and a full step-by-step run history. Use this to investigate whether/how an automation has been executing, or to check the outcome of a run started via trigger-automation.",
+    "Lists runs (executions) of an automation, newest first, with cursor paging (pass nextCursor from the previous response). Each run includes its status, timing, correlation id, error (if any), and a full step-by-step run history. Use this to investigate whether/how an automation has been executing, or to check the outcome of a run started via trigger-automation.",
   inputSchema,
   outputSchema: getAutomationsByIdRunsResponse,
   slices: ["list"],

@@ -23,6 +23,24 @@ type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 const inputSchema = {
   workspaceId: z.string().describe("The id of the workspace to update."),
   ...putWorkspacesByIdBody.shape,
+  alias: putWorkspacesByIdBody.shape.alias.describe(
+    "Unique machine alias for the workspace. Pass the current value to keep it.",
+  ),
+  name: putWorkspacesByIdBody.shape.name.describe(
+    "Display name for the workspace. Pass the current value to keep it.",
+  ),
+  serviceAccountKey: putWorkspacesByIdBody.shape.serviceAccountKey.describe(
+    "Id of the Umbraco user the workspace's automations run as. Pass the current value from get-workspace to keep it.",
+  ),
+  userGroups: putWorkspacesByIdBody.shape.userGroups.describe(
+    "Ids of the Umbraco user groups allowed to manage this workspace. Replaces the whole list - pass the current list from get-workspace to keep it, or [] for none.",
+  ),
+  allowedConnections: putWorkspacesByIdBody.shape.allowedConnections.describe(
+    "Ids of the connections this workspace's automations may use. Replaces the whole list - pass the current list from get-workspace to keep it, or [] for none.",
+  ),
+  version: putWorkspacesByIdBody.shape.version.describe(
+    "The workspace's current version from get-workspace. A stale value is rejected as a conflict.",
+  ),
 };
 
 const updateWorkspaceTool = {

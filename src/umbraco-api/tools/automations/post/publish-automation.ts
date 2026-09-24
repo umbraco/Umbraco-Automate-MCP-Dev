@@ -18,11 +18,18 @@ import { postAutomationsByIdPublishParams } from "../../../api/generated/umbraco
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...postAutomationsByIdPublishParams.shape,
+  id: postAutomationsByIdPublishParams.shape.id.describe(
+    "Id of the automation to publish. It must already have a trigger and at least one step.",
+  ),
+};
+
 const publishAutomationTool = {
   name: "publish-automation",
   description:
     "Publishes an automation, making its current version live. This activates the trigger so the automation can start running for real - only use when the automation's trigger, steps and connections are ready. Use unpublish-automation to stop it from running without deleting it.",
-  inputSchema: postAutomationsByIdPublishParams.shape,
+  inputSchema,
   slices: ["publish"],
   annotations: {
     idempotentHint: true,
@@ -32,6 +39,6 @@ const publishAutomationTool = {
       client.postAutomationsByIdPublish(id, CAPTURE_RAW_HTTP_RESPONSE),
     );
   },
-} satisfies ToolDefinition<typeof postAutomationsByIdPublishParams.shape>;
+} satisfies ToolDefinition<typeof inputSchema>;
 
 export default withStandardDecorators(publishAutomationTool);

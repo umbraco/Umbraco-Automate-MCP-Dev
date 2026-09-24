@@ -32,10 +32,10 @@ describe("Automations CRUD Operations", () => {
   it(
     "should complete a full create-read-update-delete workflow for an automation",
     runScenarioTest({
-      prompt: `Complete these tasks in order. IMPORTANT: use only the tools named exactly "create-workspace", "create-automation", "list-automations", "get-automation", "update-automation", "delete-automation", "delete-workspace" (no other prefix or namespace) - do not use any tool whose name is prefixed with "mcp__umbraco__" or similar, even if it looks like it does the same thing.
+      prompt: `Complete these tasks in order.
 1. Generate a unique suffix using the current timestamp (e.g. the numeric epoch millis).
-2. Create a new workspace with alias "evalWs{timestamp}" (letters/digits only, no spaces or hyphens), name "Eval Workspace {timestamp}", and serviceAccountKey "92bce462-d4b4-441f-9056-17f283f63cc8" (this is the real Umbraco user id to use - do not look it up or invent another one). Leave userGroups and allowedConnections empty.
-3. Create a new automation with alias "evalAuto{timestamp}" (letters/digits only), name "Eval Automation {timestamp}", description "Created by eval test", inside the workspace you just created (use its workspaceId from step 2).
+2. Create a new workspace with alias "evalWs{timestamp}", name "Eval Workspace {timestamp}", and serviceAccountKey "92bce462-d4b4-441f-9056-17f283f63cc8" (this is the real Umbraco user id to use - do not look it up or invent another one). Leave userGroups and allowedConnections empty.
+3. Create a new automation with alias "evalAuto{timestamp}", name "Eval Automation {timestamp}", description "Created by eval test", inside the workspace you just created (use its workspaceId from step 2).
 4. List automations filtering by that alias to confirm it appears in the results.
 5. Get the automation by its id to verify its details (it should have no trigger and no steps yet - that's expected).
 6. Update the automation: change its name to "Updated Eval Automation {timestamp}" and its description to "Updated by eval test". Do not touch its trigger or steps.

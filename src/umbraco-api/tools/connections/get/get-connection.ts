@@ -48,11 +48,18 @@ function redactSecrets(value: unknown): unknown {
   return value;
 }
 
+const inputSchema = {
+  ...getConnectionsByIdParams.shape,
+  id: getConnectionsByIdParams.shape.id.describe(
+    "Id of the connection (from list-connections or create-connection).",
+  ),
+};
+
 const getConnectionTool = {
   name: "get-connection",
   description:
     "Gets a single connection by id, including its alias, name, type, version and settings. The settings object is whatever the connection's type requires (e.g. base URL, API key, account id) — check the catalogue's connection-types listing for the settingsSchema of a given type. Fields whose name looks like a credential (secret, password, token, api key, etc.) are redacted server-side and returned as \"***REDACTED***\" — this tool cannot be used to read back a connection's raw secret values. Use test-connection to validate credentials without needing to inspect them.",
-  inputSchema: getConnectionsByIdParams.shape,
+  inputSchema,
   outputSchema: getConnectionsByIdResponse,
   slices: ["read"],
   annotations: {
@@ -80,7 +87,7 @@ const getConnectionTool = {
     return createToolResultError(errorData);
   },
 } satisfies ToolDefinition<
-  typeof getConnectionsByIdParams.shape,
+  typeof inputSchema,
   typeof getConnectionsByIdResponse
 >;
 

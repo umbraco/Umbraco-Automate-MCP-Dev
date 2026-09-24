@@ -21,11 +21,18 @@ import {
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...getAutomationsByIdParams.shape,
+  id: getAutomationsByIdParams.shape.id.describe(
+    "Id of the automation (from list-automations or create-automation).",
+  ),
+};
+
 const getAutomationTool = {
   name: "get-automation",
   description:
     "Gets the full definition of an automation by id: trigger, steps, connections, canvas state, notification settings, status, health and version. Read this before calling update-automation so the full body (including steps/connections) is preserved when saving.",
-  inputSchema: getAutomationsByIdParams.shape,
+  inputSchema,
   outputSchema: getAutomationsByIdResponse,
   slices: ["read"],
   annotations: {
@@ -37,7 +44,7 @@ const getAutomationTool = {
     );
   },
 } satisfies ToolDefinition<
-  typeof getAutomationsByIdParams.shape,
+  typeof inputSchema,
   typeof getAutomationsByIdResponse
 >;
 
