@@ -21,7 +21,7 @@ const config: JestConfigWithTsJest = {
   },
   testMatch: ["**/__tests__/**/*.test.ts"],
   setupFiles: ["<rootDir>/jest.setup.ts"],
-  testPathIgnorePatterns: ["/node_modules/"],
+  testPathIgnorePatterns: ["/node_modules/", "/.claude/worktrees/"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts"],
   coverageDirectory: "coverage",
