@@ -13,8 +13,29 @@ Built on [`@umbraco-cms/mcp-server-sdk`](https://www.npmjs.com/package/@umbraco-
 - An **Umbraco instance with Umbraco Automate installed**, reachable over HTTP(S)
 - An **API user** on that instance (see below)
 
-This server targets **Umbraco 18**. Connecting to a different major version warns and blocks the
-first tool call; set `UMBRACO_EXPECTED_MAJOR` to override if you know what you're doing.
+This branch line targets **Umbraco 17** with Umbraco Automate 17.x. Connecting to a different major
+version warns and blocks the first tool call; set `UMBRACO_EXPECTED_MAJOR` to override if you know
+what you're doing.
+
+### Which branch for which Umbraco
+
+| Umbraco | Umbraco Automate | Branches | Package version |
+|---------|------------------|----------|-----------------|
+| 18 | 18.x | `main` (releases), `dev` (integration) | 18.x |
+| **17** | **17.x** | **`v17/main` (releases), `v17/dev` (integration)** | **17.x** |
+
+Build from the branch that matches your site's Umbraco major - the generated API client and the
+version check differ between them.
+
+Every Automate 17.x release works. A few features arrived partway through the line (17.N ships the
+same features as 18.N); on older versions the tools refuse them with a clear message, or fall back:
+
+| Feature | Automate 17.x | Automate 18.x | Older versions |
+|---------|---------------|---------------|----------------|
+| Request Approval `approved`/`rejected` outputs | 17.2+ | 18.2+ | One output that runs on approval; `rejected` refused |
+| Container (While/ForEach/Parallel) `done` output | 17.3+ | 18.3+ | `done` refused; connect steps inside the `body` |
+| `get-automation-webhook-url` reported by Umbraco | 17.4+ | 18.4+ | URL derived from `UMBRACO_BASE_URL`, with a note |
+| Trigger `supportsManualRun` | 17.4+ | 18.4+ | Field omitted from `list-catalogue-triggers` |
 
 ## 1. Create an API user in Umbraco
 
@@ -170,7 +191,8 @@ To copy an existing automation, use **`export-automation`** and then **`import-a
 
 ## Umbraco CMS tools
 
-By default this server also chains to [`@umbraco-cms/mcp-dev`](https://www.npmjs.com/package/@umbraco-cms/mcp-dev),
+By default this server also chains to [`@umbraco-cms/mcp-dev`](https://www.npmjs.com/package/@umbraco-cms/mcp-dev)
+(`@17` on this line, the CMS MCP's Umbraco 17 releases),
 exposing CMS tools (documents, media, members) alongside the Automate ones, prefixed `cms--`
 (e.g. `cms--get-document-by-id`). It reuses the same credentials. The chained server is
 configured in `src/config/mcp-servers.ts`.
@@ -183,7 +205,7 @@ Set `DISABLE_MCP_CHAINING=true` to turn this off and run Automate tools only.
 |---------|--------------|
 | `401` on every tool | Wrong `UMBRACO_CLIENT_ID` / `UMBRACO_CLIENT_SECRET`, or the API user lacks permissions |
 | Self-signed certificate errors | Local HTTPS instance — set `NODE_TLS_REJECT_UNAUTHORIZED=0` |
-| Version mismatch warning, first tool call blocked | Instance isn't Umbraco 18 — set `UMBRACO_EXPECTED_MAJOR` |
+| Version mismatch warning, first tool call blocked | Instance isn't Umbraco 17 — build from `main` for Umbraco 18, or set `UMBRACO_EXPECTED_MAJOR` |
 | `404` on Automate tools | Umbraco Automate isn't installed on the instance |
 | A tool you expected isn't listed | Check `UMBRACO_TOOL_MODES` and the include/exclude variables with `--debug-config` |
 

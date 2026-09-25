@@ -7,8 +7,9 @@
  * handles, so an edge is only straight when the source handle and the target handle
  * share an x coordinate - a few pixels off and it gets a visible sideways jog. Getting
  * that right needs each node's rendered size, which depends on its label, so the
- * geometry below mirrors the Automate canvas's own markup and CSS (identical in 18.2
- * and 18.4): nodes are `min-width: 220px; max-width: 280px` plus a 1px border, the
+ * geometry below mirrors the Automate canvas's own markup and CSS (the node rules are
+ * identical across 17.0-17.4 and 18.2-18.4; 17.4's canvas sources match 18.4's byte for
+ * byte, and widths were re-measured in the Umbraco 17 backoffice): nodes are `min-width: 220px; max-width: 280px` plus a 1px border, the
  * header is icon + label + action bar, action/container nodes always show the 36-char
  * step id chip (so they always hit the max width), If/Approval/container handles sit
  * at 30%/70% of the bottom edge, and Switch handles sit on the right edge, one per row.
