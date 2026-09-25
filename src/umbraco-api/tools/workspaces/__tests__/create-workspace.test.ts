@@ -4,7 +4,7 @@ import {
   createSnapshotResult,
   WorkspaceTestHelper,
 } from "./setup.js";
-import { TEST_SERVICE_ACCOUNT_KEY } from "./helpers/workspace-builder.js";
+import { getTestServiceAccountKey } from "./helpers/workspace-builder.js";
 import createWorkspaceTool from "../post/create-workspace.js";
 
 const TEST_ALIAS = "_testCreateWorkspace";
@@ -24,7 +24,7 @@ describe("create-workspace", () => {
       {
         alias: TEST_ALIAS,
         name: TEST_NAME,
-        serviceAccountKey: TEST_SERVICE_ACCOUNT_KEY,
+        serviceAccountKey: await getTestServiceAccountKey(),
         userGroups: [],
         allowedConnections: [],
       },
@@ -36,9 +36,11 @@ describe("create-workspace", () => {
       | { location?: string }
       | undefined;
     if (structuredContent?.location) {
-      structuredContent.location = structuredContent.location.replace(
-        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
-        "00000000-0000-0000-0000-000000000000"
+      structuredContent.location = WorkspaceTestHelper.normalizeBaseUrl(
+        structuredContent.location.replace(
+          /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+          "00000000-0000-0000-0000-000000000000"
+        )
       );
     }
     expect(snapshot).toMatchSnapshot();
@@ -51,7 +53,7 @@ describe("create-workspace", () => {
       {
         alias: TEST_ALIAS,
         name: TEST_NAME,
-        serviceAccountKey: TEST_SERVICE_ACCOUNT_KEY,
+        serviceAccountKey: await getTestServiceAccountKey(),
         userGroups: [],
         allowedConnections: [],
       },
@@ -62,7 +64,7 @@ describe("create-workspace", () => {
       {
         alias: TEST_ALIAS,
         name: TEST_NAME,
-        serviceAccountKey: TEST_SERVICE_ACCOUNT_KEY,
+        serviceAccountKey: await getTestServiceAccountKey(),
         userGroups: [],
         allowedConnections: [],
       },

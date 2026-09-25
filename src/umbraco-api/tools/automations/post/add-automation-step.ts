@@ -22,6 +22,7 @@ import {
   saveAutomation,
   stripStepReadOnlyFields,
 } from "../_shared/automation-graph.js";
+import { normalizeStepSettings, CONDITION_SETTINGS_HELP } from "../_shared/step-settings.js";
 
 const errorBehaviors = ["Retry", "Suspend", "Terminate", "Compensate"] as const;
 
@@ -44,7 +45,7 @@ const inputSchema = {
     .record(z.string(), z.unknown())
     .optional()
     .describe(
-      "The step's configuration, matching the shape described by that step type's settingsSchema (see list-catalogue-actions/list-catalogue-control-flows). Defaults to an empty object if omitted."
+      `The step's configuration, matching the shape described by that step type's settingsSchema (see list-catalogue-actions/list-catalogue-control-flows). Defaults to an empty object if omitted. ${CONDITION_SETTINGS_HELP}`
     ),
   inputMappings: z
     .record(z.string(), z.string())
@@ -116,7 +117,7 @@ const addAutomationStepTool = {
       actionAlias: params.actionAlias,
       name: params.name,
       alias: params.alias,
-      settings: params.settings ?? {},
+      settings: normalizeStepSettings(params.settings ?? {}),
       inputMappings: params.inputMappings ?? {},
       position: { x: maxX + 1, y: 0 },
       errorBehavior: params.errorBehavior ?? "Terminate",

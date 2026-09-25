@@ -41,7 +41,7 @@ exports[`export-automation should export a portable definition of the automation
     "exportedAt": "NORMALIZED_DATE",
     "exportedFrom": {
       "product": "Umbraco.Automate",
-      "version": "18.4.0+6323387",
+      "version": "NORMALIZED_VERSION",
     },
     "formatVersion": "1.0",
   },

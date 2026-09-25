@@ -10,7 +10,7 @@ exports[`get-workspace should return workspace by id 1`] = `
     "dateModified": "NORMALIZED_DATE",
     "id": "00000000-0000-0000-0000-000000000000",
     "name": "_Test Get Workspace",
-    "serviceAccountKey": "92bce462-d4b4-441f-9056-17f283f63cc8",
+    "serviceAccountKey": "00000000-0000-0000-0000-000000000000",
     "userGroups": [],
     "version": 1,
   },

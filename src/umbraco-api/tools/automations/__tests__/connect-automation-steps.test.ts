@@ -175,4 +175,110 @@ describe("connect-automation-steps", () => {
 
     expect(result.isError).toBe(true);
   });
+  async function addControlFlowStep(actionAlias: string, alias: string, settings: Record<string, unknown>) {
+    await addAutomationStepTool.handler(
+      {
+        automationId: automation.getId(),
+        actionAlias,
+        alias,
+        name: alias,
+        settings,
+        inputMappings: undefined,
+        errorBehavior: undefined,
+        retryInterval: undefined,
+        maxRetries: undefined,
+      },
+      createMockRequestHandlerExtra(),
+    );
+  }
+
+  async function connectionsFrom(stepAlias: string) {
+    const saved = await getAutomationTool.handler({ id: automation.getId() }, createMockRequestHandlerExtra());
+    const { steps, connections } = saved.structuredContent as {
+      steps: { id: string; alias: string }[];
+      connections: { sourceStepId: string; sourceHandle: string | null; outcome: string | null }[];
+    };
+    const sourceId = steps.find((s) => s.alias === stepAlias)?.id;
+    return connections
+      .filter((c) => c.sourceStepId === sourceId)
+      .map(({ sourceHandle, outcome }) => ({ sourceHandle, outcome }));
+  }
+
+  const alwaysTrue = { groups: [{ conditions: [{ leftOperand: "x", operator: "Equals", rightOperand: "x" }] }] };
+
+  it("should save an If outcome in the exact lowercase form the runtime matches, whatever casing is passed", async () => {
+    const context = createMockRequestHandlerExtra();
+    await addControlFlowStep("umbracoAutomate.if", "check", { conditions: alwaysTrue });
+
+    const result = await connectAutomationStepsTool.handler(
+      { automationId: automation.getId(), sourceStep: "check", targetStep: TEST_STEP_ALIAS, outcome: "True", conditions: undefined },
+      context,
+    );
+
+    expect(result.isError).toBeFalsy();
+    expect(await connectionsFrom("check")).toEqual([{ sourceHandle: "true", outcome: "true" }]);
+  });
+
+  it("should route a container's exit through the done handle, accepting 'after' for it", async () => {
+    const context = createMockRequestHandlerExtra();
+    await addControlFlowStep("umbracoAutomate.while", "repeat", { conditions: alwaysTrue, maxIterations: 2 });
+
+    const body = await connectAutomationStepsTool.handler(
+      { automationId: automation.getId(), sourceStep: "repeat", targetStep: TEST_STEP_ALIAS, outcome: "loop", conditions: undefined },
+      context,
+    );
+    const done = await connectAutomationStepsTool.handler(
+      { automationId: automation.getId(), sourceStep: "repeat", targetStep: TEST_STEP_ALIAS_2, outcome: "after", conditions: undefined },
+      context,
+    );
+
+    expect(body.isError).toBeFalsy();
+    expect(done.isError).toBeFalsy();
+    expect(await connectionsFrom("repeat")).toEqual([
+      { sourceHandle: "body", outcome: "body" },
+      { sourceHandle: "done", outcome: "done" },
+    ]);
+  });
+
+  it("should return an error when a container's done output is already connected", async () => {
+    const context = createMockRequestHandlerExtra();
+    await addControlFlowStep("umbracoAutomate.while", "repeat", { conditions: alwaysTrue, maxIterations: 2 });
+    await connectAutomationStepsTool.handler(
+      { automationId: automation.getId(), sourceStep: "repeat", targetStep: TEST_STEP_ALIAS, outcome: "done", conditions: undefined },
+      context,
+    );
+
+    const result = await connectAutomationStepsTool.handler(
+      { automationId: automation.getId(), sourceStep: "repeat", targetStep: TEST_STEP_ALIAS_2, outcome: "done", conditions: undefined },
+      context,
+    );
+
+    expect(result.isError).toBe(true);
+  });
+
+  it("should return an error for an outcome the source step does not have", async () => {
+    const context = createMockRequestHandlerExtra();
+    await addControlFlowStep("umbracoAutomate.switch", "route", {
+      cases: [{ name: "enterprise", conditions: alwaysTrue }],
+    });
+
+    const result = await connectAutomationStepsTool.handler(
+      { automationId: automation.getId(), sourceStep: "route", targetStep: TEST_STEP_ALIAS, outcome: "developer", conditions: undefined },
+      context,
+    );
+
+    expect(result.isError).toBe(true);
+  });
+
+  it("should return an error when connecting from a branching step without an outcome", async () => {
+    const context = createMockRequestHandlerExtra();
+    await addControlFlowStep("umbracoAutomate.if", "check", { conditions: alwaysTrue });
+
+    const result = await connectAutomationStepsTool.handler(
+      { automationId: automation.getId(), sourceStep: "check", targetStep: TEST_STEP_ALIAS, outcome: undefined, conditions: undefined },
+      context,
+    );
+
+    expect(result.isError).toBe(true);
+  });
 });

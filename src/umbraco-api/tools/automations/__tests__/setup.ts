@@ -5,6 +5,7 @@ import {
 } from "@umbraco-cms/mcp-server-sdk/testing";
 import { configureApiClient, initializeUmbracoFetch } from "@umbraco-cms/mcp-server-sdk";
 import { getUmbracoAutomateManagementAPI } from "../../../api/generated/umbracoAutomateManagementApi.js";
+import { setUmbracoBaseUrl } from "../../../../config/umbraco-base-url.js";
 import { AutomationBuilder } from "./helpers/automation-builder.js";
 import { AutomationTestHelper } from "./helpers/automation-test-helper.js";
 // Reused, already-validated fixture builder from the workspaces collection - automations
@@ -18,6 +19,8 @@ initializeUmbracoFetch({
   clientId: process.env.UMBRACO_CLIENT_ID!,
   clientSecret: process.env.UMBRACO_CLIENT_SECRET!,
 });
+// Mirrors src/index.ts, for tools that build absolute URLs the API doesn't return.
+setUmbracoBaseUrl(process.env.UMBRACO_BASE_URL);
 
 configureApiClient(() => getUmbracoAutomateManagementAPI());
 

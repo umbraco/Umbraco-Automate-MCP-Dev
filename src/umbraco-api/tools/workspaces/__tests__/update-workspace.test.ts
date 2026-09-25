@@ -5,7 +5,7 @@ import {
   createSnapshotResult,
   WorkspaceBuilder,
 } from "./setup.js";
-import { TEST_SERVICE_ACCOUNT_KEY } from "./helpers/workspace-builder.js";
+import { getTestServiceAccountKey } from "./helpers/workspace-builder.js";
 import updateWorkspaceTool from "../put/update-workspace.js";
 import getWorkspaceTool from "../get/get-workspace.js";
 
@@ -42,7 +42,7 @@ describe("update-workspace", () => {
         workspaceId: builder.getId(),
         alias: TEST_ALIAS,
         name: "_Test Update Workspace Renamed",
-        serviceAccountKey: TEST_SERVICE_ACCOUNT_KEY,
+        serviceAccountKey: await getTestServiceAccountKey(),
         userGroups: [],
         allowedConnections: [],
         version,
@@ -71,7 +71,7 @@ describe("update-workspace", () => {
         workspaceId: builder.getId(),
         alias: TEST_ALIAS,
         name: "_Test Update Workspace Stale",
-        serviceAccountKey: TEST_SERVICE_ACCOUNT_KEY,
+        serviceAccountKey: await getTestServiceAccountKey(),
         userGroups: [],
         allowedConnections: [],
         version: 9999,

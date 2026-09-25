@@ -4,19 +4,29 @@
  * Returns the inbound webhook URL for an automation that is triggered by an
  * incoming HTTP request. Only meaningful for automations whose trigger is
  * webhook-based - give this URL to the external system that should call it.
+ *
+ * The webhook-url endpoint only exists from Umbraco Automate 18.4. Older
+ * versions answer it with a bare 404 (no problem details), while the public
+ * receiver at /automate/webhook/{id} works the same on both, so on those
+ * versions the URL is derived instead of failing.
  */
 
+import { z } from "zod";
 import {
   withStandardDecorators,
-  executeGetApiCall,
+  createToolResult,
+  UmbracoApiError,
   CAPTURE_RAW_HTTP_RESPONSE,
+  getApiClient,
   type ToolDefinition,
+  type HttpResponse,
 } from "@umbraco-cms/mcp-server-sdk";
 import type { getUmbracoAutomateManagementAPI } from "../../../api/generated/umbracoAutomateManagementApi.js";
 import {
   getAutomationsByIdWebhookUrlParams,
   getAutomationsByIdWebhookUrlResponse,
 } from "../../../api/generated/umbracoAutomateManagementApi.zod.js";
+import { getUmbracoBaseUrl } from "../../../../config/umbraco-base-url.js";
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
@@ -27,25 +37,71 @@ const inputSchema = {
   ),
 };
 
+const outputSchema = getAutomationsByIdWebhookUrlResponse.extend({
+  note: z
+    .string()
+    .optional()
+    .describe("Present when the URL was derived rather than reported by Umbraco."),
+});
+
+const WEBHOOK_RECEIVER_PATH = "/automate/webhook";
+
+// A missing route 404s with no problem-details body; a missing automation 404s with one.
+const isMissingEndpoint = (response: HttpResponse) =>
+  response.status === 404 &&
+  !(response.data && typeof response.data === "object" && "title" in response.data);
+
+const throwApiError = (response: HttpResponse): never => {
+  throw new UmbracoApiError(
+    (response.data as Record<string, unknown> | undefined) || {
+      status: response.status,
+      detail: response.statusText,
+    },
+  );
+};
+
 const getAutomationWebhookUrlTool = {
   name: "get-automation-webhook-url",
   description:
     "Gets the inbound webhook URL for an automation whose trigger is webhook-based. Share this URL with the external system that should invoke the automation. For automations with a different trigger type, this endpoint is not meaningful.",
   inputSchema,
-  outputSchema: getAutomationsByIdWebhookUrlResponse,
+  outputSchema,
   slices: ["read"],
   annotations: {
     readOnlyHint: true,
   },
   handler: async ({ id }) => {
-    return executeGetApiCall<
-      ReturnType<ApiClient["getAutomationsByIdWebhookUrl"]>,
-      ApiClient
-    >((client) => client.getAutomationsByIdWebhookUrl(id, CAPTURE_RAW_HTTP_RESPONSE));
+    const client = getApiClient<ApiClient>();
+    const response = (await client.getAutomationsByIdWebhookUrl(
+      id,
+      CAPTURE_RAW_HTTP_RESPONSE,
+    )) as unknown as HttpResponse<z.infer<typeof getAutomationsByIdWebhookUrlResponse>>;
+
+    if (response.status === 200) {
+      return createToolResult(response.data);
+    }
+    if (!isMissingEndpoint(response)) {
+      return throwApiError(response);
+    }
+
+    // Pre-18.4: confirm the automation exists so an unknown id still errors as it does on 18.4.
+    const automation = (await client.getAutomationsById(
+      id,
+      CAPTURE_RAW_HTTP_RESPONSE,
+    )) as unknown as HttpResponse;
+    if (automation.status !== 200) {
+      return throwApiError(automation);
+    }
+
+    const path = `${WEBHOOK_RECEIVER_PATH}/${id}`;
+    const baseUrl = getUmbracoBaseUrl();
+    return createToolResult({
+      url: baseUrl ? `${baseUrl}${path}` : path,
+      note: baseUrl
+        ? "Derived from the configured Umbraco base URL: this Umbraco Automate version (before 18.4) does not report webhook URLs. If the site's public domain differs from that base URL, use the public domain instead."
+        : "Path relative to the Umbraco site's public URL: this Umbraco Automate version (before 18.4) does not report webhook URLs.",
+    });
   },
-} satisfies ToolDefinition<
-  typeof inputSchema,
-  typeof getAutomationsByIdWebhookUrlResponse
->;
+} satisfies ToolDefinition<typeof inputSchema, typeof outputSchema>;
 
 export default withStandardDecorators(getAutomationWebhookUrlTool);
