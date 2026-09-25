@@ -49,7 +49,7 @@ describe("Server Config", () => {
         },
         custom: {
           disableMcpChaining: true,
-          expectedUmbracoMajor: "18",
+          expectedUmbracoMajor: "17",
         },
       });
 
@@ -62,7 +62,7 @@ describe("Server Config", () => {
 
       // Verify custom config
       expect(custom.disableMcpChaining).toBe(true);
-      expect(custom.expectedUmbracoMajor).toBe("18");
+      expect(custom.expectedUmbracoMajor).toBe("17");
     });
 
     it("should pass isStdioMode to getServerConfig", async () => {
@@ -180,7 +180,7 @@ describe("Server Config", () => {
         },
         custom: {
           disableMcpChaining: true,
-          expectedUmbracoMajor: "18",
+          expectedUmbracoMajor: "17",
         },
       });
 

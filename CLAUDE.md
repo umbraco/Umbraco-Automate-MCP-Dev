@@ -1,17 +1,61 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with the MCP server template.
+This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
 
-## Template Overview
+## Overview
 
-Starter kit for creating new Umbraco MCP server projects. Copy this folder to start a new project. Not published to npm.
+`@umbraco-automate/mcp-dev` - an MCP server for Umbraco Automate, built on `@umbraco-cms/mcp-server-sdk`
+and published to npm. User-facing docs are in `README.md`; repo setup is in `CONTRIBUTING.md`.
+
+## Umbraco 17 line (`v17/main`, `v17/dev`)
+
+This branch line targets **Umbraco 17 + Umbraco Automate 17.x**; `main`/`dev` target Umbraco 18.
+Mirrors the Umbraco CMS MCP's `v17/*` branches:
+
+- `v17/main` is the release branch (release-tag.yml tags it, never as "latest"); `v17/dev` is the
+  integration branch. Feature branches come off `v17/dev` and never merge into `main`/`dev`.
+- Package version is `17.x`; the chained CMS MCP is `@umbraco-cms/mcp-dev@17`.
+- The SDK packages (`@umbraco-cms/mcp-server-sdk`, `@umbraco-cms/mcp-hosted`) are **not** versioned
+  per Umbraco major - stay on the same `1.0.0-beta.x` line as `main`. The major this server targets
+  is `UMBRACO_TARGET_MAJOR` (`"17"` here), stamped by `npm run generate`.
+- Umbraco 17 serves OpenAPI through Swashbuckle: the Automate spec is
+  `/umbraco/swagger/automate-management/swagger.json` (OpenAPI 3.0) and Swagger UI's OAuth redirect
+  is `/umbraco/swagger/oauth2-redirect.html`. Umbraco 18 uses `/umbraco/openapi/automate-management.json`
+  (3.1) and `/umbraco/openapi/oauth2-redirect.html`.
+- `orval.config.ts` reads the spec from `UMBRACO_BASE_URL`, the same instance the target-major
+  transformer queries, so `npm run generate` can't mix one install's spec with another's version.
+- The demo site is Umbraco.Cms 17.7.0, Umbraco.Automate 17.4.0, Clean 7.0.8. Give it its own database
+  (e.g. `UmbracoDbV17`) - Umbraco can't migrate down, so never point it at a database a v18 site has
+  used. To run it beside a v18 site, start it on other ports (e.g. 44321/52269).
+
+### Automate feature gates
+
+The tools support **every Automate 17.x** release, not just the latest. Automate 17.N ships the same
+features as 18.N, so a feature that arrived mid-line has a minimum per major, kept in
+`AUTOMATE_FEATURE_MIN_VERSIONS` (`tools/automations/_shared/automate-version.ts`):
+
+| Feature | 17.x | 18.x | Without it |
+|---------|------|------|------------|
+| `approvalOutcomes` - Request Approval `approved`/`rejected` outputs | 17.2.0 | 18.2.0 | connect saves a plain connection; `rejected` refused |
+| `containerDone` - While/ForEach/Parallel `done` output | 17.3.0 | 18.3.0 | connect refuses `done` |
+| `webhookUrlEndpoint` - `GET /automations/{id}/webhook-url` | 17.4.0 | 18.4.0 | URL derived from `UMBRACO_BASE_URL` |
+| `triggerSupportsManualRun` - `TriggerItemResponseModel.supportsManualRun` | 17.4.0 | 18.4.0 | field optional in the output schema |
+
+Never gate on a single version ("18.3 or later") - that refuses the feature on 17.x releases that have
+it. When a regenerated spec gains an endpoint or field, find the first version that has it (the
+Umbraco.Automate NuGet packages' DLLs and the client sources in `Umbraco.Automate.Web.StaticAssets`'
+source maps), add it to the table, and make older versions fail clearly or fall back.
+
+Check new tools through a real MCP client, not only their handler tests: handler tests skip the
+server's output-schema validation (Umbraco 17's spec turns some responses into `z.record`, which is
+not a valid MCP `outputSchema`).
 
 ## Commands
 
 ```bash
 npm run build          # Build with tsup
 npm run compile        # Type-check only
-npm run generate       # Generate API client from OpenAPI spec (Orval)
+npm run generate       # Generate API client from OpenAPI spec (Orval) - reads UMBRACO_BASE_URL
 npm run inspect        # Run MCP inspector
 npm run test           # Unit tests only
 npm run test:evals     # LLM eval tests (requires Claude Code subscription or ANTHROPIC_API_KEY)
@@ -141,7 +185,7 @@ Integration tests require an API user in Umbraco. **You must create this manuall
 `npm run build` runs `umbraco-mcp-generate-types` as a `postbuild` step. This walks the compiled `dist/collections.js`, runs every tool's input/output Zod schema through codegen, and writes a typed registry to `dist/tool-types.d.ts`. The `./tool-types` subpath in `package.json#exports` makes this importable by anyone who depends on this package and wants to chain to it with type safety:
 
 ```ts
-import type { McpTemplateTools } from "@umbraco-cms/mcp-template/tool-types";
+import type { McpDevTools } from "@umbraco-automate/mcp-dev/tool-types";
 ```
 
 If your MCP is private/internal and no other MCP will chain to it, you can remove the `postbuild` script and the `./tool-types` export — neither is required for the server to run.

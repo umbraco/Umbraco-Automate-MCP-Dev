@@ -31,6 +31,66 @@ export const getApprovalsPendingResponseItem = zod.object({
 export const getApprovalsPendingResponse = zod.array(getApprovalsPendingResponseItem)
 
 
+
+
+
+
+export const postAutomationsBody = zod.object({
+  "alias": zod.string().min(1),
+  "name": zod.string().min(1),
+  "description": zod.string().nullish(),
+  "workspaceId": zod.guid(),
+  "groupId": zod.guid().nullish(),
+  "trigger": zod.object({
+  "triggerAlias": zod.string(),
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
+}).nullish(),
+  "steps": zod.array(zod.object({
+  "id": zod.guid(),
+  "actionAlias": zod.string(),
+  "name": zod.string(),
+  "alias": zod.string().nullish(),
+  "connectionId": zod.guid().nullish(),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
+  "inputMappings": zod.record(zod.string(), zod.string()),
+  "position": zod.object({
+  "x": zod.number(),
+  "y": zod.number()
+}),
+  "errorBehavior": zod.enum(['Retry', 'Suspend', 'Terminate', 'Compensate']),
+  "retryInterval": zod.string().nullish(),
+  "maxRetries": zod.int().nullish()
+})),
+  "connections": zod.array(zod.object({
+  "sourceStepId": zod.guid(),
+  "sourceHandle": zod.string().nullish(),
+  "targetStepId": zod.guid(),
+  "targetHandle": zod.string().nullish(),
+  "outcome": zod.string().nullish(),
+  "filter": zod.object({
+  "groups": zod.array(zod.object({
+  "conditions": zod.array(zod.object({
+  "leftOperand": zod.string(),
+  "operator": zod.enum(['Equals', 'NotEquals', 'Contains', 'NotContains', 'StartsWith', 'EndsWith', 'GreaterThan', 'LessThan', 'GreaterThanOrEquals', 'LessThanOrEquals', 'IsEmpty', 'IsNotEmpty']),
+  "rightOperand": zod.string()
+}))
+}))
+}).nullish()
+})),
+  "canvasState": zod.string().nullish(),
+  "notificationSettings": zod.object({
+  "channels": zod.array(zod.object({
+  "channelAlias": zod.string(),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
+  "isEnabled": zod.boolean(),
+  "notifyOn": zod.enum(['Never', 'Failed', 'Suspended', 'FailedOrSuspended', 'Completed', 'Recovered', 'Disabled', 'Warning', 'ReEnabled', 'Resumed', 'Rejected'])
+}))
+}).nullish()
+})
+
+export const postAutomationsResponse = zod.void()
+
+
 export const getAutomationsQuerySkipDefault = 0;
 export const getAutomationsQueryTakeDefault = 100;
 
@@ -66,71 +126,11 @@ export const getAutomationsResponse = zod.object({
 })
 
 
-
-
-export const postAutomationsBodyStepsItemRetryIntervalRegExp = new RegExp('^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$');
-
-
-export const postAutomationsBody = zod.object({
-  "alias": zod.string().min(1),
-  "name": zod.string().min(1),
-  "description": zod.string().nullish(),
-  "workspaceId": zod.guid(),
-  "groupId": zod.guid().nullish(),
-  "trigger": zod.union([zod.null(),zod.object({
-  "triggerAlias": zod.string(),
-  "settings": zod.looseObject({
-
-})
-})]).optional(),
-  "steps": zod.array(zod.object({
-  "id": zod.guid(),
-  "actionAlias": zod.string(),
-  "name": zod.string(),
-  "alias": zod.string().nullish(),
-  "connectionId": zod.guid().nullish(),
-  "settings": zod.looseObject({
-
-}),
-  "inputMappings": zod.record(zod.string(), zod.string()),
-  "position": zod.object({
-  "x": zod.number(),
-  "y": zod.number()
-}),
-  "errorBehavior": zod.enum(['Retry', 'Suspend', 'Terminate', 'Compensate']),
-  "retryInterval": zod.string().regex(postAutomationsBodyStepsItemRetryIntervalRegExp).nullish(),
-  "maxRetries": zod.int().nullish()
-})),
-  "connections": zod.array(zod.object({
-  "sourceStepId": zod.guid(),
-  "sourceHandle": zod.string().nullish(),
-  "targetStepId": zod.guid(),
-  "targetHandle": zod.string().nullish(),
-  "outcome": zod.string().nullish(),
-  "filter": zod.union([zod.null(),zod.object({
-  "groups": zod.array(zod.object({
-  "conditions": zod.array(zod.object({
-  "leftOperand": zod.string(),
-  "operator": zod.enum(['Equals', 'NotEquals', 'Contains', 'NotContains', 'StartsWith', 'EndsWith', 'GreaterThan', 'LessThan', 'GreaterThanOrEquals', 'LessThanOrEquals', 'IsEmpty', 'IsNotEmpty']),
-  "rightOperand": zod.string()
-}))
-}))
-})]).optional()
-})),
-  "canvasState": zod.string().nullish(),
-  "notificationSettings": zod.union([zod.null(),zod.object({
-  "channels": zod.array(zod.object({
-  "channelAlias": zod.string(),
-  "settings": zod.looseObject({
-
-}),
-  "isEnabled": zod.boolean(),
-  "notifyOn": zod.enum(['Never', 'Failed', 'Suspended', 'FailedOrSuspended', 'Completed', 'Recovered', 'Disabled', 'Warning', 'ReEnabled', 'Resumed', 'Rejected'])
-}))
-})]).optional()
+export const deleteAutomationsByIdParams = zod.object({
+  "id": zod.guid()
 })
 
-export const postAutomationsResponse = zod.void()
+export const deleteAutomationsByIdResponse = zod.unknown()
 
 
 export const getAutomationsByIdParams = zod.object({
@@ -139,7 +139,6 @@ export const getAutomationsByIdParams = zod.object({
 
 
 
-export const getAutomationsByIdResponseStepsItemRetryIntervalRegExp = new RegExp('^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$');
 
 
 export const getAutomationsByIdResponse = zod.object({
@@ -151,28 +150,24 @@ export const getAutomationsByIdResponse = zod.object({
   "publishedVersion": zod.int().nullish(),
   "workspaceId": zod.guid(),
   "groupId": zod.guid().nullish(),
-  "trigger": zod.union([zod.null(),zod.object({
+  "trigger": zod.object({
   "triggerAlias": zod.string(),
-  "settings": zod.looseObject({
-
-})
-})]).optional(),
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
+}).nullish(),
   "steps": zod.array(zod.object({
   "id": zod.guid(),
   "actionAlias": zod.string(),
   "name": zod.string(),
   "alias": zod.string().nullish(),
   "connectionId": zod.guid().nullish(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "inputMappings": zod.record(zod.string(), zod.string()),
   "position": zod.object({
   "x": zod.number(),
   "y": zod.number()
 }),
   "errorBehavior": zod.enum(['Retry', 'Suspend', 'Terminate', 'Compensate']),
-  "retryInterval": zod.string().regex(getAutomationsByIdResponseStepsItemRetryIntervalRegExp).nullish(),
+  "retryInterval": zod.string().nullish(),
   "maxRetries": zod.int().nullish()
 })),
   "connections": zod.array(zod.object({
@@ -181,7 +176,7 @@ export const getAutomationsByIdResponse = zod.object({
   "targetStepId": zod.guid(),
   "targetHandle": zod.string().nullish(),
   "outcome": zod.string().nullish(),
-  "filter": zod.union([zod.null(),zod.object({
+  "filter": zod.object({
   "groups": zod.array(zod.object({
   "conditions": zod.array(zod.object({
   "leftOperand": zod.string(),
@@ -189,33 +184,24 @@ export const getAutomationsByIdResponse = zod.object({
   "rightOperand": zod.string()
 }))
 }))
-})]).optional()
+}).nullish()
 })),
   "canvasState": zod.string().nullish(),
   "version": zod.int(),
   "dateCreated": zod.iso.datetime({"local":true,"offset":true}),
   "dateModified": zod.iso.datetime({"local":true,"offset":true}),
-  "notificationSettings": zod.union([zod.null(),zod.object({
+  "notificationSettings": zod.object({
   "channels": zod.array(zod.object({
   "channelAlias": zod.string(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "isEnabled": zod.boolean(),
   "notifyOn": zod.enum(['Never', 'Failed', 'Suspended', 'FailedOrSuspended', 'Completed', 'Recovered', 'Disabled', 'Warning', 'ReEnabled', 'Resumed', 'Rejected'])
 }))
-})]).optional(),
+}).nullish(),
   "health": zod.enum(['Healthy', 'Degraded', 'Disabled']),
   "warningIssuedUtc": zod.iso.datetime({"local":true,"offset":true}).nullish(),
   "disabledUtc": zod.iso.datetime({"local":true,"offset":true}).nullish()
 })
-
-
-export const deleteAutomationsByIdParams = zod.object({
-  "id": zod.guid()
-})
-
-export const deleteAutomationsByIdResponse = zod.unknown()
 
 
 export const putAutomationsByIdParams = zod.object({
@@ -224,8 +210,7 @@ export const putAutomationsByIdParams = zod.object({
 
 
 
-export const putAutomationsByIdBodyStepsItemRetryIntervalRegExp = new RegExp('^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$');
-export const putAutomationsByIdBodyVersionMax = 2147483647;
+export const putAutomationsByIdBodyOneVersionMax = 2147483647;
 
 
 
@@ -234,28 +219,24 @@ export const putAutomationsByIdBody = zod.object({
   "name": zod.string().min(1),
   "description": zod.string().nullish(),
   "groupId": zod.guid().nullish(),
-  "trigger": zod.union([zod.null(),zod.object({
+  "trigger": zod.object({
   "triggerAlias": zod.string(),
-  "settings": zod.looseObject({
-
-})
-})]).optional(),
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
+}).nullish(),
   "steps": zod.array(zod.object({
   "id": zod.guid(),
   "actionAlias": zod.string(),
   "name": zod.string(),
   "alias": zod.string().nullish(),
   "connectionId": zod.guid().nullish(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "inputMappings": zod.record(zod.string(), zod.string()),
   "position": zod.object({
   "x": zod.number(),
   "y": zod.number()
 }),
   "errorBehavior": zod.enum(['Retry', 'Suspend', 'Terminate', 'Compensate']),
-  "retryInterval": zod.string().regex(putAutomationsByIdBodyStepsItemRetryIntervalRegExp).nullish(),
+  "retryInterval": zod.string().nullish(),
   "maxRetries": zod.int().nullish()
 })),
   "connections": zod.array(zod.object({
@@ -264,7 +245,7 @@ export const putAutomationsByIdBody = zod.object({
   "targetStepId": zod.guid(),
   "targetHandle": zod.string().nullish(),
   "outcome": zod.string().nullish(),
-  "filter": zod.union([zod.null(),zod.object({
+  "filter": zod.object({
   "groups": zod.array(zod.object({
   "conditions": zod.array(zod.object({
   "leftOperand": zod.string(),
@@ -272,20 +253,18 @@ export const putAutomationsByIdBody = zod.object({
   "rightOperand": zod.string()
 }))
 }))
-})]).optional()
+}).nullish()
 })),
   "canvasState": zod.string().nullish(),
-  "notificationSettings": zod.union([zod.null(),zod.object({
+  "notificationSettings": zod.object({
   "channels": zod.array(zod.object({
   "channelAlias": zod.string(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "isEnabled": zod.boolean(),
   "notifyOn": zod.enum(['Never', 'Failed', 'Suspended', 'FailedOrSuspended', 'Completed', 'Recovered', 'Disabled', 'Warning', 'ReEnabled', 'Resumed', 'Rejected'])
 }))
-})]).optional(),
-  "version": zod.int().min(1).max(putAutomationsByIdBodyVersionMax)
+}).nullish(),
+  "version": zod.int().min(1).max(putAutomationsByIdBodyOneVersionMax)
 })
 
 export const putAutomationsByIdResponse = zod.unknown()
@@ -319,9 +298,6 @@ export const getAutomationsByIdExportQueryParams = zod.object({
   "include": zod.string().optional()
 })
 
-export const getAutomationsByIdExportResponseAutomationStepsItemRetryIntervalRegExp = new RegExp('^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$');
-
-
 export const getAutomationsByIdExportResponse = zod.object({
   "formatVersion": zod.string(),
   "exportedAt": zod.iso.datetime({"local":true,"offset":true}),
@@ -334,28 +310,24 @@ export const getAutomationsByIdExportResponse = zod.object({
   "alias": zod.string(),
   "name": zod.string(),
   "description": zod.string().nullish(),
-  "trigger": zod.union([zod.null(),zod.object({
+  "trigger": zod.object({
   "triggerAlias": zod.string(),
-  "settings": zod.looseObject({
-
-})
-})]).optional(),
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
+}).nullish(),
   "steps": zod.array(zod.object({
   "id": zod.guid(),
   "actionAlias": zod.string(),
   "name": zod.string(),
   "alias": zod.string().nullish(),
   "connectionAlias": zod.string().nullish(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "inputMappings": zod.record(zod.string(), zod.string()),
   "position": zod.object({
   "x": zod.number(),
   "y": zod.number()
 }),
   "errorBehavior": zod.enum(['Retry', 'Suspend', 'Terminate', 'Compensate']),
-  "retryInterval": zod.string().regex(getAutomationsByIdExportResponseAutomationStepsItemRetryIntervalRegExp).nullish(),
+  "retryInterval": zod.string().nullish(),
   "maxRetries": zod.int().nullish()
 })),
   "connections": zod.array(zod.object({
@@ -364,7 +336,7 @@ export const getAutomationsByIdExportResponse = zod.object({
   "targetStepId": zod.guid(),
   "targetHandle": zod.string().nullish(),
   "outcome": zod.string().nullish(),
-  "filter": zod.union([zod.null(),zod.object({
+  "filter": zod.object({
   "groups": zod.array(zod.object({
   "conditions": zod.array(zod.object({
   "leftOperand": zod.string(),
@@ -372,19 +344,17 @@ export const getAutomationsByIdExportResponse = zod.object({
   "rightOperand": zod.string()
 }))
 }))
-})]).optional()
+}).nullish()
 })),
   "canvasState": zod.string().nullish(),
-  "notificationSettings": zod.union([zod.null(),zod.object({
+  "notificationSettings": zod.object({
   "channels": zod.array(zod.object({
   "channelAlias": zod.string(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "isEnabled": zod.boolean(),
   "notifyOn": zod.enum(['Never', 'Failed', 'Suspended', 'FailedOrSuspended', 'Completed', 'Recovered', 'Disabled', 'Warning', 'ReEnabled', 'Resumed', 'Rejected'])
 }))
-})]).optional()
+}).nullish()
 }),
   "connectionReferences": zod.array(zod.object({
   "alias": zod.string(),
@@ -398,9 +368,6 @@ export const putAutomationsByIdImportParams = zod.object({
   "id": zod.guid()
 })
 
-export const putAutomationsByIdImportBodyAutomationStepsItemRetryIntervalRegExp = new RegExp('^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$');
-
-
 export const putAutomationsByIdImportBody = zod.object({
   "formatVersion": zod.string(),
   "exportedAt": zod.iso.datetime({"local":true,"offset":true}),
@@ -413,28 +380,24 @@ export const putAutomationsByIdImportBody = zod.object({
   "alias": zod.string(),
   "name": zod.string(),
   "description": zod.string().nullish(),
-  "trigger": zod.union([zod.null(),zod.object({
+  "trigger": zod.object({
   "triggerAlias": zod.string(),
-  "settings": zod.looseObject({
-
-})
-})]).optional(),
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
+}).nullish(),
   "steps": zod.array(zod.object({
   "id": zod.guid(),
   "actionAlias": zod.string(),
   "name": zod.string(),
   "alias": zod.string().nullish(),
   "connectionAlias": zod.string().nullish(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "inputMappings": zod.record(zod.string(), zod.string()),
   "position": zod.object({
   "x": zod.number(),
   "y": zod.number()
 }),
   "errorBehavior": zod.enum(['Retry', 'Suspend', 'Terminate', 'Compensate']),
-  "retryInterval": zod.string().regex(putAutomationsByIdImportBodyAutomationStepsItemRetryIntervalRegExp).nullish(),
+  "retryInterval": zod.string().nullish(),
   "maxRetries": zod.int().nullish()
 })),
   "connections": zod.array(zod.object({
@@ -443,7 +406,7 @@ export const putAutomationsByIdImportBody = zod.object({
   "targetStepId": zod.guid(),
   "targetHandle": zod.string().nullish(),
   "outcome": zod.string().nullish(),
-  "filter": zod.union([zod.null(),zod.object({
+  "filter": zod.object({
   "groups": zod.array(zod.object({
   "conditions": zod.array(zod.object({
   "leftOperand": zod.string(),
@@ -451,19 +414,17 @@ export const putAutomationsByIdImportBody = zod.object({
   "rightOperand": zod.string()
 }))
 }))
-})]).optional()
+}).nullish()
 })),
   "canvasState": zod.string().nullish(),
-  "notificationSettings": zod.union([zod.null(),zod.object({
+  "notificationSettings": zod.object({
   "channels": zod.array(zod.object({
   "channelAlias": zod.string(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "isEnabled": zod.boolean(),
   "notifyOn": zod.enum(['Never', 'Failed', 'Suspended', 'FailedOrSuspended', 'Completed', 'Recovered', 'Disabled', 'Warning', 'ReEnabled', 'Resumed', 'Rejected'])
 }))
-})]).optional()
+}).nullish()
 }),
   "connectionReferences": zod.array(zod.object({
   "alias": zod.string(),
@@ -580,9 +541,6 @@ export const getAutomationsGroupsByGroupIdResponse = zod.object({
 })
 
 
-export const postAutomationsImportBodyExportModelAutomationStepsItemRetryIntervalRegExp = new RegExp('^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$');
-
-
 export const postAutomationsImportBody = zod.object({
   "workspaceId": zod.guid(),
   "exportModel": zod.object({
@@ -597,28 +555,24 @@ export const postAutomationsImportBody = zod.object({
   "alias": zod.string(),
   "name": zod.string(),
   "description": zod.string().nullish(),
-  "trigger": zod.union([zod.null(),zod.object({
+  "trigger": zod.object({
   "triggerAlias": zod.string(),
-  "settings": zod.looseObject({
-
-})
-})]).optional(),
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
+}).nullish(),
   "steps": zod.array(zod.object({
   "id": zod.guid(),
   "actionAlias": zod.string(),
   "name": zod.string(),
   "alias": zod.string().nullish(),
   "connectionAlias": zod.string().nullish(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "inputMappings": zod.record(zod.string(), zod.string()),
   "position": zod.object({
   "x": zod.number(),
   "y": zod.number()
 }),
   "errorBehavior": zod.enum(['Retry', 'Suspend', 'Terminate', 'Compensate']),
-  "retryInterval": zod.string().regex(postAutomationsImportBodyExportModelAutomationStepsItemRetryIntervalRegExp).nullish(),
+  "retryInterval": zod.string().nullish(),
   "maxRetries": zod.int().nullish()
 })),
   "connections": zod.array(zod.object({
@@ -627,7 +581,7 @@ export const postAutomationsImportBody = zod.object({
   "targetStepId": zod.guid(),
   "targetHandle": zod.string().nullish(),
   "outcome": zod.string().nullish(),
-  "filter": zod.union([zod.null(),zod.object({
+  "filter": zod.object({
   "groups": zod.array(zod.object({
   "conditions": zod.array(zod.object({
   "leftOperand": zod.string(),
@@ -635,19 +589,17 @@ export const postAutomationsImportBody = zod.object({
   "rightOperand": zod.string()
 }))
 }))
-})]).optional()
+}).nullish()
 })),
   "canvasState": zod.string().nullish(),
-  "notificationSettings": zod.union([zod.null(),zod.object({
+  "notificationSettings": zod.object({
   "channels": zod.array(zod.object({
   "channelAlias": zod.string(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "isEnabled": zod.boolean(),
   "notifyOn": zod.enum(['Never', 'Failed', 'Suspended', 'FailedOrSuspended', 'Completed', 'Recovered', 'Disabled', 'Warning', 'ReEnabled', 'Resumed', 'Rejected'])
 }))
-})]).optional()
+}).nullish()
 }),
   "connectionReferences": zod.array(zod.object({
   "alias": zod.string(),
@@ -666,9 +618,6 @@ export const postAutomationsImportResponse = zod.object({
 })
 
 
-export const postAutomationsImportValidateBodyExportModelAutomationStepsItemRetryIntervalRegExp = new RegExp('^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$');
-
-
 export const postAutomationsImportValidateBody = zod.object({
   "workspaceId": zod.guid(),
   "exportModel": zod.object({
@@ -683,28 +632,24 @@ export const postAutomationsImportValidateBody = zod.object({
   "alias": zod.string(),
   "name": zod.string(),
   "description": zod.string().nullish(),
-  "trigger": zod.union([zod.null(),zod.object({
+  "trigger": zod.object({
   "triggerAlias": zod.string(),
-  "settings": zod.looseObject({
-
-})
-})]).optional(),
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
+}).nullish(),
   "steps": zod.array(zod.object({
   "id": zod.guid(),
   "actionAlias": zod.string(),
   "name": zod.string(),
   "alias": zod.string().nullish(),
   "connectionAlias": zod.string().nullish(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "inputMappings": zod.record(zod.string(), zod.string()),
   "position": zod.object({
   "x": zod.number(),
   "y": zod.number()
 }),
   "errorBehavior": zod.enum(['Retry', 'Suspend', 'Terminate', 'Compensate']),
-  "retryInterval": zod.string().regex(postAutomationsImportValidateBodyExportModelAutomationStepsItemRetryIntervalRegExp).nullish(),
+  "retryInterval": zod.string().nullish(),
   "maxRetries": zod.int().nullish()
 })),
   "connections": zod.array(zod.object({
@@ -713,7 +658,7 @@ export const postAutomationsImportValidateBody = zod.object({
   "targetStepId": zod.guid(),
   "targetHandle": zod.string().nullish(),
   "outcome": zod.string().nullish(),
-  "filter": zod.union([zod.null(),zod.object({
+  "filter": zod.object({
   "groups": zod.array(zod.object({
   "conditions": zod.array(zod.object({
   "leftOperand": zod.string(),
@@ -721,19 +666,17 @@ export const postAutomationsImportValidateBody = zod.object({
   "rightOperand": zod.string()
 }))
 }))
-})]).optional()
+}).nullish()
 })),
   "canvasState": zod.string().nullish(),
-  "notificationSettings": zod.union([zod.null(),zod.object({
+  "notificationSettings": zod.object({
   "channels": zod.array(zod.object({
   "channelAlias": zod.string(),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "isEnabled": zod.boolean(),
   "notifyOn": zod.enum(['Never', 'Failed', 'Suspended', 'FailedOrSuspended', 'Completed', 'Recovered', 'Disabled', 'Warning', 'ReEnabled', 'Resumed', 'Rejected'])
 }))
-})]).optional()
+}).nullish()
 }),
   "connectionReferences": zod.array(zod.object({
   "alias": zod.string(),
@@ -769,24 +712,22 @@ export const getCatalogueActionsResponseItem = zod.object({
   "group": zod.string().nullish(),
   "icon": zod.string().nullish(),
   "connectionTypeAlias": zod.string().nullish(),
-  "settingsSchema": zod.union([zod.null(),zod.object({
+  "settingsSchema": zod.object({
   "fields": zod.array(zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
-  "defaultValue": zod.unknown().optional(),
+  "defaultValue": zod.unknown().nullish(),
   "sortOrder": zod.int(),
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
   "supportsBindings": zod.boolean()
 }))
-})]).optional(),
-  "outputSchema": zod.looseObject({
-
 }).nullish(),
+  "outputSchema": zod.record(zod.string(), zod.unknown().nullable()).nullish(),
   "hasDynamicOutputSchema": zod.boolean(),
   "type": zod.string().min(1)
 })
@@ -804,21 +745,21 @@ export const getCatalogueConnectionTypesResponseItem = zod.object({
   "description": zod.string().nullish(),
   "group": zod.string().nullish(),
   "icon": zod.string().nullish(),
-  "settingsSchema": zod.union([zod.null(),zod.object({
+  "settingsSchema": zod.object({
   "fields": zod.array(zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
-  "defaultValue": zod.unknown().optional(),
+  "defaultValue": zod.unknown().nullish(),
   "sortOrder": zod.int(),
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
   "supportsBindings": zod.boolean()
 }))
-})]).optional()
+}).nullish()
 })
 export const getCatalogueConnectionTypesResponse = zod.array(getCatalogueConnectionTypesResponseItem)
 
@@ -836,24 +777,22 @@ export const getCatalogueControlFlowsResponseItem = zod.object({
   "group": zod.string().nullish(),
   "icon": zod.string().nullish(),
   "connectionTypeAlias": zod.string().nullish(),
-  "settingsSchema": zod.union([zod.null(),zod.object({
+  "settingsSchema": zod.object({
   "fields": zod.array(zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
-  "defaultValue": zod.unknown().optional(),
+  "defaultValue": zod.unknown().nullish(),
   "sortOrder": zod.int(),
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
   "supportsBindings": zod.boolean()
 }))
-})]).optional(),
-  "outputSchema": zod.looseObject({
-
 }).nullish(),
+  "outputSchema": zod.record(zod.string(), zod.unknown().nullable()).nullish(),
   "hasDynamicOutputSchema": zod.boolean(),
   "type": zod.string().min(1)
 })
@@ -870,21 +809,21 @@ export const getCatalogueNotificationChannelsResponseItem = zod.object({
   "name": zod.string().min(1),
   "description": zod.string().nullish(),
   "icon": zod.string().nullish(),
-  "settingsSchema": zod.union([zod.null(),zod.object({
+  "settingsSchema": zod.object({
   "fields": zod.array(zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
-  "defaultValue": zod.unknown().optional(),
+  "defaultValue": zod.unknown().nullish(),
   "sortOrder": zod.int(),
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
   "supportsBindings": zod.boolean()
 }))
-})]).optional()
+}).nullish()
 })
 export const getCatalogueNotificationChannelsResponse = zod.array(getCatalogueNotificationChannelsResponseItem)
 
@@ -906,24 +845,22 @@ export const getCatalogueStepTypesResponseItem = zod.object({
   "group": zod.string().nullish(),
   "icon": zod.string().nullish(),
   "connectionTypeAlias": zod.string().nullish(),
-  "settingsSchema": zod.union([zod.null(),zod.object({
+  "settingsSchema": zod.object({
   "fields": zod.array(zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
-  "defaultValue": zod.unknown().optional(),
+  "defaultValue": zod.unknown().nullish(),
   "sortOrder": zod.int(),
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
   "supportsBindings": zod.boolean()
 }))
-})]).optional(),
-  "outputSchema": zod.looseObject({
-
 }).nullish(),
+  "outputSchema": zod.record(zod.string(), zod.unknown().nullable()).nullish(),
   "hasDynamicOutputSchema": zod.boolean(),
   "type": zod.string().min(1)
 })
@@ -935,14 +872,10 @@ export const postCatalogueStepTypesByAliasOutputSchemaParams = zod.object({
 })
 
 export const postCatalogueStepTypesByAliasOutputSchemaBody = zod.object({
-  "settings": zod.looseObject({
-
-})
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
 })
 
-export const postCatalogueStepTypesByAliasOutputSchemaResponse = zod.looseObject({
-
-})
+export const postCatalogueStepTypesByAliasOutputSchemaResponse = zod.record(zod.string(), zod.unknown())
 
 
 export const getCatalogueTriggersQueryParams = zod.object({
@@ -956,33 +889,31 @@ export const getCatalogueTriggersQueryParams = zod.object({
 
 
 export const getCatalogueTriggersResponseItem = zod.object({
-  "supportsManualRun": zod.boolean(),
   "alias": zod.string().min(1),
   "name": zod.string().min(1),
   "description": zod.string().nullish(),
   "group": zod.string().nullish(),
   "icon": zod.string().nullish(),
   "connectionTypeAlias": zod.string().nullish(),
-  "settingsSchema": zod.union([zod.null(),zod.object({
+  "settingsSchema": zod.object({
   "fields": zod.array(zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
-  "defaultValue": zod.unknown().optional(),
+  "defaultValue": zod.unknown().nullish(),
   "sortOrder": zod.int(),
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
   "supportsBindings": zod.boolean()
 }))
-})]).optional(),
-  "outputSchema": zod.looseObject({
-
 }).nullish(),
+  "outputSchema": zod.record(zod.string(), zod.unknown().nullable()).nullish(),
   "hasDynamicOutputSchema": zod.boolean(),
-  "type": zod.string().min(1)
+  "type": zod.string().min(1),
+  "supportsManualRun": zod.boolean()
 })
 export const getCatalogueTriggersResponse = zod.array(getCatalogueTriggersResponseItem)
 
@@ -996,23 +927,38 @@ export const getCatalogueWebhookAuthenticatorsResponseItem = zod.object({
   "alias": zod.string().min(1),
   "name": zod.string().min(1),
   "description": zod.string().nullish(),
-  "settingsSchema": zod.union([zod.null(),zod.object({
+  "settingsSchema": zod.object({
   "fields": zod.array(zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
-  "defaultValue": zod.unknown().optional(),
+  "defaultValue": zod.unknown().nullish(),
   "sortOrder": zod.int(),
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
   "supportsBindings": zod.boolean()
 }))
-})]).optional()
+}).nullish()
 })
 export const getCatalogueWebhookAuthenticatorsResponse = zod.array(getCatalogueWebhookAuthenticatorsResponseItem)
+
+
+
+
+
+
+
+export const postConnectionsBody = zod.object({
+  "alias": zod.string().min(1),
+  "name": zod.string().min(1),
+  "type": zod.string().min(1),
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
+})
+
+export const postConnectionsResponse = zod.void()
 
 
 export const getConnectionsQuerySkipDefault = 0;
@@ -1043,21 +989,11 @@ export const getConnectionsResponse = zod.object({
 })
 
 
-
-
-
-
-
-export const postConnectionsBody = zod.object({
-  "alias": zod.string().min(1),
-  "name": zod.string().min(1),
-  "type": zod.string().min(1),
-  "settings": zod.looseObject({
-
-})
+export const deleteConnectionsByIdParams = zod.object({
+  "id": zod.guid()
 })
 
-export const postConnectionsResponse = zod.void()
+export const deleteConnectionsByIdResponse = zod.unknown()
 
 
 export const getConnectionsByIdParams = zod.object({
@@ -1074,20 +1010,11 @@ export const getConnectionsByIdResponse = zod.object({
   "alias": zod.string().min(1),
   "name": zod.string().min(1),
   "type": zod.string().min(1),
-  "settings": zod.looseObject({
-
-}),
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
   "version": zod.int(),
   "dateCreated": zod.iso.datetime({"local":true,"offset":true}),
   "dateModified": zod.iso.datetime({"local":true,"offset":true})
 })
-
-
-export const deleteConnectionsByIdParams = zod.object({
-  "id": zod.guid()
-})
-
-export const deleteConnectionsByIdResponse = zod.unknown()
 
 
 export const putConnectionsByIdParams = zod.object({
@@ -1097,7 +1024,7 @@ export const putConnectionsByIdParams = zod.object({
 
 
 
-export const putConnectionsByIdBodyVersionMax = 2147483647;
+export const putConnectionsByIdBodyOneVersionMax = 2147483647;
 
 
 
@@ -1105,10 +1032,8 @@ export const putConnectionsByIdBody = zod.object({
   "alias": zod.string().min(1),
   "name": zod.string().min(1),
   "type": zod.string().min(1),
-  "settings": zod.looseObject({
-
-}),
-  "version": zod.int().min(1).max(putConnectionsByIdBodyVersionMax)
+  "settings": zod.record(zod.string(), zod.unknown().nullable()),
+  "version": zod.int().min(1).max(putConnectionsByIdBodyOneVersionMax)
 })
 
 export const putConnectionsByIdResponse = zod.unknown()
@@ -1133,7 +1058,15 @@ export const getMetricsQueryParams = zod.object({
 
 export const getMetricsResponse = zod.object({
   "totalRuns": zod.int(),
-  "byStatus": zod.record(zod.string(), zod.int()),
+  "byStatus": zod.object({
+  "Pending": zod.int(),
+  "Running": zod.int(),
+  "Completed": zod.int(),
+  "Failed": zod.int(),
+  "Suspended": zod.int(),
+  "Cancelled": zod.int(),
+  "Rejected": zod.int()
+}),
   "successRate": zod.number()
 })
 
@@ -1326,6 +1259,21 @@ export const getVersionHistorySupportedTypesResponseItem = zod.string()
 export const getVersionHistorySupportedTypesResponse = zod.array(getVersionHistorySupportedTypesResponseItem)
 
 
+
+
+
+
+export const postWorkspacesBody = zod.object({
+  "alias": zod.string().min(1),
+  "name": zod.string().min(1),
+  "serviceAccountKey": zod.guid(),
+  "userGroups": zod.array(zod.guid()),
+  "allowedConnections": zod.array(zod.guid())
+})
+
+export const postWorkspacesResponse = zod.void()
+
+
 export const getWorkspacesQuerySkipDefault = 0;
 export const getWorkspacesQueryTakeDefault = 100;
 
@@ -1353,19 +1301,11 @@ export const getWorkspacesResponse = zod.object({
 })
 
 
-
-
-
-
-export const postWorkspacesBody = zod.object({
-  "alias": zod.string().min(1),
-  "name": zod.string().min(1),
-  "serviceAccountKey": zod.guid(),
-  "userGroups": zod.array(zod.guid()),
-  "allowedConnections": zod.array(zod.guid())
+export const deleteWorkspacesByIdParams = zod.object({
+  "id": zod.guid()
 })
 
-export const postWorkspacesResponse = zod.void()
+export const deleteWorkspacesByIdResponse = zod.unknown()
 
 
 export const getWorkspacesByIdParams = zod.object({
@@ -1389,20 +1329,13 @@ export const getWorkspacesByIdResponse = zod.object({
 })
 
 
-export const deleteWorkspacesByIdParams = zod.object({
-  "id": zod.guid()
-})
-
-export const deleteWorkspacesByIdResponse = zod.unknown()
-
-
 export const putWorkspacesByIdParams = zod.object({
   "id": zod.guid()
 })
 
 
 
-export const putWorkspacesByIdBodyVersionMax = 2147483647;
+export const putWorkspacesByIdBodyOneVersionMax = 2147483647;
 
 
 
@@ -1412,10 +1345,25 @@ export const putWorkspacesByIdBody = zod.object({
   "serviceAccountKey": zod.guid(),
   "userGroups": zod.array(zod.guid()),
   "allowedConnections": zod.array(zod.guid()),
-  "version": zod.int().min(1).max(putWorkspacesByIdBodyVersionMax)
+  "version": zod.int().min(1).max(putWorkspacesByIdBodyOneVersionMax)
 })
 
 export const putWorkspacesByIdResponse = zod.unknown()
+
+
+export const postWorkspacesByIdGroupsParams = zod.object({
+  "id": zod.guid()
+})
+
+
+
+
+export const postWorkspacesByIdGroupsBody = zod.object({
+  "name": zod.string().min(1),
+  "parentId": zod.guid().nullish()
+})
+
+export const postWorkspacesByIdGroupsResponse = zod.void()
 
 
 export const getWorkspacesByIdGroupsParams = zod.object({
@@ -1439,19 +1387,12 @@ export const getWorkspacesByIdGroupsResponseItem = zod.object({
 export const getWorkspacesByIdGroupsResponse = zod.array(getWorkspacesByIdGroupsResponseItem)
 
 
-export const postWorkspacesByIdGroupsParams = zod.object({
-  "id": zod.guid()
+export const deleteWorkspacesByIdGroupsByGroupIdParams = zod.object({
+  "id": zod.guid(),
+  "groupId": zod.guid()
 })
 
-
-
-
-export const postWorkspacesByIdGroupsBody = zod.object({
-  "name": zod.string().min(1),
-  "parentId": zod.guid().nullish()
-})
-
-export const postWorkspacesByIdGroupsResponse = zod.void()
+export const deleteWorkspacesByIdGroupsByGroupIdResponse = zod.unknown()
 
 
 export const getWorkspacesByIdGroupsByGroupIdParams = zod.object({
@@ -1469,14 +1410,6 @@ export const getWorkspacesByIdGroupsByGroupIdResponse = zod.object({
   "workspaceId": zod.guid(),
   "dateCreated": zod.iso.datetime({"local":true,"offset":true})
 })
-
-
-export const deleteWorkspacesByIdGroupsByGroupIdParams = zod.object({
-  "id": zod.guid(),
-  "groupId": zod.guid()
-})
-
-export const deleteWorkspacesByIdGroupsByGroupIdResponse = zod.unknown()
 
 
 export const putWorkspacesByIdGroupsByGroupIdParams = zod.object({

@@ -1,6 +1,6 @@
 {
   "apiName": "Umbraco Automate Management API",
-  "swaggerUrl": "https://localhost:44320/umbraco/openapi/automate-management.json",
+  "swaggerUrl": "https://localhost:44320/umbraco/swagger/automate-management/swagger.json",
   "baseUrl": "https://localhost:44320",
   "collections": [
     "approvals",

@@ -36,7 +36,7 @@ import {
  */
 const SPEC_URL =
   process.env.UMBRACO_OPENAPI_SPEC ??
-  "http://localhost:44391/umbraco/openapi/management.json";
+  "http://localhost:44391/umbraco/swagger/management/swagger.json";
 
 export const UmbManagementApiOrvalConfig = defineConfig({
   "umbraco-management-api": {

@@ -1,10 +1,21 @@
 # Contributing / Development
 
 Working on this repo. If you just want to *use* the MCP server against your own Umbraco
-instance, see [README.md](README.md) instead.
+instance, see [README.md](README.md) instead — none of the scripts below exist in the
+published npm package.
 
-This repo builds `automate-mcp-server`, an MCP server for Umbraco Automate built on
+This repo builds `@umbraco-automate/mcp-dev`, an MCP server for Umbraco Automate built on
 `@umbraco-cms/mcp-server-sdk`. It exposes the Umbraco Automate Management API as MCP tools.
+
+## Branches
+
+| Umbraco | Branches | Package version |
+|---------|----------|-----------------|
+| 18 | `main` (releases), `dev` (integration) | 18.x |
+| **17** | **`v17/main` (releases), `v17/dev` (integration)** | **17.x** |
+
+You're on the Umbraco 17 line. Feature branches come off `v17/dev` and never merge into
+`main`/`dev`.
 
 ## Prerequisites
 
@@ -46,7 +57,15 @@ it by that name.
 
 ### 3. Start the demo Umbraco + Automate instance
 
-`demo-site/` is an Umbraco 18 site with Umbraco Automate installed, checked into this repo.
+`demo-site/` is an Umbraco 17 site (Umbraco 17.7, Umbraco Automate 17.4, Clean 7) on this `v17/*`
+line, checked into this repo; `main`/`dev` carry the Umbraco 18 version of it.
+
+Give each major its **own database**. Umbraco only migrates forward: a database an Umbraco 18 site
+has used can't go back to Umbraco 17, and pointing a v18 site at the v17 database upgrades it.
+Put the database name in `demo-site/appsettings.local.json`, e.g. `Database=UmbracoDbV17`. To run a
+v17 and a v18 site side by side, start one of them on other ports, e.g.
+`ASPNETCORE_URLS="http://localhost:52269;https://localhost:44321" dotnet run --no-launch-profile`
+from `demo-site/`, and point `UMBRACO_BASE_URL` at it.
 
 ```bash
 npm run start:umbraco

@@ -1,4 +1,4 @@
-# automate-mcp-server
+# @umbraco-automate/mcp-dev
 
 An [MCP](https://modelcontextprotocol.io) server for **Umbraco Automate**. Point it at an Umbraco
 instance and your AI assistant can build and publish automations, wire up their steps and
@@ -13,8 +13,29 @@ Built on [`@umbraco-cms/mcp-server-sdk`](https://www.npmjs.com/package/@umbraco-
 - An **Umbraco instance with Umbraco Automate installed**, reachable over HTTP(S)
 - An **API user** on that instance (see below)
 
-This server targets **Umbraco 18**. Connecting to a different major version warns and blocks the
-first tool call; set `UMBRACO_EXPECTED_MAJOR` to override if you know what you're doing.
+This version targets **Umbraco 17** with Umbraco Automate 17.x. Connecting to a different major
+version warns and blocks the first tool call; set `UMBRACO_EXPECTED_MAJOR` to override if you know
+what you're doing.
+
+### Which version for which Umbraco
+
+| Umbraco | Umbraco Automate | Package |
+|---------|------------------|---------|
+| 18 | 18.x | `@umbraco-automate/mcp-dev` (18.x) |
+| **17** | **17.x** | **`@umbraco-automate/mcp-dev@17`** |
+
+Install the version that matches your site's Umbraco major — the API client and the version check
+differ between them.
+
+Every Automate 17.x release works. A few features arrived partway through the line (17.N ships the
+same features as 18.N); on older versions the tools refuse them with a clear message, or fall back:
+
+| Feature | Automate 17.x | Automate 18.x | Older versions |
+|---------|---------------|---------------|----------------|
+| Request Approval `approved`/`rejected` outputs | 17.2+ | 18.2+ | One output that runs on approval; `rejected` refused |
+| Container (While/ForEach/Parallel) `done` output | 17.3+ | 18.3+ | `done` refused; connect steps inside the `body` |
+| `get-automation-webhook-url` reported by Umbraco | 17.4+ | 18.4+ | URL derived from `UMBRACO_BASE_URL`, with a note |
+| Trigger `supportsManualRun` | 17.4+ | 18.4+ | Field omitted from `list-catalogue-triggers` |
 
 ## 1. Create an API user in Umbraco
 
@@ -27,18 +48,7 @@ In the Umbraco backoffice:
 
 The server authenticates with those credentials via OAuth client credentials.
 
-## 2. Build the server
-
-The server isn't published to npm yet, so build it from this repo:
-
-```bash
-npm install
-npm run build
-```
-
-This produces `dist/index.js`.
-
-## 3. Add it to your MCP client
+## 2. Add it to your MCP client
 
 ### Claude Code / Claude Desktop
 
@@ -48,8 +58,8 @@ Add to your `.mcp.json` (or `claude_desktop_config.json`):
 {
   "mcpServers": {
     "umbraco-automate": {
-      "command": "node",
-      "args": ["/absolute/path/to/Umbraco-Automate-MCP-Dev/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "@umbraco-automate/mcp-dev@17"],
       "env": {
         "UMBRACO_BASE_URL": "https://your-site.example.com",
         "UMBRACO_CLIENT_ID": "your-client-id",
@@ -62,9 +72,6 @@ Add to your `.mcp.json` (or `claude_desktop_config.json`):
 
 Restart your client and the tools appear.
 
-Working inside this repo? The checked-in `.mcp.json` already registers the server and reads
-credentials from `.env` — see [CONTRIBUTING.md](CONTRIBUTING.md).
-
 ### Any other MCP client
 
 The server speaks MCP over stdio. Run it however your client spawns servers:
@@ -73,7 +80,7 @@ The server speaks MCP over stdio. Run it however your client spawns servers:
 UMBRACO_BASE_URL=https://your-site.example.com \
 UMBRACO_CLIENT_ID=your-client-id \
 UMBRACO_CLIENT_SECRET=your-client-secret \
-node dist/index.js
+npx -y @umbraco-automate/mcp-dev@17
 ```
 
 ### Local Umbraco with a self-signed certificate
@@ -81,19 +88,20 @@ node dist/index.js
 Add `"NODE_TLS_REJECT_UNAUTHORIZED": "0"` to `env`. Only do this against local development
 instances — it disables certificate verification process-wide.
 
-## 4. Check it works
+## 3. Check it works
 
 Without wiring up a client:
 
 ```bash
 # List every tool this server exposes
-node --env-file=.env dist/index.js --list-tools
+npx -y @umbraco-automate/mcp-dev@17 --list-tools
 
 # Show resolved configuration and where each value came from
-node --env-file=.env dist/index.js --debug-config
+npx -y @umbraco-automate/mcp-dev@17 --debug-config
 
 # Call a tool directly
-node --env-file=.env dist/index.js --call list-automations --call-args '{}'
+UMBRACO_BASE_URL=... UMBRACO_CLIENT_ID=... UMBRACO_CLIENT_SECRET=... \
+  npx -y @umbraco-automate/mcp-dev@17 --call list-automations --call-args '{}'
 ```
 
 `--describe-tool <name>` prints a single tool's full input schema.
@@ -170,7 +178,8 @@ To copy an existing automation, use **`export-automation`** and then **`import-a
 
 ## Umbraco CMS tools
 
-By default this server also chains to [`@umbraco-cms/mcp-dev`](https://www.npmjs.com/package/@umbraco-cms/mcp-dev),
+By default this server also chains to [`@umbraco-cms/mcp-dev`](https://www.npmjs.com/package/@umbraco-cms/mcp-dev)
+(`@17` on this line, the CMS MCP's Umbraco 17 releases),
 exposing CMS tools (documents, media, members) alongside the Automate ones, prefixed `cms--`
 (e.g. `cms--get-document-by-id`). It reuses the same credentials. The chained server is
 configured in `src/config/mcp-servers.ts`.
@@ -183,7 +192,7 @@ Set `DISABLE_MCP_CHAINING=true` to turn this off and run Automate tools only.
 |---------|--------------|
 | `401` on every tool | Wrong `UMBRACO_CLIENT_ID` / `UMBRACO_CLIENT_SECRET`, or the API user lacks permissions |
 | Self-signed certificate errors | Local HTTPS instance — set `NODE_TLS_REJECT_UNAUTHORIZED=0` |
-| Version mismatch warning, first tool call blocked | Instance isn't Umbraco 18 — set `UMBRACO_EXPECTED_MAJOR` |
+| Version mismatch warning, first tool call blocked | Instance isn't Umbraco 17 — use `@umbraco-automate/mcp-dev` 18.x for Umbraco 18, or set `UMBRACO_EXPECTED_MAJOR` |
 | `404` on Automate tools | Umbraco Automate isn't installed on the instance |
 | A tool you expected isn't listed | Check `UMBRACO_TOOL_MODES` and the include/exclude variables with `--debug-config` |
 
