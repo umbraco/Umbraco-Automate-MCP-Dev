@@ -21,7 +21,7 @@ describe("resolve-step-type-output-schema", () => {
       { alias: "umbracoAutomate.logMessage", settings: { message: "Hello" } },
       createMockRequestHandlerExtra()
     );
-    expect(resolveStepTypeOutputSchemaTool.outputSchema.safeParse(result.structuredContent).success).toBe(true);
+    expect(resolveStepTypeOutputSchemaTool.outputSchema?.safeParse(result.structuredContent).success).toBe(true);
   });
 
   it("should resolve the output schema for a configured step", async () => {
