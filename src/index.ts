@@ -59,6 +59,7 @@ import {
   allSliceNames,
   loadServerConfig,
   clearConfigCache,
+  setUmbracoBaseUrl,
   UMBRACO_TARGET_MAJOR,
 } from "./config/index.js";
 
@@ -98,6 +99,7 @@ const clientId = resolveAuth("clientId");
 const clientSecret = resolveAuth("clientSecret");
 if (clientId) {
   initializeUmbracoFetch({ baseUrl, clientId, clientSecret });
+  setUmbracoBaseUrl(baseUrl);
 }
 
 // Create collection config loader with our registries
