@@ -8,6 +8,7 @@ import {
   TEST_STEP_ALIAS,
 } from "./setup.js";
 import addAutomationStepTool from "../post/add-automation-step.js";
+import getAutomationTool from "../get/get-automation.js";
 
 const TEST_WORKSPACE_ALIAS = "_testWsAuto_addStep";
 const TEST_ALIAS = "_test_add_step_automation";
@@ -69,6 +70,48 @@ describe("add-automation-step", () => {
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
     );
     expect({ ...structured, stepId: "00000000-0000-0000-0000-000000000000" }).toMatchSnapshot();
+  });
+
+  it("should save Switch cases in the PascalCase form the backoffice editor reads", async () => {
+    const context = createMockRequestHandlerExtra();
+
+    const result = await addAutomationStepTool.handler(
+      {
+        automationId: automation.getId(),
+        actionAlias: "umbracoAutomate.switch",
+        alias: "routeByInterest",
+        name: "Route by interest",
+        settings: {
+          cases: [
+            {
+              name: "enterprise",
+              conditions: {
+                groups: [{ conditions: [{ leftOperand: "${trigger.name}", operator: "Contains", rightOperand: "Enterprise" }] }],
+              },
+            },
+          ],
+        },
+        inputMappings: undefined,
+        errorBehavior: undefined,
+        retryInterval: undefined,
+        maxRetries: undefined,
+      },
+      context,
+    );
+    expect(result.isError).toBeFalsy();
+
+    const saved = await getAutomationTool.handler({ id: automation.getId() }, context);
+    const steps = (saved.structuredContent as { steps: { alias: string; settings: unknown }[] }).steps;
+    expect(steps.find((s) => s.alias === "routeByInterest")?.settings).toEqual({
+      cases: [
+        {
+          Name: "enterprise",
+          Conditions: {
+            Groups: [{ Conditions: [{ LeftOperand: "${trigger.name}", Operator: "Contains", RightOperand: "Enterprise" }] }],
+          },
+        },
+      ],
+    });
   });
 
   it("should return an error when the alias is already used by another step", async () => {
