@@ -24,7 +24,7 @@
     "start:umbraco": "bash scripts/start-umbraco.sh",
     "create-api-user": "node scripts/create-api-user.mjs",
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --testPathPatterns=__tests__ --runInBand",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
     "test:rerun-failures": "node scripts/rerun-failures.mjs",
     "test:changed": "node scripts/test-changed.mjs",
     "test:evals": "npm run build && node scripts/run-evals-isolated.mjs",
