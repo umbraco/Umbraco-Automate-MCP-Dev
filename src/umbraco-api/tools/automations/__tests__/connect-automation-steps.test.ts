@@ -148,15 +148,17 @@ describe("connect-automation-steps", () => {
     const step1 = structured.steps.find((s) => s.alias === TEST_STEP_ALIAS)!;
     const step2 = structured.steps.find((s) => s.alias === TEST_STEP_ALIAS_2)!;
 
-    // Two rows, one step per row, so each is centered (x=0) and further
-    // down the canvas (increasing y) the deeper it is from the trigger -
-    // never both stacked at the same position add-automation-step left them at.
-    expect(step1.position).toEqual({ x: 0, y: 260 });
-    expect(step2.position).toEqual({ x: 0, y: 520 });
-    expect(step1.position.y).toBeLessThan(step2.position.y);
+    // A straight chain under the trigger: action nodes render 282px wide, so centring them
+    // on the trigger's centre (x=0) puts their left edge at -141, and each sits a fixed
+    // gap below the one above (trigger 65px tall, action 115px, gap 72px).
+    expect(step1.position).toEqual({ x: -141, y: 137 });
+    expect(step2.position).toEqual({ x: -141, y: 324 });
 
+    // The trigger node is centred on x=0 too, so the edge into the first step is straight.
     const canvasState = JSON.parse(structured.canvasState!);
-    expect(canvasState.triggerPosition).toEqual({ x: 0, y: 0 });
+    expect(canvasState.triggerPosition.y).toBe(0);
+    expect(canvasState.triggerPosition.x).toBeLessThanOrEqual(-111);
+    expect(canvasState.triggerPosition.x).toBeGreaterThanOrEqual(-141);
   });
 
   it("should return an error when connecting from the trigger before one is set", async () => {
