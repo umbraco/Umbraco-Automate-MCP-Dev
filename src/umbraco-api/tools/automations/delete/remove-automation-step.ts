@@ -13,8 +13,7 @@ import {
   toPutBody,
   saveAutomation,
   resolveStep,
-  stripStepReadOnlyFields,
-  computeAutoLayout,
+  applyAutoLayout,
 } from "../_shared/automation-graph.js";
 
 const inputSchema = {
@@ -49,16 +48,16 @@ const removeAutomationStepTool = {
     );
     const removedConnectionCount = automation.connections.length - remainingConnections.length;
 
-    const remainingRawSteps = automation.steps.filter((s) => s.id !== target.id);
-    const { stepPositions } = computeAutoLayout(remainingRawSteps, remainingConnections);
-    const remainingSteps = remainingRawSteps.map((s) => ({
-      ...stripStepReadOnlyFields(s),
-      position: stepPositions[s.id] ?? s.position,
-    }));
+    const { steps, canvasState } = await applyAutoLayout(
+      automation,
+      remainingConnections,
+      automation.steps.filter((s) => s.id !== target.id)
+    );
 
     const body = toPutBody(automation, {
-      steps: remainingSteps,
+      steps,
       connections: remainingConnections,
+      canvasState,
     });
     await saveAutomation(params.automationId, body);
 

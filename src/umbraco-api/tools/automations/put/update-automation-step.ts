@@ -15,6 +15,7 @@ import {
   saveAutomation,
   resolveStep,
   stripStepReadOnlyFields,
+  applyAutoLayout,
 } from "../_shared/automation-graph.js";
 import { normalizeStepSettings, CONDITION_SETTINGS_HELP } from "../_shared/step-settings.js";
 
@@ -98,7 +99,12 @@ const updateAutomationStepTool = {
       };
     });
 
-    const body = toPutBody(automation, { steps: updatedSteps });
+    // A new name or settings can change the node's size and outputs (e.g. Switch cases),
+    // so re-lay out when either changes.
+    const relayout = params.name !== undefined || params.settings !== undefined;
+    const body = relayout
+      ? toPutBody(automation, await applyAutoLayout(automation, automation.connections, updatedSteps))
+      : toPutBody(automation, { steps: updatedSteps });
     await saveAutomation(params.automationId, body);
 
     return createToolResult({ message: `Step "${params.step}" updated.` });

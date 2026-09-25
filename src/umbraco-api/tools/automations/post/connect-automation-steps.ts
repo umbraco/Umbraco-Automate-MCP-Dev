@@ -137,7 +137,7 @@ const connectAutomationStepsTool = {
     };
 
     const newConnections = [...automation.connections, newConnection];
-    const { steps, canvasState } = applyAutoLayout(automation, newConnections);
+    const { steps, canvasState } = await applyAutoLayout(automation, newConnections);
 
     const body = toPutBody(automation, {
       connections: newConnections,

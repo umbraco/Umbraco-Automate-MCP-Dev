@@ -84,7 +84,7 @@ const disconnectAutomationStepsTool = {
       );
     }
 
-    const { steps, canvasState } = applyAutoLayout(automation, remaining);
+    const { steps, canvasState } = await applyAutoLayout(automation, remaining);
     const body = toPutBody(automation, { connections: remaining, steps, canvasState });
     await saveAutomation(params.automationId, body);
 

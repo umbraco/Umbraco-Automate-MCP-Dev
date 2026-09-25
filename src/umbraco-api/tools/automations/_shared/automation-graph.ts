@@ -37,6 +37,7 @@ import type {
   StepConfigurationModel,
   StepConnectionModel,
 } from "../../../api/generated/umbracoAutomateManagementApi.js";
+import { computeCanvasLayout, type TriggerLabel } from "./canvas-layout.js";
 
 export type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
@@ -186,95 +187,61 @@ export function resolveConnectionSource(
   return resolveStep(automation, ref);
 }
 
-const LAYOUT_X_SPACING = 320;
-const LAYOUT_Y_SPACING = 260;
-
 /**
- * Lays out steps top-down by their distance from the trigger (row = number
- * of hops from the trigger, following connections; siblings at the same
- * row are spread left-to-right, centered), instead of the graph the API
- * hands back with every step piled on top of the last one added. Distance
- * is a longest-path over a topological order (Kahn's algorithm) so a step
- * with multiple incoming connections (a join after a branch) sits below
- * all of its parents, not just the first one processed. A step with a
- * cyclic or otherwise unreachable path from the trigger never gets
- * dequeued and is treated the same as one that's simply not connected yet
- * (add-automation-step's default): it's placed in one extra row below
- * everything else rather than left at its stale position.
+ * How the canvas labels each trigger type, from the catalogue: its name (the canvas
+ * falls back to the alias) and whether it has settings (which adds an edit button).
+ * The layout needs both to know the trigger node's width. They are product-defined per
+ * alias, so they are cached for the life of the process instead of re-reading the
+ * catalogue on every save.
  */
+const triggerLabels = new Map<string, TriggerLabel>();
+
+async function getTriggerLabel(alias: string): Promise<TriggerLabel> {
+  if (!triggerLabels.has(alias)) {
+    try {
+      const client = getApiClient<ApiClient>();
+      const response = (await client.getCatalogueTriggers(
+        undefined,
+        CAPTURE_RAW_HTTP_RESPONSE
+      )) as unknown as HttpResponse<{ alias: string; name: string; settingsSchema?: { fields?: unknown[] } | null }[]>;
+      if (response.status === 200) {
+        for (const t of response.data ?? []) {
+          triggerLabels.set(t.alias, { name: t.name, hasSettings: (t.settingsSchema?.fields?.length ?? 0) > 0 });
+        }
+      }
+    } catch {
+      // Fall back below, as the canvas does.
+    }
+  }
+  return triggerLabels.get(alias) ?? { name: alias, hasSettings: true };
+}
+
+/** Positions for the given steps and connections; see canvas-layout.ts. */
 export function computeAutoLayout(
   steps: StepConfigurationModel[],
-  connections: StepConnectionModel[]
+  connections: StepConnectionModel[],
+  triggerLabel: TriggerLabel = { name: "", hasSettings: true }
 ): { stepPositions: Record<string, { x: number; y: number }>; triggerPosition: { x: number; y: number } } {
-  const childrenByParent = new Map<string, string[]>();
-  const indegree = new Map<string, number>();
-  for (const step of steps) indegree.set(step.id, 0);
-  for (const c of connections) {
-    const list = childrenByParent.get(c.sourceStepId) ?? [];
-    list.push(c.targetStepId);
-    childrenByParent.set(c.sourceStepId, list);
-    if (c.targetStepId !== TRIGGER_STEP_ID) {
-      indegree.set(c.targetStepId, (indegree.get(c.targetStepId) ?? 0) + 1);
-    }
-  }
-
-  const depth = new Map<string, number>([[TRIGGER_STEP_ID, 0]]);
-  const remainingIndegree = new Map(indegree);
-  const queue: string[] = [TRIGGER_STEP_ID];
-  while (queue.length) {
-    const current = queue.shift()!;
-    const currentDepth = depth.get(current) ?? 0;
-    for (const childId of childrenByParent.get(current) ?? []) {
-      depth.set(childId, Math.max(depth.get(childId) ?? 0, currentDepth + 1));
-      const remaining = (remainingIndegree.get(childId) ?? 0) - 1;
-      remainingIndegree.set(childId, remaining);
-      if (remaining <= 0) queue.push(childId);
-    }
-  }
-
-  const byDepth = new Map<number, string[]>();
-  const unreached: string[] = [];
-  for (const step of steps) {
-    const d = depth.get(step.id);
-    if (d === undefined) {
-      unreached.push(step.id);
-      continue;
-    }
-    const list = byDepth.get(d) ?? [];
-    list.push(step.id);
-    byDepth.set(d, list);
-  }
-
-  const stepPositions: Record<string, { x: number; y: number }> = {};
-  const placeRow = (ids: string[], row: number) => {
-    ids.forEach((id, i) => {
-      stepPositions[id] = { x: (i - (ids.length - 1) / 2) * LAYOUT_X_SPACING, y: row * LAYOUT_Y_SPACING };
-    });
-  };
-  for (const [row, ids] of byDepth.entries()) {
-    if (row === 0) continue; // row 0 is the trigger itself, which isn't a step
-    placeRow(ids, row);
-  }
-  if (unreached.length) {
-    placeRow(unreached, (Math.max(0, ...byDepth.keys()) || 0) + 1);
-  }
-
-  return { stepPositions, triggerPosition: { x: 0, y: 0 } };
+  return computeCanvasLayout(steps, connections, triggerLabel);
 }
 
 /**
- * Applies computeAutoLayout to an automation's steps for a given (possibly
- * about-to-be-saved) connections list, returning ready-to-use `steps` and
- * `canvasState` overrides for toPutBody. Any existing canvas viewport is
- * preserved - only positions and the trigger's canvas position change.
+ * Lays out an automation for a (possibly about-to-be-saved) set of steps and
+ * connections, returning ready-to-use `steps` and `canvasState` overrides for
+ * toPutBody. Any existing canvas viewport is preserved - only step positions and the
+ * trigger's canvas position change. `steps` defaults to the automation's current steps.
  */
-export function applyAutoLayout(
+export async function applyAutoLayout(
   automation: AutomationResponseModel,
-  connections: StepConnectionModel[]
-): { steps: StepConfigurationModel[]; canvasState: string } {
-  const { stepPositions, triggerPosition } = computeAutoLayout(automation.steps, connections);
+  connections: StepConnectionModel[],
+  steps: StepConfigurationModel[] = automation.steps
+): Promise<{ steps: StepConfigurationModel[]; canvasState: string }> {
+  const triggerLabel = automation.trigger
+    ? await getTriggerLabel(automation.trigger.triggerAlias)
+    : { name: "", hasSettings: true };
+  const { stepPositions, triggerPosition } = computeAutoLayout(steps, connections, triggerLabel);
 
-  const steps = automation.steps.map((s) => ({
+  const laidOut = steps.map((s) => ({
     ...stripStepReadOnlyFields(s),
     position: stepPositions[s.id] ?? s.position,
   }));
@@ -289,5 +256,5 @@ export function applyAutoLayout(
   }
   canvas.triggerPosition = triggerPosition;
 
-  return { steps, canvasState: JSON.stringify(canvas) };
+  return { steps: laidOut, canvasState: JSON.stringify(canvas) };
 }
