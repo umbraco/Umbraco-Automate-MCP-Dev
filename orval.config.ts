@@ -47,22 +47,27 @@ const stampTargetMajor = createUmbracoTargetMajorTransformer({
  * The template includes a sample OpenAPI spec (src/umbraco-api/api/openapi.yaml) that
  * demonstrates the patterns. Replace it with your add-on's spec.
  *
- * Example OpenAPI spec sources:
- * - Local file: "./src/umbraco-api/api/openapi.yaml"
- * - Local Umbraco 18+: "http://localhost:44391/umbraco/openapi/management.json"
- * - Local Umbraco 17:  "http://localhost:44391/umbraco/swagger/management/swagger.json"
- * - Remote URL: "https://api.example.com/openapi.json"
+ * This is the v17 line (branches v17/main, v17/dev), generated against Umbraco
+ * 17 + Umbraco Automate 17.x. Umbraco 17 serves its specs through Swashbuckle
+ * at /umbraco/swagger/<document>/swagger.json (OpenAPI 3.0); Umbraco 18 (the
+ * main/dev branches) serves /umbraco/openapi/<document>.json (OpenAPI 3.1).
  *
- * Umbraco 18 emits OpenAPI 3.1; this config uses orval 8 with workarounds for a
- * few Umbraco-specific quirks (see relax-untyped-arrays.ts and zod-post-process.ts).
+ * The spec is read from the same instance as the target major (UMBRACO_BASE_URL
+ * in .env, defaulting to the demo-site's https://localhost:44320), so the
+ * generated client and the stamped UMBRACO_TARGET_MAJOR cannot come from two
+ * different Umbraco installs.
+ *
+ * This config uses orval 8 with workarounds for a few Umbraco-specific quirks
+ * (see relax-untyped-arrays.ts and zod-post-process.ts); they apply to the
+ * OpenAPI 3.0 and 3.1 documents alike.
  */
+const AUTOMATE_SPEC_URL = `${(process.env.UMBRACO_BASE_URL ?? "https://localhost:44320").replace(/\/+$/, "")}/umbraco/swagger/automate-management/swagger.json`;
+
 export default defineConfig({
   // Main API client generation
   umbracoAutomateManagementApi: {
     input: {
-      // Use the included example OpenAPI spec
-      // Replace with your add-on's spec path or URL
-      target: "https://localhost:44320/umbraco/openapi/automate-management.json",
+      target: AUTOMATE_SPEC_URL,
       unsafeDisableValidation: true,
       override: {
         // Transformers compose. `stampTargetMajor` leaves the spec untouched —
@@ -93,7 +98,7 @@ export default defineConfig({
   // Zod schema generation for validation
   umbracoAutomateManagementApiZod: {
     input: {
-      target: "https://localhost:44320/umbraco/openapi/automate-management.json",
+      target: AUTOMATE_SPEC_URL,
       unsafeDisableValidation: true,
       override: {
         transformer: relaxUntypedArrays,

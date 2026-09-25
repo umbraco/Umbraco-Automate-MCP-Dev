@@ -9,9 +9,9 @@ export const TEST_WORKSPACE_ALIAS = "_testWorkspace";
 export const TEST_WORKSPACE_NAME = "_Test Workspace";
 
 /**
- * Workspaces require a serviceAccountKey referencing a real Umbraco user - Automate 18.2
- * refuses to publish automations in a workspace whose service account doesn't exist (18.4
- * doesn't check). This collection has no tool that looks one up, so default to the "Api"
+ * Workspaces require a serviceAccountKey referencing a real Umbraco user - some Automate
+ * versions (18.2, for one) refuse to publish automations in a workspace whose service
+ * account doesn't exist. This collection has no tool that looks one up, so default to the "Api"
  * kind user behind the OAuth client credentials the tests authenticate with, which exists
  * on every instance the tests can reach. Override with TEST_SERVICE_ACCOUNT_KEY if needed.
  */
