@@ -7,6 +7,7 @@
  * rate. Use this for a single top-level health snapshot of automation runs.
  */
 
+import { z } from "zod";
 import {
   withStandardDecorators,
   executeGetApiCall,
@@ -20,6 +21,13 @@ import {
 } from "../../../api/generated/umbracoAutomateManagementApi.zod.js";
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
+
+// byStatus only holds the statuses that have runs (an instance with none returns {}).
+// The Umbraco 17 spec lists every status as a required key, so the generated schema
+// would reject that on every instance with fewer than all seven statuses in use.
+const outputSchema = getMetricsResponse.extend({
+  byStatus: z.record(z.string(), z.int()),
+});
 
 const inputSchema = {
   ...getMetricsQueryParams.shape,
@@ -39,7 +47,7 @@ const getMetricsTool = {
   description:
     "Gets overall automation run metrics: totalRuns, a byStatus breakdown (e.g. how many runs are Completed, Failed, Running), and successRate (successful runs / total runs). Optionally scope to a single workspace with workspaceId, and/or restrict to runs started within [from, to] (ISO 8601 date-times). If from/to are omitted, the metrics cover all recorded runs with no time restriction. Use get-metrics-by-automation instead when you need the breakdown per individual automation rather than one aggregate total.",
   inputSchema,
-  outputSchema: getMetricsResponse,
+  outputSchema,
   slices: ["read"],
   annotations: {
     readOnlyHint: true,
@@ -55,7 +63,7 @@ const getMetricsTool = {
   },
 } satisfies ToolDefinition<
   typeof inputSchema,
-  typeof getMetricsResponse
+  typeof outputSchema
 >;
 
 export default withStandardDecorators(getMetricsTool);
