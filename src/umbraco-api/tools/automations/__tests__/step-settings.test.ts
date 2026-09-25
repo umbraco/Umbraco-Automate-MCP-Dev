@@ -1,4 +1,4 @@
-import { normalizeStepSettings } from "../step-settings.js";
+import { normalizeStepSettings } from "../_shared/step-settings.js";
 
 const camelConditionSet = {
   groups: [

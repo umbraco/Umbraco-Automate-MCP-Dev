@@ -94,7 +94,8 @@ const resolveAuth = (field: keyof typeof startupAuth): string =>
   configSources[field] === "cli" || configSources.envFile === "cli"
     ? auth[field]
     : startupAuth[field] || auth[field] || "";
-const baseUrl = resolveAuth("baseUrl");
+// Same fallback as before, so introspection (--list-tools etc.) still works without a base URL.
+const baseUrl = resolveAuth("baseUrl") || "https://localhost:44320";
 const clientId = resolveAuth("clientId");
 const clientSecret = resolveAuth("clientSecret");
 if (clientId) {
