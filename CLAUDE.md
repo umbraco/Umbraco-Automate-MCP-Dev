@@ -1,10 +1,11 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with the MCP server template.
+This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
 
-## Template Overview
+## Overview
 
-Starter kit for creating new Umbraco MCP server projects. Copy this folder to start a new project. Not published to npm.
+`@umbraco-automate/mcp-dev` - an MCP server for Umbraco Automate, built on `@umbraco-cms/mcp-server-sdk`
+and published to npm. User-facing docs are in `README.md`; repo setup is in `CONTRIBUTING.md`.
 
 ## Umbraco 17 line (`v17/main`, `v17/dev`)
 
@@ -184,7 +185,7 @@ Integration tests require an API user in Umbraco. **You must create this manuall
 `npm run build` runs `umbraco-mcp-generate-types` as a `postbuild` step. This walks the compiled `dist/collections.js`, runs every tool's input/output Zod schema through codegen, and writes a typed registry to `dist/tool-types.d.ts`. The `./tool-types` subpath in `package.json#exports` makes this importable by anyone who depends on this package and wants to chain to it with type safety:
 
 ```ts
-import type { McpTemplateTools } from "@umbraco-cms/mcp-template/tool-types";
+import type { McpDevTools } from "@umbraco-automate/mcp-dev/tool-types";
 ```
 
 If your MCP is private/internal and no other MCP will chain to it, you can remove the `postbuild` script and the `./tool-types` export — neither is required for the server to run.
