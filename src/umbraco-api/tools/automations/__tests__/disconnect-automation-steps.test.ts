@@ -90,6 +90,36 @@ describe("disconnect-automation-steps", () => {
     expect(createSnapshotResult(result)).toMatchSnapshot();
   });
 
+  it("should remove a branch connection by outcome regardless of casing", async () => {
+    const context = createMockRequestHandlerExtra();
+    await addAutomationStepTool.handler(
+      {
+        automationId: automation.getId(),
+        actionAlias: "umbracoAutomate.if",
+        alias: "check",
+        name: "check",
+        settings: { conditions: { groups: [{ conditions: [{ leftOperand: "x", operator: "Equals", rightOperand: "x" }] }] } },
+        inputMappings: undefined,
+        errorBehavior: undefined,
+        retryInterval: undefined,
+        maxRetries: undefined,
+      },
+      context,
+    );
+    await connectAutomationStepsTool.handler(
+      { automationId: automation.getId(), sourceStep: "check", targetStep: TEST_STEP_ALIAS, outcome: "true", conditions: undefined },
+      context,
+    );
+
+    const result = await disconnectAutomationStepsTool.handler(
+      { automationId: automation.getId(), sourceStep: "check", targetStep: TEST_STEP_ALIAS, outcome: "TRUE" },
+      context,
+    );
+
+    expect(result.isError).toBeFalsy();
+    expect((result.structuredContent as { removedCount: number }).removedCount).toBe(1);
+  });
+
   it("should return an error for an unknown target step alias", async () => {
     const context = createMockRequestHandlerExtra();
 

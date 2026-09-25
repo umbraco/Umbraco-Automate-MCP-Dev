@@ -15,7 +15,9 @@ import {
   saveAutomation,
   resolveStep,
   stripStepReadOnlyFields,
+  applyAutoLayout,
 } from "../_shared/automation-graph.js";
+import { normalizeStepSettings, CONDITION_SETTINGS_HELP } from "../_shared/step-settings.js";
 
 const errorBehaviors = ["Retry", "Suspend", "Terminate", "Compensate"] as const;
 
@@ -30,7 +32,7 @@ const inputSchema = {
     .record(z.string(), z.unknown())
     .optional()
     .describe(
-      "New configuration for the step, replacing its current settings entirely (not merged field-by-field). Match the shape from that step type's settingsSchema. Omit to leave settings unchanged."
+      `New configuration for the step, replacing its current settings entirely (not merged field-by-field). Match the shape from that step type's settingsSchema. Omit to leave settings unchanged. ${CONDITION_SETTINGS_HELP}`
     ),
   inputMappings: z
     .record(z.string(), z.string())
@@ -89,7 +91,7 @@ const updateAutomationStepTool = {
       return {
         ...s,
         name: params.name ?? s.name,
-        settings: params.settings ?? s.settings,
+        settings: params.settings ? normalizeStepSettings(params.settings) : s.settings,
         inputMappings: params.inputMappings ?? s.inputMappings,
         errorBehavior: params.errorBehavior ?? s.errorBehavior,
         retryInterval: params.retryInterval !== undefined ? params.retryInterval : s.retryInterval,
@@ -97,7 +99,12 @@ const updateAutomationStepTool = {
       };
     });
 
-    const body = toPutBody(automation, { steps: updatedSteps });
+    // A new name or settings can change the node's size and outputs (e.g. Switch cases),
+    // so re-lay out when either changes.
+    const relayout = params.name !== undefined || params.settings !== undefined;
+    const body = relayout
+      ? toPutBody(automation, await applyAutoLayout(automation, automation.connections, updatedSteps))
+      : toPutBody(automation, { steps: updatedSteps });
     await saveAutomation(params.automationId, body);
 
     return createToolResult({ message: `Step "${params.step}" updated.` });

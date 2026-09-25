@@ -17,11 +17,18 @@ import { postRunsByIdSuspendParams } from "../../../api/generated/umbracoAutomat
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...postRunsByIdSuspendParams.shape,
+  id: postRunsByIdSuspendParams.shape.id.describe(
+    "Id of the Pending or Running run to pause.",
+  ),
+};
+
 const suspendRunTool = {
   name: "suspend-run",
   description:
     "Pauses a workflow run that is currently in progress (status Pending or Running), leaving it Suspended so it can be continued later with resume-run instead of running to completion. Not valid for a run that has already finished or been terminated — check status via get-run-by-id first.",
-  inputSchema: postRunsByIdSuspendParams.shape,
+  inputSchema,
   slices: ["action"],
   annotations: {},
   handler: async ({ id }) => {
@@ -29,6 +36,6 @@ const suspendRunTool = {
       client.postRunsByIdSuspend(id, CAPTURE_RAW_HTTP_RESPONSE),
     );
   },
-} satisfies ToolDefinition<typeof postRunsByIdSuspendParams.shape, undefined>;
+} satisfies ToolDefinition<typeof inputSchema, undefined>;
 
 export default withStandardDecorators(suspendRunTool);

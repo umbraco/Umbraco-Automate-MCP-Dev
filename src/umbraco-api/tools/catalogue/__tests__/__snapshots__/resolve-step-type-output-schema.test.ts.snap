@@ -1,17 +1,12 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`resolve-step-type-output-schema should resolve the dynamic output schema for a configured step 1`] = `
+exports[`resolve-step-type-output-schema should resolve the output schema for a configured step 1`] = `
 {
   "content": [],
   "structuredContent": {
     "properties": {
-      "result": {
-        "properties": {
-          "upper": {
-            "type": "string",
-          },
-        },
-        "type": "object",
+      "message": {
+        "type": "string",
       },
     },
     "type": "object",

@@ -1,160 +1,194 @@
-# automate-mcp-server
+# @umbraco-automate/mcp-dev
 
-MCP server template for Umbraco add-ons using the @umbraco-cms/mcp-server-sdk.
+An [MCP](https://modelcontextprotocol.io) server for **Umbraco Automate**. Point it at an Umbraco
+instance and your AI assistant can build and publish automations, wire up their steps and
+triggers, manage connections and workspaces, inspect and control runs, handle approvals, and roll
+back to earlier versions — 62 Automate tools across 8 collections, plus a server-info tool.
 
-## Getting Started
+Built on [`@umbraco-cms/mcp-server-sdk`](https://www.npmjs.com/package/@umbraco-cms/mcp-server-sdk).
 
-### 1. Install Dependencies
+## Requirements
+
+- **Node.js 22+**
+- An **Umbraco instance with Umbraco Automate installed**, reachable over HTTP(S)
+- An **API user** on that instance (see below)
+
+This version targets **Umbraco 18** with Umbraco Automate 18.x. Connecting to a different major
+version warns and blocks the first tool call; set `UMBRACO_EXPECTED_MAJOR` to override if you know
+what you're doing.
+
+### Which version for which Umbraco
+
+| Umbraco | Umbraco Automate | Package |
+|---------|------------------|---------|
+| **18** | **18.x** | **`@umbraco-automate/mcp-dev`** |
+| 17 | 17.x | `@umbraco-automate/mcp-dev@17` |
+
+Install the version that matches your site's Umbraco major — the API client and the version check
+differ between them.
+
+## 1. Create an API user in Umbraco
+
+In the Umbraco backoffice:
+
+1. Go to **Settings → Users**
+2. Create a new **API user**
+3. Note its **Client ID** and **Client Secret**
+4. Grant it permissions for the Automate sections you want the assistant to reach
+
+The server authenticates with those credentials via OAuth client credentials.
+
+## 2. Add it to your MCP client
+
+### Claude Code / Claude Desktop
+
+Add to your `.mcp.json` (or `claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "umbraco-automate": {
+      "command": "npx",
+      "args": ["-y", "@umbraco-automate/mcp-dev"],
+      "env": {
+        "UMBRACO_BASE_URL": "https://your-site.example.com",
+        "UMBRACO_CLIENT_ID": "your-client-id",
+        "UMBRACO_CLIENT_SECRET": "your-client-secret"
+      }
+    }
+  }
+}
+```
+
+Restart your client and the tools appear.
+
+### Any other MCP client
+
+The server speaks MCP over stdio. Run it however your client spawns servers:
 
 ```bash
-npm install
+UMBRACO_BASE_URL=https://your-site.example.com \
+UMBRACO_CLIENT_ID=your-client-id \
+UMBRACO_CLIENT_SECRET=your-client-secret \
+npx -y @umbraco-automate/mcp-dev
 ```
 
-### 2. Configure Environment
+### Local Umbraco with a self-signed certificate
 
-Copy `.env.example` to `.env` and fill in your Umbraco connection details:
+Add `"NODE_TLS_REJECT_UNAUTHORIZED": "0"` to `env`. Only do this against local development
+instances — it disables certificate verification process-wide.
+
+## 3. Check it works
+
+Without wiring up a client:
 
 ```bash
-cp .env.example .env
+# List every tool this server exposes
+npx -y @umbraco-automate/mcp-dev --list-tools
+
+# Show resolved configuration and where each value came from
+npx -y @umbraco-automate/mcp-dev --debug-config
+
+# Call a tool directly
+UMBRACO_BASE_URL=... UMBRACO_CLIENT_ID=... UMBRACO_CLIENT_SECRET=... \
+  npx -y @umbraco-automate/mcp-dev --call list-automations --call-args '{}'
 ```
 
-### 3. Generate API Client (Optional)
+`--describe-tool <name>` prints a single tool's full input schema.
 
-If you have an OpenAPI spec for your add-on:
+## Configuration
 
-1. Update `orval.config.ts` to point to your spec
-2. Run the generator:
+Every option is an environment variable, and most also have a CLI flag (`--help` lists them).
 
-```bash
-npm run generate
+### Connection
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `UMBRACO_BASE_URL` | yes | Base URL of your Umbraco instance |
+| `UMBRACO_CLIENT_ID` | yes | API user's client ID |
+| `UMBRACO_CLIENT_SECRET` | yes | API user's client secret |
+| `UMBRACO_EXPECTED_MAJOR` | no | Override the expected Umbraco major version |
+
+### Limiting the tool surface
+
+63 tools is a lot of context. Narrow it down:
+
+| Variable | Purpose |
+|----------|---------|
+| `UMBRACO_TOOL_MODES` | Enable named groups of collections (see below) |
+| `UMBRACO_INCLUDE_TOOL_COLLECTIONS` | Only these collections |
+| `UMBRACO_EXCLUDE_TOOL_COLLECTIONS` | Everything except these |
+| `UMBRACO_INCLUDE_TOOLS` / `UMBRACO_EXCLUDE_TOOLS` | Individual tools by name |
+| `UMBRACO_INCLUDE_SLICES` / `UMBRACO_EXCLUDE_SLICES` | By operation type, e.g. `delete` |
+| `UMBRACO_READONLY` | Block every write operation |
+| `UMBRACO_DRY_RUN` | Log writes instead of performing them |
+
+Available modes:
+
+| Mode | Includes |
+|------|----------|
+| `automate` | All 8 Automate collections |
+| `umbraco-server` | Server information only |
+
+```json
+"env": {
+  "UMBRACO_INCLUDE_TOOL_COLLECTIONS": "automations,catalogue,runs",
+  "UMBRACO_READONLY": "true"
+}
 ```
 
-### 4. Build and Test
+## What you get
 
-```bash
-# Build the server
-npm run build
+| Collection | Tools | What it covers |
+|------------|-------|----------------|
+| `automations` | 23 | Create, publish, trigger, import/export and delete automations; add, connect and configure steps; set triggers |
+| `workspaces` | 10 | Workspaces and the groups (folders) that organise automations |
+| `catalogue` | 8 | Available triggers, actions, control flows, connection types, notification channels and webhook authenticators |
+| `connections` | 6 | Stored credentials/endpoints that steps use, including a connection test |
+| `runs` | 6 | Run history and detail; replay, resume, suspend and terminate runs |
+| `version-history` | 5 | Past versions of an entity — list, inspect, compare and roll back |
+| `approvals` | 2 | Runs paused on an approval step, and approving/rejecting them |
+| `metrics` | 2 | Run metrics overall and per automation |
+| `umbraco-server` | 1 | Umbraco server information (version, runtime) |
 
-# Run tests
-npm test
+Run `--list-tools` for the full list with descriptions.
 
-# Test with MCP Inspector
-npm run inspect
-```
+### Building an automation
 
-## Project Structure
+The usual order:
 
-```
-├── src/
-│   ├── api/
-│   │   ├── client.ts           # API client configuration
-│   │   └── generated/          # Orval-generated API code
-│   ├── tools/
-│   │   └── example/            # Example tool collection
-│   │       ├── get/
-│   │       ├── post/
-│   │       └── index.ts
-│   └── index.ts                # Server entry point
-├── scripts/
-│   └── tunnels.sh              # Cloudflare tunnels for remote MCP client testing
-├── umbraco/
-│   ├── McpOAuthComposer.cs                            # Self-hosted: OAuth client for your own Worker
-│   ├── McpHostedClientsComposer.Cloud.cs              # Cloud only (commented out): one or more hosted MCP clients (Editor / Dev / …) chosen via array
-│   └── McpExternalLoginShortCircuitComposer.Cloud.cs  # Cloud only (commented out): redirects to Umbraco SSO instead of dead-ending at /umbraco/login
-├── __tests__/
-│   └── example/                # Example tests
-├── package.json
-├── tsconfig.json
-├── tsup.config.ts
-├── jest.config.ts
-├── orval.config.ts
-└── .env.example
-```
+1. **`list-catalogue-triggers`** / **`list-catalogue-step-types`** — see what's available.
+2. **`create-automation`** — creates an empty draft in a workspace.
+3. **`set-automation-trigger`**, then **`add-automation-step`** and **`connect-automation-steps`**
+   — build the graph one piece at a time.
+4. **`publish-automation`** — make it live. **`trigger-automation`** starts a run by hand.
 
-## Adding Your Own Tools
+To copy an existing automation, use **`export-automation`** and then **`import-automation`**
+(check the payload first with **`validate-automation-import`**).
 
-1. Create a new folder under `src/tools/` for your tool collection
-2. Create tool files following the example pattern:
-   - `get/` for GET operations
-   - `post/` for POST operations
-   - `put/` for PUT operations
-   - `delete/` for DELETE operations
-3. Create an `index.ts` that exports the collection
-4. Register the collection in `src/index.ts`
+## Umbraco CMS tools
 
-### Tool Pattern Example
+By default this server also chains to [`@umbraco-cms/mcp-dev`](https://www.npmjs.com/package/@umbraco-cms/mcp-dev),
+exposing CMS tools (documents, media, members) alongside the Automate ones, prefixed `cms--`
+(e.g. `cms--get-document-by-id`). It reuses the same credentials. The chained server is
+configured in `src/config/mcp-servers.ts`.
 
-```typescript
-import { z } from "zod";
-import {
-  withStandardDecorators,
-  executeGetApiCall,
-  CAPTURE_RAW_HTTP_RESPONSE,
-  ToolDefinition,
-} from "@umbraco-cms/mcp-server-sdk";
+Set `DISABLE_MCP_CHAINING=true` to turn this off and run Automate tools only.
 
-const inputSchema = {
-  id: z.string().uuid(),
-};
+## Troubleshooting
 
-const myTool: ToolDefinition<typeof inputSchema> = {
-  name: "my-tool",
-  description: "Does something useful",
-  inputSchema,
-  slices: ["read"],
-  annotations: { readOnlyHint: true },
-  handler: async ({ id }) => {
-    return executeGetApiCall((client) =>
-      client.getMyItem(id, CAPTURE_RAW_HTTP_RESPONSE)
-    );
-  },
-};
+| Symptom | Likely cause |
+|---------|--------------|
+| `401` on every tool | Wrong `UMBRACO_CLIENT_ID` / `UMBRACO_CLIENT_SECRET`, or the API user lacks permissions |
+| Self-signed certificate errors | Local HTTPS instance — set `NODE_TLS_REJECT_UNAUTHORIZED=0` |
+| Version mismatch warning, first tool call blocked | Instance isn't Umbraco 18 — use `@umbraco-automate/mcp-dev@17` for Umbraco 17, or set `UMBRACO_EXPECTED_MAJOR` |
+| `404` on Automate tools | Umbraco Automate isn't installed on the instance |
+| A tool you expected isn't listed | Check `UMBRACO_TOOL_MODES` and the include/exclude variables with `--debug-config` |
 
-export default withStandardDecorators(myTool);
-```
+## Contributing
 
-## Testing
-
-Tests use Jest with the MCP toolkit's testing helpers:
-
-```typescript
-import {
-  setupTestEnvironment,
-  createSnapshotResult,
-  createMockRequestHandlerExtra,
-} from "@umbraco-cms/mcp-server-sdk/testing";
-
-describe("my-tool", () => {
-  setupTestEnvironment();
-
-  it("should do something", async () => {
-    const result = await myTool.handler({ id: "..." }, createMockRequestHandlerExtra());
-    expect(createSnapshotResult(result)).toMatchSnapshot();
-  });
-});
-```
-
-## Testing with Claude Code
-
-This project ships with a `.mcp.json` that registers the MCP server with Claude Code automatically. Once you have run `init`, `discover`, and `npm run build`, open the project directory in Claude Code and the server is available immediately — no manual `claude mcp add` required.
-
-```bash
-# One-time setup
-npx @umbraco-cms/create-umbraco-mcp-server init   # writes credentials to .env
-npx @umbraco-cms/create-umbraco-mcp-server discover # generates API client
-npm run build                                       # compiles dist/index.js
-
-# Open in Claude Code — .mcp.json is picked up automatically
-claude .
-```
-
-The server reads credentials from `.env` via `node --env-file=.env ./dist/index.js`, so no secrets are committed to source control.
-
-## Publishing
-
-1. Update `package.json` with your package name and details
-2. Build: `npm run build`
-3. Publish: `npm publish`
+Setting up the repo, running the demo Umbraco site and the test suites: see
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

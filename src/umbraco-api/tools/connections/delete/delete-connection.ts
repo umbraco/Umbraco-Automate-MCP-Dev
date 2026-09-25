@@ -16,11 +16,18 @@ import { deleteConnectionsByIdParams } from "../../../api/generated/umbracoAutom
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...deleteConnectionsByIdParams.shape,
+  id: deleteConnectionsByIdParams.shape.id.describe(
+    "Id of the connection to delete permanently.",
+  ),
+};
+
 const deleteConnectionTool = {
   name: "delete-connection",
   description:
     "Permanently deletes a connection by id. This is not reversible and is not idempotent — calling it again on an already-deleted connection returns a not-found error. Any automation step still referencing this connection will fail the next time it runs, so check for references before deleting.",
-  inputSchema: deleteConnectionsByIdParams.shape,
+  inputSchema,
   slices: ["delete"],
   annotations: {
     destructiveHint: true,
@@ -30,6 +37,6 @@ const deleteConnectionTool = {
       client.deleteConnectionsById(id, CAPTURE_RAW_HTTP_RESPONSE)
     );
   },
-} satisfies ToolDefinition<typeof deleteConnectionsByIdParams.shape>;
+} satisfies ToolDefinition<typeof inputSchema>;
 
 export default withStandardDecorators(deleteConnectionTool);

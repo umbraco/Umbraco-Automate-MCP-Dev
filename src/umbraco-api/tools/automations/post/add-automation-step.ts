@@ -21,7 +21,9 @@ import {
   toPutBody,
   saveAutomation,
   stripStepReadOnlyFields,
+  applyAutoLayout,
 } from "../_shared/automation-graph.js";
+import { normalizeStepSettings, CONDITION_SETTINGS_HELP } from "../_shared/step-settings.js";
 
 const errorBehaviors = ["Retry", "Suspend", "Terminate", "Compensate"] as const;
 
@@ -37,14 +39,14 @@ const inputSchema = {
     .string()
     .min(1)
     .describe(
-      "Unique, code-friendly name for this step within the automation (e.g. 'send-welcome-email'). Use this to refer to the step later in connect-automation-steps, update-automation-step, and remove-automation-step."
+      "Unique name for this step within the automation. Letters and digits only, starting with a letter - no hyphens, underscores or spaces (e.g. 'sendWelcomeEmail'). Use this to refer to the step later in connect-automation-steps, update-automation-step, and remove-automation-step."
     ),
   name: z.string().min(1).describe("Human-readable display name for this step."),
   settings: z
     .record(z.string(), z.unknown())
     .optional()
     .describe(
-      "The step's configuration, matching the shape described by that step type's settingsSchema (see list-catalogue-actions/list-catalogue-control-flows). Defaults to an empty object if omitted."
+      `The step's configuration, matching the shape described by that step type's settingsSchema (see list-catalogue-actions/list-catalogue-control-flows). Defaults to an empty object if omitted. ${CONDITION_SETTINGS_HELP}`
     ),
   inputMappings: z
     .record(z.string(), z.string())
@@ -93,7 +95,7 @@ const outputSchema = z.object({
 const addAutomationStepTool = {
   name: "add-automation-step",
   description:
-    "Adds a new step to an automation's graph. You only need to describe the new step - this tool reads the automation's current definition, appends the step, and saves it back, so nothing else is affected. The step is created unconnected: use connect-automation-steps afterwards to wire it into the flow (from the trigger, or from another step). Canvas position is assigned automatically; use the Umbraco backoffice canvas to rearrange steps visually if needed.",
+    "Adds a new step to an automation's graph. You only need to describe the new step - this tool reads the automation's current definition, appends the step, and saves it back, so nothing else is affected. A step with no incoming connection runs directly off the trigger, so a one-step automation needs no connect-automation-steps call; use connect-automation-steps to make a step run after another step. Canvas positions are assigned automatically (an unconnected step waits in a row below the graph until it is connected); use the Umbraco backoffice canvas to rearrange steps visually if needed.",
   inputSchema,
   outputSchema,
   slices: ["update"],
@@ -109,24 +111,26 @@ const addAutomationStepTool = {
       );
     }
 
-    const maxX = automation.steps.reduce((max, s) => Math.max(max, s.position.x), -1);
     const stepId = randomUUID();
     const newStep: StepConfigurationModel = {
       id: stepId,
       actionAlias: params.actionAlias,
       name: params.name,
       alias: params.alias,
-      settings: params.settings ?? {},
+      settings: normalizeStepSettings(params.settings ?? {}),
       inputMappings: params.inputMappings ?? {},
-      position: { x: maxX + 1, y: 0 },
+      position: { x: 0, y: 0 },
       errorBehavior: params.errorBehavior ?? "Terminate",
       retryInterval: params.retryInterval ?? null,
       maxRetries: params.maxRetries ?? null,
     };
 
-    const body = toPutBody(automation, {
-      steps: [...automation.steps.map(stripStepReadOnlyFields), newStep],
-    });
+    // Not connected yet, so the layout parks it in the row below the graph until it is.
+    const { steps, canvasState } = await applyAutoLayout(automation, automation.connections, [
+      ...automation.steps.map(stripStepReadOnlyFields),
+      newStep,
+    ]);
+    const body = toPutBody(automation, { steps, canvasState });
     await saveAutomation(params.automationId, body);
 
     return createToolResult({

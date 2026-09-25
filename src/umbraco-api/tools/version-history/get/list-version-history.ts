@@ -21,14 +21,20 @@ import {
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
-const inputSchema = getVersionHistoryByEntityTypeByEntityIdParams.extend(
-  getVersionHistoryByEntityTypeByEntityIdQueryParams.shape,
-);
+const inputSchema = getVersionHistoryByEntityTypeByEntityIdParams.extend({
+  ...getVersionHistoryByEntityTypeByEntityIdQueryParams.shape,
+  entityType: getVersionHistoryByEntityTypeByEntityIdParams.shape.entityType.describe(
+    "Entity type in PascalCase, e.g. 'Automation'. See list-version-history-supported-types for the accepted values.",
+  ),
+  entityId: getVersionHistoryByEntityTypeByEntityIdParams.shape.entityId.describe(
+    "Id of the entity whose history to list, e.g. an automation id.",
+  ),
+});
 
 const listVersionHistoryTool = {
   name: "list-version-history",
   description:
-    "Lists the version history for a single entity, given its entityType and entityId. Returns currentVersion, totalVersions, publishedVersion (if any version is currently published), and a page of version entries (id, version number, dateCreated, createdByUserId, changeDescription, isPublished) ordered newest first. Use get-version-history-supported-types first to confirm a valid entityType (PascalCase, e.g. 'Automation' - see list-version-history-supported-types for the full list). Use skip/take to page through history for entities with many versions (take defaults to 10). Use the version numbers returned here with get-version-history-entry, compare-version-history, or rollback-version-history.",
+    "Lists the version history for a single entity, given its entityType and entityId. Returns currentVersion, totalVersions, publishedVersion (if any version is currently published), and a page of version entries (id, version number, dateCreated, createdByUserId, changeDescription, isPublished) ordered newest first. Use list-version-history-supported-types to confirm a valid entityType (PascalCase, e.g. 'Automation'). For entities with many versions, page through the history by passing nextCursor from the previous response. Use the version numbers returned here with get-version-history-entry, compare-version-history, or rollback-version-history.",
   inputSchema: inputSchema.shape,
   outputSchema: getVersionHistoryByEntityTypeByEntityIdResponse,
   slices: ["list"],

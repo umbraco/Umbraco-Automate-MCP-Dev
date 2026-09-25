@@ -8,7 +8,8 @@
 
 import { z } from "zod";
 import { withStandardDecorators, createToolResult, type ToolDefinition } from "@umbraco-cms/mcp-server-sdk";
-import { fetchAutomation, toPutBody, saveAutomation, resolveStep, resolveConnectionSource, applyAutoLayout } from "../_shared/automation-graph.js";
+import { fetchAutomation, toPutBody, saveAutomation, resolveStep, resolveConnectionSource, applyAutoLayout, TRIGGER_STEP_ID } from "../_shared/automation-graph.js";
+import { resolveConnectionOutput } from "../_shared/step-outputs.js";
 
 const inputSchema = {
   automationId: z.string().uuid().describe("Id of the automation to disconnect steps within."),
@@ -50,11 +51,27 @@ const disconnectAutomationStepsTool = {
     const source = resolveConnectionSource(automation, params.sourceStep);
     const target = resolveStep(automation, params.targetStep);
 
+    // Match the output the way connect-automation-steps saves it ("loop" -> "body", "True" ->
+    // "true"), and case-insensitively against both fields so connections saved before outcomes
+    // were normalized (e.g. outcome "True", no sourceHandle) can still be removed.
+    const wanted = new Set<string>();
+    if (params.outcome !== undefined) {
+      wanted.add(params.outcome.trim().toLowerCase());
+      const sourceStep = source.id === TRIGGER_STEP_ID ? undefined : resolveStep(automation, source.id);
+      try {
+        const resolved = resolveConnectionOutput(sourceStep, params.outcome).outcome;
+        if (resolved) wanted.add(resolved.toLowerCase());
+      } catch {
+        // Not a current output name - still match it literally, for legacy connections.
+      }
+    }
+    const matchesOutcome = (value: string | null | undefined) => !!value && wanted.has(value.toLowerCase());
+
     const remaining = automation.connections.filter((c) => {
       const matches =
         c.sourceStepId === source.id &&
         c.targetStepId === target.id &&
-        (params.outcome === undefined || c.outcome === params.outcome);
+        (params.outcome === undefined || matchesOutcome(c.outcome) || matchesOutcome(c.sourceHandle));
       return !matches;
     });
     const removedCount = automation.connections.length - remaining.length;
@@ -67,7 +84,7 @@ const disconnectAutomationStepsTool = {
       );
     }
 
-    const { steps, canvasState } = applyAutoLayout(automation, remaining);
+    const { steps, canvasState } = await applyAutoLayout(automation, remaining);
     const body = toPutBody(automation, { connections: remaining, steps, canvasState });
     await saveAutomation(params.automationId, body);
 

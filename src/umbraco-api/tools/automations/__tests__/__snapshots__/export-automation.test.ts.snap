@@ -6,7 +6,7 @@ exports[`export-automation should export a portable definition of the automation
   "structuredContent": {
     "automation": {
       "alias": "_test_export_automation",
-      "canvasState": null,
+      "canvasState": "{"triggerPosition":{"x":-111,"y":0}}",
       "connections": [],
       "description": null,
       "id": "00000000-0000-0000-0000-000000000000",
@@ -23,8 +23,8 @@ exports[`export-automation should export a portable definition of the automation
           "maxRetries": null,
           "name": "Delay Step",
           "position": {
-            "x": 0,
-            "y": 0,
+            "x": -111,
+            "y": 209,
           },
           "retryInterval": null,
           "settings": {
@@ -41,7 +41,7 @@ exports[`export-automation should export a portable definition of the automation
     "exportedAt": "NORMALIZED_DATE",
     "exportedFrom": {
       "product": "Umbraco.Automate",
-      "version": "18.4.0+6323387",
+      "version": "NORMALIZED_VERSION",
     },
     "formatVersion": "1.0",
   },

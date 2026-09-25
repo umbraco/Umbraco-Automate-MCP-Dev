@@ -19,17 +19,24 @@ import { postAutomationsByIdTriggerParams } from "../../../api/generated/umbraco
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...postAutomationsByIdTriggerParams.shape,
+  id: postAutomationsByIdTriggerParams.shape.id.describe(
+    "Id of the published automation to run now.",
+  ),
+};
+
 const triggerAutomationTool = {
   name: "trigger-automation",
   description:
     "Manually starts a new run of an automation immediately, bypassing its configured trigger condition. The automation must be published first (publish-automation) - this fails on a Draft or Unpublished automation. Has a real side effect - it executes the automation's steps right now. Use list-automation-runs afterwards to see the resulting run and its outcome.",
-  inputSchema: postAutomationsByIdTriggerParams.shape,
+  inputSchema,
   slices: ["action"],
   handler: async ({ id }) => {
     return executeVoidApiCall<ApiClient>((client) =>
       client.postAutomationsByIdTrigger(id, CAPTURE_RAW_HTTP_RESPONSE),
     );
   },
-} satisfies ToolDefinition<typeof postAutomationsByIdTriggerParams.shape>;
+} satisfies ToolDefinition<typeof inputSchema>;
 
 export default withStandardDecorators(triggerAutomationTool);

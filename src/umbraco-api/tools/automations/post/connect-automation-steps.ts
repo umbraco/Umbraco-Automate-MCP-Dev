@@ -8,8 +8,15 @@
  */
 
 import { z } from "zod";
-import { withStandardDecorators, createToolResult, type ToolDefinition } from "@umbraco-cms/mcp-server-sdk";
-import { fetchAutomation, toPutBody, saveAutomation, resolveStep, resolveConnectionSource, applyAutoLayout } from "../_shared/automation-graph.js";
+import { withStandardDecorators, createToolResult, ToolValidationError, type ToolDefinition } from "@umbraco-cms/mcp-server-sdk";
+import { fetchAutomation, toPutBody, saveAutomation, resolveStep, resolveConnectionSource, applyAutoLayout, TRIGGER_STEP_ID } from "../_shared/automation-graph.js";
+import {
+  resolveConnectionOutput,
+  isSingleConnectionOutput,
+  supportsContainerDone,
+  DONE_HANDLE,
+  OUTCOME_HELP,
+} from "../_shared/step-outputs.js";
 
 const operators = [
   "Equals",
@@ -48,12 +55,7 @@ const inputSchema = {
     .string()
     .min(1)
     .describe("The step this connection runs to, by alias (preferred) or step id."),
-  outcome: z
-    .string()
-    .optional()
-    .describe(
-      "For a step with multiple named outputs (e.g. a branching control-flow step's 'true'/'false' paths), which outcome this connection follows. Omit for steps with a single, unconditional output."
-    ),
+  outcome: z.string().optional().describe(OUTCOME_HELP),
   conditions: z
     .array(conditionSchema)
     .optional()
@@ -75,7 +77,7 @@ const outputSchema = z.object({ message: z.string() });
 const connectAutomationStepsTool = {
   name: "connect-automation-steps",
   description:
-    "Connects one step's output to another step's input, so the target step runs after the source step (optionally only for a specific outcome, and/or only when conditions are met). The target step must already exist on the automation - use add-automation-step first. Pass sourceStep: \"trigger\" to run the target step directly off the automation's trigger instead of another step (every automation needs at least one such connection to actually run). Adding a connection does not remove any existing connections between other steps. Also re-lays out every step's canvas position top-down by distance from the trigger, so the graph reads as a flow instead of piling up wherever add-automation-step happened to place it.",
+    "Connects one step's output to another step's input, so the target step runs after the source step (optionally only for a specific outcome, and/or only when conditions are met). The target step must already exist on the automation - use add-automation-step first. Connections from a branching step (If, Switch, Request Approval, While, ForEach, Parallel) must name the output via `outcome`. Pass sourceStep: \"trigger\" to run the target step directly off the automation's trigger instead of another step. Adding a connection does not remove any existing connections between other steps. Also re-lays out every step's canvas position top-down by distance from the trigger, so the graph reads as a flow instead of piling up wherever add-automation-step happened to place it.",
   inputSchema,
   outputSchema,
   slices: ["update"],
@@ -86,34 +88,56 @@ const connectAutomationStepsTool = {
     const automation = await fetchAutomation(params.automationId);
     const source = resolveConnectionSource(automation, params.sourceStep);
     const target = resolveStep(automation, params.targetStep);
+    const sourceStep = source.id === TRIGGER_STEP_ID ? undefined : resolveStep(automation, source.id);
+    const output = resolveConnectionOutput(sourceStep, params.outcome);
+
+    if (sourceStep && output.sourceHandle === DONE_HANDLE && !(await supportsContainerDone())) {
+      throw new ToolValidationError({
+        title: "Not supported by this Automate version",
+        detail: `This Umbraco Automate version (before 18.3) has no "done" output on ${sourceStep.actionAlias} steps - every connection from it runs inside the loop. Connect the step with outcome "body" to run it on each iteration, or upgrade Umbraco Automate to run steps after the loop.`,
+      });
+    }
+
+    if (
+      sourceStep &&
+      output.sourceHandle &&
+      isSingleConnectionOutput(sourceStep, output.sourceHandle) &&
+      automation.connections.some((c) => c.sourceStepId === source.id && c.sourceHandle === output.sourceHandle)
+    ) {
+      throw new ToolValidationError({
+        title: "Output already connected",
+        detail: `"${params.sourceStep}" already has a step on its "${output.sourceHandle}" output, and only the first one would ever run. Chain further steps after that step instead, or disconnect-automation-steps it first.`,
+      });
+    }
 
     const alreadyConnected = automation.connections.some(
       (c) =>
         c.sourceStepId === source.id &&
         c.targetStepId === target.id &&
-        (c.outcome ?? null) === (params.outcome ?? null)
+        (c.outcome ?? null) === output.outcome &&
+        (c.sourceHandle ?? null) === output.sourceHandle
     );
     if (alreadyConnected) {
       throw new Error(
         `A connection from "${params.sourceStep}" to "${params.targetStep}"${
-          params.outcome ? ` for outcome "${params.outcome}"` : ""
+          output.outcome ? ` for outcome "${output.outcome}"` : ""
         } already exists - use disconnect-automation-steps first if you need to replace it (e.g. with different conditions).`
       );
     }
 
     const newConnection = {
       sourceStepId: source.id,
-      sourceHandle: null,
+      sourceHandle: output.sourceHandle,
       targetStepId: target.id,
       targetHandle: null,
-      outcome: params.outcome ?? null,
+      outcome: output.outcome,
       filter: params.conditions?.length
         ? { groups: [{ conditions: params.conditions }] }
         : null,
     };
 
     const newConnections = [...automation.connections, newConnection];
-    const { steps, canvasState } = applyAutoLayout(automation, newConnections);
+    const { steps, canvasState } = await applyAutoLayout(automation, newConnections);
 
     const body = toPutBody(automation, {
       connections: newConnections,
@@ -123,7 +147,7 @@ const connectAutomationStepsTool = {
     await saveAutomation(params.automationId, body);
 
     return createToolResult({
-      message: `Connected "${params.sourceStep}" -> "${params.targetStep}".`,
+      message: `Connected "${params.sourceStep}"${output.outcome ? ` (${output.outcome})` : ""} -> "${params.targetStep}".`,
     });
   },
 } satisfies ToolDefinition<typeof inputSchema, typeof outputSchema>;

@@ -9,7 +9,7 @@
 
 import { z } from "zod";
 import { withStandardDecorators, createToolResult, type ToolDefinition } from "@umbraco-cms/mcp-server-sdk";
-import { fetchAutomation, toPutBody, saveAutomation } from "../_shared/automation-graph.js";
+import { fetchAutomation, toPutBody, saveAutomation, applyAutoLayout } from "../_shared/automation-graph.js";
 
 const inputSchema = {
   automationId: z.string().uuid().describe("Id of the automation to set the trigger for."),
@@ -39,7 +39,7 @@ const outputSchema = z.object({ message: z.string() });
 const setAutomationTriggerTool = {
   name: "set-automation-trigger",
   description:
-    "Sets what starts the automation: a trigger type (from list-catalogue-triggers) and its settings. Replaces any existing trigger entirely. Omit triggerAlias to remove the trigger - a Draft automation with no trigger can still be edited, but publish-automation will fail until one is set. Steps and connections are left unchanged.",
+    "Sets what starts the automation: a trigger type (from list-catalogue-triggers) and its settings. Replaces any existing trigger entirely, and re-lays out the canvas around it. Omit triggerAlias to remove the trigger - a Draft automation with no trigger can still be edited, but publish-automation will fail until one is set. Steps and connections are left unchanged.",
   inputSchema,
   outputSchema,
   slices: ["update"],
@@ -49,11 +49,12 @@ const setAutomationTriggerTool = {
   handler: async (params: SetAutomationTriggerParams) => {
     const automation = await fetchAutomation(params.automationId);
 
-    const body = toPutBody(automation, {
-      trigger: params.triggerAlias
-        ? { triggerAlias: params.triggerAlias, settings: params.settings ?? {} }
-        : null,
-    });
+    const trigger = params.triggerAlias
+      ? { triggerAlias: params.triggerAlias, settings: params.settings ?? {} }
+      : null;
+    // A different trigger label changes the trigger node's width, so re-centre the layout.
+    const { steps, canvasState } = await applyAutoLayout({ ...automation, trigger }, automation.connections);
+    const body = toPutBody(automation, { trigger, steps, canvasState });
     await saveAutomation(params.automationId, body);
 
     return createToolResult({

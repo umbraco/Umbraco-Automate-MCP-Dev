@@ -17,11 +17,18 @@ import { postAutomationsByIdUnpublishParams } from "../../../api/generated/umbra
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...postAutomationsByIdUnpublishParams.shape,
+  id: postAutomationsByIdUnpublishParams.shape.id.describe(
+    "Id of the automation to unpublish.",
+  ),
+};
+
 const unpublishAutomationTool = {
   name: "unpublish-automation",
   description:
     "Unpublishes an automation, taking it offline so its trigger stops firing and no new runs can start. The automation definition and run history are preserved - use publish-automation to make it live again.",
-  inputSchema: postAutomationsByIdUnpublishParams.shape,
+  inputSchema,
   slices: ["publish"],
   annotations: {
     idempotentHint: true,
@@ -31,6 +38,6 @@ const unpublishAutomationTool = {
       client.postAutomationsByIdUnpublish(id, CAPTURE_RAW_HTTP_RESPONSE),
     );
   },
-} satisfies ToolDefinition<typeof postAutomationsByIdUnpublishParams.shape>;
+} satisfies ToolDefinition<typeof inputSchema>;
 
 export default withStandardDecorators(unpublishAutomationTool);

@@ -43,7 +43,7 @@ Create a `.env` file:
 ```
 UMBRACO_CLIENT_ID=your-client-id
 UMBRACO_CLIENT_SECRET=your-secret
-UMBRACO_BASE_URL=https://localhost:44391
+UMBRACO_BASE_URL=https://localhost:44320
 ```
 
 Introspection commands (`--list-tools`, `--describe-tool`, `--generate-context`) do not require auth.
@@ -70,7 +70,7 @@ Use the `env` block for credentials:
       "env": {
         "UMBRACO_CLIENT_ID": "your-client-id",
         "UMBRACO_CLIENT_SECRET": "your-secret",
-        "UMBRACO_BASE_URL": "https://localhost:44391"
+        "UMBRACO_BASE_URL": "https://localhost:44320"
       }
     }
   }

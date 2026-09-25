@@ -23,6 +23,24 @@ type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 const inputSchema = z.object({
   ...putConnectionsByIdParams.shape,
   ...putConnectionsByIdBody.shape,
+  id: putConnectionsByIdParams.shape.id.describe(
+    "Id of the connection to update.",
+  ),
+  alias: putConnectionsByIdBody.shape.alias.describe(
+    "Connection alias. Pass the current value to keep it.",
+  ),
+  name: putConnectionsByIdBody.shape.name.describe(
+    "Display name. Pass the current value to keep it.",
+  ),
+  type: putConnectionsByIdBody.shape.type.describe(
+    "Connection type alias from list-catalogue-connection-types. Pass the current value to keep it.",
+  ),
+  settings: putConnectionsByIdBody.shape.settings.describe(
+    "The complete settings object for the connection type. Replaces the stored settings - include every field you want to keep.",
+  ),
+  version: putConnectionsByIdBody.shape.version.describe(
+    "The connection's current version from get-connection. A stale value is rejected as a conflict.",
+  ),
 });
 
 const updateConnectionTool = {

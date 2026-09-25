@@ -4,6 +4,7 @@ const config: JestConfigWithTsJest = {
   displayName: "template",
   preset: "ts-jest/presets/js-with-ts-esm",
   testEnvironment: "node",
+  reporters: ["default", "<rootDir>/jest-failure-reporter.ts"],
   maxWorkers: 1,
   extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
@@ -20,7 +21,7 @@ const config: JestConfigWithTsJest = {
   },
   testMatch: ["**/__tests__/**/*.test.ts"],
   setupFiles: ["<rootDir>/jest.setup.ts"],
-  testPathIgnorePatterns: ["/node_modules/"],
+  testPathIgnorePatterns: ["/node_modules/", "/.claude/worktrees/"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts"],
   coverageDirectory: "coverage",

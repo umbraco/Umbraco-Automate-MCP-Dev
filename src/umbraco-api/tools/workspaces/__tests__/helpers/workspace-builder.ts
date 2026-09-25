@@ -1,25 +1,43 @@
 import { getUmbracoAutomateManagementAPI } from "../../../../api/generated/umbracoAutomateManagementApi.js";
-import { CAPTURE_RAW_HTTP_RESPONSE, type HttpResponse } from "@umbraco-cms/mcp-server-sdk";
+import {
+  CAPTURE_RAW_HTTP_RESPONSE,
+  UmbracoManagementClient,
+  type HttpResponse,
+} from "@umbraco-cms/mcp-server-sdk";
 
 export const TEST_WORKSPACE_ALIAS = "_testWorkspace";
 export const TEST_WORKSPACE_NAME = "_Test Workspace";
 
 /**
- * The instance under test currently has exactly one real Umbraco user: the
- * "Api" kind user backing the OAuth client credentials this project's .env
- * authenticates with (found via GET /umbraco/management/api/v1/user on the
- * connected instance). Workspaces require a serviceAccountKey referencing a
- * real Umbraco user, and this collection has no tool that looks one up, so
- * the builder defaults to that user's id. Override with
- * TEST_SERVICE_ACCOUNT_KEY if the instance changes.
+ * Workspaces require a serviceAccountKey referencing a real Umbraco user - Automate 18.2
+ * refuses to publish automations in a workspace whose service account doesn't exist (18.4
+ * doesn't check). This collection has no tool that looks one up, so default to the "Api"
+ * kind user behind the OAuth client credentials the tests authenticate with, which exists
+ * on every instance the tests can reach. Override with TEST_SERVICE_ACCOUNT_KEY if needed.
  */
-export const TEST_SERVICE_ACCOUNT_KEY =
-  process.env.TEST_SERVICE_ACCOUNT_KEY ?? "92bce462-d4b4-441f-9056-17f283f63cc8";
+let serviceAccountKey: Promise<string> | undefined;
+
+export function getTestServiceAccountKey(): Promise<string> {
+  serviceAccountKey ??= process.env.TEST_SERVICE_ACCOUNT_KEY
+    ? Promise.resolve(process.env.TEST_SERVICE_ACCOUNT_KEY)
+    : (
+        UmbracoManagementClient<{ id: string }>(
+          { method: "GET", url: "/umbraco/management/api/v1/user/current" },
+          CAPTURE_RAW_HTTP_RESPONSE,
+        ) as unknown as Promise<HttpResponse<{ id: string }>>
+      ).then((response) => {
+        if (response.status !== 200 || !response.data?.id) {
+          throw new Error(`Failed to resolve the current API user: HTTP ${response.status}`);
+        }
+        return response.data.id;
+      });
+  return serviceAccountKey;
+}
 
 interface WorkspaceModel {
   alias: string;
   name: string;
-  serviceAccountKey: string;
+  serviceAccountKey?: string;
   userGroups: string[];
   allowedConnections: string[];
 }
@@ -28,7 +46,6 @@ export class WorkspaceBuilder {
   private model: WorkspaceModel = {
     alias: TEST_WORKSPACE_ALIAS,
     name: TEST_WORKSPACE_NAME,
-    serviceAccountKey: TEST_SERVICE_ACCOUNT_KEY,
     userGroups: [],
     allowedConnections: [],
   };
@@ -67,7 +84,10 @@ export class WorkspaceBuilder {
   async create(): Promise<this> {
     const client = getUmbracoAutomateManagementAPI();
     const response = (await client.postWorkspaces(
-      this.model,
+      {
+        ...this.model,
+        serviceAccountKey: this.model.serviceAccountKey ?? (await getTestServiceAccountKey()),
+      },
       CAPTURE_RAW_HTTP_RESPONSE
     )) as HttpResponse;
 

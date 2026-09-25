@@ -21,11 +21,24 @@ import {
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
+const inputSchema = {
+  ...getMetricsQueryParams.shape,
+  workspaceId: getMetricsQueryParams.shape.workspaceId.describe(
+    "Optional. Only count runs of automations in this workspace (id from list-workspaces).",
+  ),
+  from: getMetricsQueryParams.shape.from.describe(
+    "Optional start of the time window, as an ISO 8601 date-time (e.g. '2026-09-01T00:00:00Z'). Omit for no lower bound.",
+  ),
+  to: getMetricsQueryParams.shape.to.describe(
+    "Optional end of the time window, as an ISO 8601 date-time (e.g. '2026-09-30T23:59:59Z'). Omit for no upper bound.",
+  ),
+};
+
 const getMetricsTool = {
   name: "get-metrics",
   description:
     "Gets overall automation run metrics: totalRuns, a byStatus breakdown (e.g. how many runs are Completed, Failed, Running), and successRate (successful runs / total runs). Optionally scope to a single workspace with workspaceId, and/or restrict to runs started within [from, to] (ISO 8601 date-times). If from/to are omitted, the metrics cover all recorded runs with no time restriction. Use get-metrics-by-automation instead when you need the breakdown per individual automation rather than one aggregate total.",
-  inputSchema: getMetricsQueryParams.shape,
+  inputSchema,
   outputSchema: getMetricsResponse,
   slices: ["read"],
   annotations: {
@@ -41,7 +54,7 @@ const getMetricsTool = {
     );
   },
 } satisfies ToolDefinition<
-  typeof getMetricsQueryParams.shape,
+  typeof inputSchema,
   typeof getMetricsResponse
 >;
 
