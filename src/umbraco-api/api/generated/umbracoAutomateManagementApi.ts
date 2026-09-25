@@ -9,7 +9,7 @@ import { customInstance } from '../client.js';
 /**
  * @nullable
  */
-export type ActionItemResponseModelOutputSchema = null | { [key: string]: unknown };
+export type ActionItemResponseModelOutputSchema = {[key: string]: unknown | null} | null;
 
 export interface EditableModelFieldDescriptorModel {
   /** @minLength 1 */
@@ -21,7 +21,7 @@ export interface EditableModelFieldDescriptorModel {
   editorUiAlias?: string | null;
   /** @nullable */
   editorConfig?: string | null;
-  defaultValue?: unknown;
+  defaultValue?: unknown | null;
   sortOrder: number;
   isSensitive: boolean;
   isRequired: boolean;
@@ -47,7 +47,7 @@ export interface ActionItemResponseModel {
   icon?: string | null;
   /** @nullable */
   connectionTypeAlias?: string | null;
-  settingsSchema?: null | EditableModelSchemaModel;
+  settingsSchema?: EditableModelSchemaModel | null;
   /** @nullable */
   outputSchema?: ActionItemResponseModelOutputSchema;
   hasDynamicOutputSchema: boolean;
@@ -83,7 +83,7 @@ export interface AutomationAncestorResponseModel {
   isFolder: boolean;
 }
 
-export type TriggerConfigurationModelSettings = { [key: string]: unknown };
+export type TriggerConfigurationModelSettings = {[key: string]: unknown | null};
 
 export interface TriggerConfigurationModel {
   triggerAlias: string;
@@ -105,7 +105,7 @@ export const StepErrorBehaviorModel = {
   Compensate: 'Compensate',
 } as const;
 
-export type ExportStepModelSettings = { [key: string]: unknown };
+export type ExportStepModelSettings = {[key: string]: unknown | null};
 
 export type ExportStepModelInputMappings = {[key: string]: string};
 
@@ -121,10 +121,7 @@ export interface ExportStepModel {
   inputMappings: ExportStepModelInputMappings;
   position: StepPositionModel;
   errorBehavior: StepErrorBehaviorModel;
-  /**
-     * @nullable
-     * @pattern ^-?(\d+\.)?\d{2}:\d{2}:\d{2}(\.\d{1,7})?$
-     */
+  /** @nullable */
   retryInterval?: string | null;
   /** @nullable */
   maxRetries?: number | null;
@@ -171,7 +168,7 @@ export interface StepConnectionModel {
   targetHandle?: string | null;
   /** @nullable */
   outcome?: string | null;
-  filter?: null | ConditionSetModel;
+  filter?: ConditionSetModel | null;
 }
 
 export type NotifyOnModel = typeof NotifyOnModel[keyof typeof NotifyOnModel];
@@ -191,7 +188,7 @@ export const NotifyOnModel = {
   Rejected: 'Rejected',
 } as const;
 
-export type ChannelConfigurationModelSettings = { [key: string]: unknown };
+export type ChannelConfigurationModelSettings = {[key: string]: unknown | null};
 
 export interface ChannelConfigurationModel {
   channelAlias: string;
@@ -210,12 +207,12 @@ export interface AutomationExportDefinitionModel {
   name: string;
   /** @nullable */
   description?: string | null;
-  trigger?: null | TriggerConfigurationModel;
+  trigger?: TriggerConfigurationModel | null;
   steps: ExportStepModel[];
   connections: StepConnectionModel[];
   /** @nullable */
   canvasState?: string | null;
-  notificationSettings?: null | AutomationNotificationSettingsModel;
+  notificationSettings?: AutomationNotificationSettingsModel | null;
 }
 
 export interface ExportSourceModel {
@@ -287,7 +284,7 @@ export interface AutomationItemResponseModel {
   health: AutomationHealthModel;
 }
 
-export type StepConfigurationModelSettings = { [key: string]: unknown };
+export type StepConfigurationModelSettings = {[key: string]: unknown | null};
 
 export type StepConfigurationModelInputMappings = {[key: string]: string};
 
@@ -303,10 +300,7 @@ export interface StepConfigurationModel {
   inputMappings: StepConfigurationModelInputMappings;
   position: StepPositionModel;
   errorBehavior: StepErrorBehaviorModel;
-  /**
-     * @nullable
-     * @pattern ^-?(\d+\.)?\d{2}:\d{2}:\d{2}(\.\d{1,7})?$
-     */
+  /** @nullable */
   retryInterval?: string | null;
   /** @nullable */
   maxRetries?: number | null;
@@ -326,7 +320,7 @@ export interface AutomationResponseModel {
   workspaceId: string;
   /** @nullable */
   groupId?: string | null;
-  trigger?: null | TriggerConfigurationModel;
+  trigger?: TriggerConfigurationModel | null;
   steps: StepConfigurationModel[];
   connections: StepConnectionModel[];
   /** @nullable */
@@ -334,7 +328,7 @@ export interface AutomationResponseModel {
   version: number;
   dateCreated: string;
   dateModified: string;
-  notificationSettings?: null | AutomationNotificationSettingsModel;
+  notificationSettings?: AutomationNotificationSettingsModel | null;
   health: AutomationHealthModel;
   /** @nullable */
   warningIssuedUtc?: string | null;
@@ -445,7 +439,7 @@ export interface ConnectionItemResponseModel {
   dateModified: string;
 }
 
-export type ConnectionResponseModelSettings = { [key: string]: unknown };
+export type ConnectionResponseModelSettings = {[key: string]: unknown | null};
 
 export interface ConnectionResponseModel {
   id: string;
@@ -472,7 +466,7 @@ export interface ConnectionTypeItemResponseModel {
   group?: string | null;
   /** @nullable */
   icon?: string | null;
-  settingsSchema?: null | EditableModelSchemaModel;
+  settingsSchema?: EditableModelSchemaModel | null;
 }
 
 export type ConnectionValidationStatusModel = typeof ConnectionValidationStatusModel[keyof typeof ConnectionValidationStatusModel];
@@ -494,7 +488,7 @@ export interface ConnectionValidationResponseModel {
 /**
  * @nullable
  */
-export type ControlFlowItemResponseModelOutputSchema = null | { [key: string]: unknown };
+export type ControlFlowItemResponseModelOutputSchema = {[key: string]: unknown | null} | null;
 
 export interface ControlFlowItemResponseModel {
   /** @minLength 1 */
@@ -509,7 +503,7 @@ export interface ControlFlowItemResponseModel {
   icon?: string | null;
   /** @nullable */
   connectionTypeAlias?: string | null;
-  settingsSchema?: null | EditableModelSchemaModel;
+  settingsSchema?: EditableModelSchemaModel | null;
   /** @nullable */
   outputSchema?: ControlFlowItemResponseModelOutputSchema;
   hasDynamicOutputSchema: boolean;
@@ -527,15 +521,15 @@ export interface CreateAutomationRequestModel {
   workspaceId: string;
   /** @nullable */
   groupId?: string | null;
-  trigger?: null | TriggerConfigurationModel;
+  trigger?: TriggerConfigurationModel | null;
   steps: StepConfigurationModel[];
   connections: StepConnectionModel[];
   /** @nullable */
   canvasState?: string | null;
-  notificationSettings?: null | AutomationNotificationSettingsModel;
+  notificationSettings?: AutomationNotificationSettingsModel | null;
 }
 
-export type CreateConnectionRequestModelSettings = { [key: string]: unknown };
+export type CreateConnectionRequestModelSettings = {[key: string]: unknown | null};
 
 export interface CreateConnectionRequestModel {
   /** @minLength 1 */
@@ -613,7 +607,7 @@ export interface NotificationChannelItemResponseModel {
   description?: string | null;
   /** @nullable */
   icon?: string | null;
-  settingsSchema?: null | EditableModelSchemaModel;
+  settingsSchema?: EditableModelSchemaModel | null;
 }
 
 export interface PagedAutomationItemResponseModel {
@@ -675,15 +669,24 @@ export interface ProblemDetails {
   detail?: string | null;
   /** @nullable */
   instance?: string | null;
+  [key: string]: unknown;
 }
 
-export type ResolveOutputSchemaRequestModelSettings = { [key: string]: unknown };
+export type ResolveOutputSchemaRequestModelSettings = {[key: string]: unknown | null};
 
 export interface ResolveOutputSchemaRequestModel {
   settings: ResolveOutputSchemaRequestModelSettings;
 }
 
-export type RunSummaryModelByStatus = {[key: string]: number};
+export type RunSummaryModelByStatus = {
+  Pending: number;
+  Running: number;
+  Completed: number;
+  Failed: number;
+  Suspended: number;
+  Cancelled: number;
+  Rejected: number;
+};
 
 export interface RunSummaryModel {
   totalRuns: number;
@@ -694,7 +697,7 @@ export interface RunSummaryModel {
 /**
  * @nullable
  */
-export type StepTypeItemResponseModelOutputSchema = null | { [key: string]: unknown };
+export type StepTypeItemResponseModelOutputSchema = {[key: string]: unknown | null} | null;
 
 export interface StepTypeItemResponseModel {
   /** @minLength 1 */
@@ -709,7 +712,7 @@ export interface StepTypeItemResponseModel {
   icon?: string | null;
   /** @nullable */
   connectionTypeAlias?: string | null;
-  settingsSchema?: null | EditableModelSchemaModel;
+  settingsSchema?: EditableModelSchemaModel | null;
   /** @nullable */
   outputSchema?: StepTypeItemResponseModelOutputSchema;
   hasDynamicOutputSchema: boolean;
@@ -720,10 +723,9 @@ export interface StepTypeItemResponseModel {
 /**
  * @nullable
  */
-export type TriggerItemResponseModelOutputSchema = null | { [key: string]: unknown };
+export type TriggerItemResponseModelOutputSchema = {[key: string]: unknown | null} | null;
 
 export interface TriggerItemResponseModel {
-  supportsManualRun: boolean;
   /** @minLength 1 */
   alias: string;
   /** @minLength 1 */
@@ -736,12 +738,13 @@ export interface TriggerItemResponseModel {
   icon?: string | null;
   /** @nullable */
   connectionTypeAlias?: string | null;
-  settingsSchema?: null | EditableModelSchemaModel;
+  settingsSchema?: EditableModelSchemaModel | null;
   /** @nullable */
   outputSchema?: TriggerItemResponseModelOutputSchema;
   hasDynamicOutputSchema: boolean;
   /** @minLength 1 */
   type: string;
+  supportsManualRun: boolean;
 }
 
 export interface UpdateAutomationRequestModel {
@@ -753,12 +756,12 @@ export interface UpdateAutomationRequestModel {
   description?: string | null;
   /** @nullable */
   groupId?: string | null;
-  trigger?: null | TriggerConfigurationModel;
+  trigger?: TriggerConfigurationModel | null;
   steps: StepConfigurationModel[];
   connections: StepConnectionModel[];
   /** @nullable */
   canvasState?: string | null;
-  notificationSettings?: null | AutomationNotificationSettingsModel;
+  notificationSettings?: AutomationNotificationSettingsModel | null;
   /**
      * @minimum 1
      * @maximum 2147483647
@@ -766,7 +769,7 @@ export interface UpdateAutomationRequestModel {
   version: number;
 }
 
-export type UpdateConnectionRequestModelSettings = { [key: string]: unknown };
+export type UpdateConnectionRequestModelSettings = {[key: string]: unknown | null};
 
 export interface UpdateConnectionRequestModel {
   /** @minLength 1 */
@@ -812,7 +815,7 @@ export interface WebhookAuthenticatorItemResponseModel {
   name: string;
   /** @nullable */
   description?: string | null;
-  settingsSchema?: null | EditableModelSchemaModel;
+  settingsSchema?: EditableModelSchemaModel | null;
 }
 
 export interface WebhookUrlResponseModel {
@@ -869,7 +872,7 @@ export type GetCatalogueStepTypesParams = {
 type?: string;
 };
 
-export type PostCatalogueStepTypesByAliasOutputSchema200 = { [key: string]: unknown };
+export type PostCatalogueStepTypesByAliasOutputSchema200 = {[key: string]: unknown};
 
 export type GetCatalogueTriggersParams = {
 workspaceId?: string;
@@ -921,9 +924,9 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 const postApprovalsByRunIdStepsByStepIdDecision = (
     runId: string,
     stepId: string,
-    approvalDecisionRequestModel: ApprovalDecisionRequestModel,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+    approvalDecisionRequestModel?: ApprovalDecisionRequestModel,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/approvals/${runId}/steps/${stepId}/decision`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
       data: approvalDecisionRequestModel
@@ -940,6 +943,17 @@ const getApprovalsPending = (
       options);
     }
 
+const postAutomations = (
+    createAutomationRequestModel?: CreateAutomationRequestModel,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
+      {url: `/umbraco/automate/management/api/v1/automations`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createAutomationRequestModel
+    },
+      options);
+    }
+
 const getAutomations = (
     params?: GetAutomationsParams,
  options?: SecondParameter<typeof customInstance<PagedAutomationItemResponseModel>>,) => {
@@ -950,13 +964,11 @@ const getAutomations = (
       options);
     }
 
-const postAutomations = (
-    createAutomationRequestModel: CreateAutomationRequestModel,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
-      {url: `/umbraco/automate/management/api/v1/automations`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: createAutomationRequestModel
+const deleteAutomationsById = (
+    id: string,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
+      {url: `/umbraco/automate/management/api/v1/automations/${id}`, method: 'DELETE'
     },
       options);
     }
@@ -970,20 +982,11 @@ const getAutomationsById = (
       options);
     }
 
-const deleteAutomationsById = (
-    id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
-      {url: `/umbraco/automate/management/api/v1/automations/${id}`, method: 'DELETE'
-    },
-      options);
-    }
-
 const putAutomationsById = (
     id: string,
-    updateAutomationRequestModel: UpdateAutomationRequestModel,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+    updateAutomationRequestModel?: UpdateAutomationRequestModel,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/automations/${id}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
       data: updateAutomationRequestModel
@@ -1013,7 +1016,7 @@ const getAutomationsByIdExport = (
 
 const putAutomationsByIdImport = (
     id: string,
-    automationExportModel: AutomationExportModel,
+    automationExportModel?: AutomationExportModel,
  options?: SecondParameter<typeof customInstance<AutomationImportResultModel>>,) => {
       return customInstance<AutomationImportResultModel>(
       {url: `/umbraco/automate/management/api/v1/automations/${id}/import`, method: 'PUT',
@@ -1025,8 +1028,8 @@ const putAutomationsByIdImport = (
 
 const postAutomationsByIdPublish = (
     id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/automations/${id}/publish`, method: 'POST'
     },
       options);
@@ -1034,8 +1037,8 @@ const postAutomationsByIdPublish = (
 
 const postAutomationsByIdReEnable = (
     id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/automations/${id}/re-enable`, method: 'POST'
     },
       options);
@@ -1054,8 +1057,8 @@ const getAutomationsByIdRuns = (
 
 const postAutomationsByIdTrigger = (
     id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/automations/${id}/trigger`, method: 'POST'
     },
       options);
@@ -1063,8 +1066,8 @@ const postAutomationsByIdTrigger = (
 
 const postAutomationsByIdUnpublish = (
     id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/automations/${id}/unpublish`, method: 'POST'
     },
       options);
@@ -1089,7 +1092,7 @@ const getAutomationsGroupsByGroupId = (
     }
 
 const postAutomationsImport = (
-    importAutomationRequestModel: ImportAutomationRequestModel,
+    importAutomationRequestModel?: ImportAutomationRequestModel,
  options?: SecondParameter<typeof customInstance<AutomationImportResultModel>>,) => {
       return customInstance<AutomationImportResultModel>(
       {url: `/umbraco/automate/management/api/v1/automations/import`, method: 'POST',
@@ -1100,7 +1103,7 @@ const postAutomationsImport = (
     }
 
 const postAutomationsImportValidate = (
-    importAutomationRequestModel: ImportAutomationRequestModel,
+    importAutomationRequestModel?: ImportAutomationRequestModel,
  options?: SecondParameter<typeof customInstance<AutomationImportResultModel>>,) => {
       return customInstance<AutomationImportResultModel>(
       {url: `/umbraco/automate/management/api/v1/automations/import/validate`, method: 'POST',
@@ -1159,7 +1162,7 @@ const getCatalogueStepTypes = (
 
 const postCatalogueStepTypesByAliasOutputSchema = (
     alias: string,
-    resolveOutputSchemaRequestModel: ResolveOutputSchemaRequestModel,
+    resolveOutputSchemaRequestModel?: ResolveOutputSchemaRequestModel,
  options?: SecondParameter<typeof customInstance<PostCatalogueStepTypesByAliasOutputSchema200>>,) => {
       return customInstance<PostCatalogueStepTypesByAliasOutputSchema200>(
       {url: `/umbraco/automate/management/api/v1/catalogue/step-types/${alias}/output-schema`, method: 'POST',
@@ -1188,6 +1191,17 @@ const getCatalogueWebhookAuthenticators = (
       options);
     }
 
+const postConnections = (
+    createConnectionRequestModel?: CreateConnectionRequestModel,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
+      {url: `/umbraco/automate/management/api/v1/connections`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createConnectionRequestModel
+    },
+      options);
+    }
+
 const getConnections = (
     params?: GetConnectionsParams,
  options?: SecondParameter<typeof customInstance<PagedConnectionItemResponseModel>>,) => {
@@ -1198,13 +1212,11 @@ const getConnections = (
       options);
     }
 
-const postConnections = (
-    createConnectionRequestModel: CreateConnectionRequestModel,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
-      {url: `/umbraco/automate/management/api/v1/connections`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: createConnectionRequestModel
+const deleteConnectionsById = (
+    id: string,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
+      {url: `/umbraco/automate/management/api/v1/connections/${id}`, method: 'DELETE'
     },
       options);
     }
@@ -1218,20 +1230,11 @@ const getConnectionsById = (
       options);
     }
 
-const deleteConnectionsById = (
-    id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
-      {url: `/umbraco/automate/management/api/v1/connections/${id}`, method: 'DELETE'
-    },
-      options);
-    }
-
 const putConnectionsById = (
     id: string,
-    updateConnectionRequestModel: UpdateConnectionRequestModel,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+    updateConnectionRequestModel?: UpdateConnectionRequestModel,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/connections/${id}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
       data: updateConnectionRequestModel
@@ -1289,8 +1292,8 @@ const getRunsById = (
 
 const postRunsByIdReplay = (
     id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/runs/${id}/replay`, method: 'POST'
     },
       options);
@@ -1298,8 +1301,8 @@ const postRunsByIdReplay = (
 
 const postRunsByIdResume = (
     id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/runs/${id}/resume`, method: 'POST'
     },
       options);
@@ -1307,8 +1310,8 @@ const postRunsByIdResume = (
 
 const postRunsByIdSuspend = (
     id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/runs/${id}/suspend`, method: 'POST'
     },
       options);
@@ -1316,8 +1319,8 @@ const postRunsByIdSuspend = (
 
 const postRunsByIdTerminate = (
     id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/runs/${id}/terminate`, method: 'POST'
     },
       options);
@@ -1350,8 +1353,8 @@ const postVersionHistoryByEntityTypeByEntityIdByEntityVersionRollback = (
     entityType: string,
     entityId: string,
     entityVersion: number,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/version-history/${entityType}/${entityId}/${entityVersion}/rollback`, method: 'POST'
     },
       options);
@@ -1378,6 +1381,17 @@ const getVersionHistorySupportedTypes = (
       options);
     }
 
+const postWorkspaces = (
+    createWorkspaceRequestModel?: CreateWorkspaceRequestModel,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
+      {url: `/umbraco/automate/management/api/v1/workspaces`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: createWorkspaceRequestModel
+    },
+      options);
+    }
+
 const getWorkspaces = (
     params?: GetWorkspacesParams,
  options?: SecondParameter<typeof customInstance<PagedWorkspaceItemResponseModel>>,) => {
@@ -1388,13 +1402,11 @@ const getWorkspaces = (
       options);
     }
 
-const postWorkspaces = (
-    createWorkspaceRequestModel: CreateWorkspaceRequestModel,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
-      {url: `/umbraco/automate/management/api/v1/workspaces`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: createWorkspaceRequestModel
+const deleteWorkspacesById = (
+    id: string,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
+      {url: `/umbraco/automate/management/api/v1/workspaces/${id}`, method: 'DELETE'
     },
       options);
     }
@@ -1408,23 +1420,26 @@ const getWorkspacesById = (
       options);
     }
 
-const deleteWorkspacesById = (
+const putWorkspacesById = (
     id: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
-      {url: `/umbraco/automate/management/api/v1/workspaces/${id}`, method: 'DELETE'
+    updateWorkspaceRequestModel?: UpdateWorkspaceRequestModel,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
+      {url: `/umbraco/automate/management/api/v1/workspaces/${id}`, method: 'PUT',
+      headers: {'Content-Type': 'application/json', },
+      data: updateWorkspaceRequestModel
     },
       options);
     }
 
-const putWorkspacesById = (
+const postWorkspacesByIdGroups = (
     id: string,
-    updateWorkspaceRequestModel: UpdateWorkspaceRequestModel,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
-      {url: `/umbraco/automate/management/api/v1/workspaces/${id}`, method: 'PUT',
+    createWorkspaceGroupRequestModel?: CreateWorkspaceGroupRequestModel,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
+      {url: `/umbraco/automate/management/api/v1/workspaces/${id}/groups`, method: 'POST',
       headers: {'Content-Type': 'application/json', },
-      data: updateWorkspaceRequestModel
+      data: createWorkspaceGroupRequestModel
     },
       options);
     }
@@ -1440,14 +1455,12 @@ const getWorkspacesByIdGroups = (
       options);
     }
 
-const postWorkspacesByIdGroups = (
+const deleteWorkspacesByIdGroupsByGroupId = (
     id: string,
-    createWorkspaceGroupRequestModel: CreateWorkspaceGroupRequestModel,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
-      {url: `/umbraco/automate/management/api/v1/workspaces/${id}/groups`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: createWorkspaceGroupRequestModel
+    groupId: string,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
+      {url: `/umbraco/automate/management/api/v1/workspaces/${id}/groups/${groupId}`, method: 'DELETE'
     },
       options);
     }
@@ -1462,22 +1475,12 @@ const getWorkspacesByIdGroupsByGroupId = (
       options);
     }
 
-const deleteWorkspacesByIdGroupsByGroupId = (
-    id: string,
-    groupId: string,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
-      {url: `/umbraco/automate/management/api/v1/workspaces/${id}/groups/${groupId}`, method: 'DELETE'
-    },
-      options);
-    }
-
 const putWorkspacesByIdGroupsByGroupId = (
     id: string,
     groupId: string,
-    updateWorkspaceGroupRequestModel: UpdateWorkspaceGroupRequestModel,
- options?: SecondParameter<typeof customInstance<unknown>>,) => {
-      return customInstance<unknown>(
+    updateWorkspaceGroupRequestModel?: UpdateWorkspaceGroupRequestModel,
+ options?: SecondParameter<typeof customInstance<void>>,) => {
+      return customInstance<void>(
       {url: `/umbraco/automate/management/api/v1/workspaces/${id}/groups/${groupId}`, method: 'PUT',
       headers: {'Content-Type': 'application/json', },
       data: updateWorkspaceGroupRequestModel
@@ -1485,13 +1488,13 @@ const putWorkspacesByIdGroupsByGroupId = (
       options);
     }
 
-return {postApprovalsByRunIdStepsByStepIdDecision,getApprovalsPending,getAutomations,postAutomations,getAutomationsById,deleteAutomationsById,putAutomationsById,getAutomationsByIdAncestors,getAutomationsByIdExport,putAutomationsByIdImport,postAutomationsByIdPublish,postAutomationsByIdReEnable,getAutomationsByIdRuns,postAutomationsByIdTrigger,postAutomationsByIdUnpublish,getAutomationsByIdWebhookUrl,getAutomationsGroupsByGroupId,postAutomationsImport,postAutomationsImportValidate,getCatalogueActions,getCatalogueConnectionTypes,getCatalogueControlFlows,getCatalogueNotificationChannels,getCatalogueStepTypes,postCatalogueStepTypesByAliasOutputSchema,getCatalogueTriggers,getCatalogueWebhookAuthenticators,getConnections,postConnections,getConnectionsById,deleteConnectionsById,putConnectionsById,postConnectionsByIdTest,getMetrics,getMetricsByAutomation,getRuns,getRunsById,postRunsByIdReplay,postRunsByIdResume,postRunsByIdSuspend,postRunsByIdTerminate,getVersionHistoryByEntityTypeByEntityId,getVersionHistoryByEntityTypeByEntityIdByEntityVersion,postVersionHistoryByEntityTypeByEntityIdByEntityVersionRollback,getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersion,getVersionHistorySupportedTypes,getWorkspaces,postWorkspaces,getWorkspacesById,deleteWorkspacesById,putWorkspacesById,getWorkspacesByIdGroups,postWorkspacesByIdGroups,getWorkspacesByIdGroupsByGroupId,deleteWorkspacesByIdGroupsByGroupId,putWorkspacesByIdGroupsByGroupId}};
+return {postApprovalsByRunIdStepsByStepIdDecision,getApprovalsPending,postAutomations,getAutomations,deleteAutomationsById,getAutomationsById,putAutomationsById,getAutomationsByIdAncestors,getAutomationsByIdExport,putAutomationsByIdImport,postAutomationsByIdPublish,postAutomationsByIdReEnable,getAutomationsByIdRuns,postAutomationsByIdTrigger,postAutomationsByIdUnpublish,getAutomationsByIdWebhookUrl,getAutomationsGroupsByGroupId,postAutomationsImport,postAutomationsImportValidate,getCatalogueActions,getCatalogueConnectionTypes,getCatalogueControlFlows,getCatalogueNotificationChannels,getCatalogueStepTypes,postCatalogueStepTypesByAliasOutputSchema,getCatalogueTriggers,getCatalogueWebhookAuthenticators,postConnections,getConnections,deleteConnectionsById,getConnectionsById,putConnectionsById,postConnectionsByIdTest,getMetrics,getMetricsByAutomation,getRuns,getRunsById,postRunsByIdReplay,postRunsByIdResume,postRunsByIdSuspend,postRunsByIdTerminate,getVersionHistoryByEntityTypeByEntityId,getVersionHistoryByEntityTypeByEntityIdByEntityVersion,postVersionHistoryByEntityTypeByEntityIdByEntityVersionRollback,getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersion,getVersionHistorySupportedTypes,postWorkspaces,getWorkspaces,deleteWorkspacesById,getWorkspacesById,putWorkspacesById,postWorkspacesByIdGroups,getWorkspacesByIdGroups,deleteWorkspacesByIdGroupsByGroupId,getWorkspacesByIdGroupsByGroupId,putWorkspacesByIdGroupsByGroupId}};
 export type PostApprovalsByRunIdStepsByStepIdDecisionResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postApprovalsByRunIdStepsByStepIdDecision']>>>
 export type GetApprovalsPendingResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getApprovalsPending']>>>
-export type GetAutomationsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getAutomations']>>>
 export type PostAutomationsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postAutomations']>>>
-export type GetAutomationsByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getAutomationsById']>>>
+export type GetAutomationsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getAutomations']>>>
 export type DeleteAutomationsByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['deleteAutomationsById']>>>
+export type GetAutomationsByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getAutomationsById']>>>
 export type PutAutomationsByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['putAutomationsById']>>>
 export type GetAutomationsByIdAncestorsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getAutomationsByIdAncestors']>>>
 export type GetAutomationsByIdExportResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getAutomationsByIdExport']>>>
@@ -1513,10 +1516,10 @@ export type GetCatalogueStepTypesResult = NonNullable<Awaited<ReturnType<ReturnT
 export type PostCatalogueStepTypesByAliasOutputSchemaResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postCatalogueStepTypesByAliasOutputSchema']>>>
 export type GetCatalogueTriggersResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getCatalogueTriggers']>>>
 export type GetCatalogueWebhookAuthenticatorsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getCatalogueWebhookAuthenticators']>>>
-export type GetConnectionsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getConnections']>>>
 export type PostConnectionsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postConnections']>>>
-export type GetConnectionsByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getConnectionsById']>>>
+export type GetConnectionsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getConnections']>>>
 export type DeleteConnectionsByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['deleteConnectionsById']>>>
+export type GetConnectionsByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getConnectionsById']>>>
 export type PutConnectionsByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['putConnectionsById']>>>
 export type PostConnectionsByIdTestResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postConnectionsByIdTest']>>>
 export type GetMetricsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getMetrics']>>>
@@ -1532,13 +1535,13 @@ export type GetVersionHistoryByEntityTypeByEntityIdByEntityVersionResult = NonNu
 export type PostVersionHistoryByEntityTypeByEntityIdByEntityVersionRollbackResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postVersionHistoryByEntityTypeByEntityIdByEntityVersionRollback']>>>
 export type GetVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersionResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersion']>>>
 export type GetVersionHistorySupportedTypesResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getVersionHistorySupportedTypes']>>>
-export type GetWorkspacesResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getWorkspaces']>>>
 export type PostWorkspacesResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postWorkspaces']>>>
-export type GetWorkspacesByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getWorkspacesById']>>>
+export type GetWorkspacesResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getWorkspaces']>>>
 export type DeleteWorkspacesByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['deleteWorkspacesById']>>>
+export type GetWorkspacesByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getWorkspacesById']>>>
 export type PutWorkspacesByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['putWorkspacesById']>>>
-export type GetWorkspacesByIdGroupsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getWorkspacesByIdGroups']>>>
 export type PostWorkspacesByIdGroupsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postWorkspacesByIdGroups']>>>
-export type GetWorkspacesByIdGroupsByGroupIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getWorkspacesByIdGroupsByGroupId']>>>
+export type GetWorkspacesByIdGroupsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getWorkspacesByIdGroups']>>>
 export type DeleteWorkspacesByIdGroupsByGroupIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['deleteWorkspacesByIdGroupsByGroupId']>>>
+export type GetWorkspacesByIdGroupsByGroupIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getWorkspacesByIdGroupsByGroupId']>>>
 export type PutWorkspacesByIdGroupsByGroupIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['putWorkspacesByIdGroupsByGroupId']>>>
