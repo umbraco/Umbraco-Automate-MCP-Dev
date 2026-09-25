@@ -1,5 +1,5 @@
 import { getUmbracoAutomateManagementAPI } from "../../../../api/generated/umbracoAutomateManagementApi.js";
-import { CAPTURE_RAW_HTTP_RESPONSE, type HttpResponse } from "@umbraco-cms/mcp-server-sdk";
+import { CAPTURE_RAW_HTTP_RESPONSE, normalizeBaseUrl, type HttpResponse } from "@umbraco-cms/mcp-server-sdk";
 import type { AutomationItemResponseModel } from "../../../../api/generated/umbracoAutomateManagementApi.js";
 
 export class AutomationTestHelper {
@@ -50,11 +50,17 @@ export class AutomationTestHelper {
   static normalizeIds(data: unknown): unknown {
     if (typeof data === "string") {
       // Some error/warning messages embed a raw UUID inline (e.g. "An automation with ID
-      // 'xxxx' already exists.") - strip those too so such messages snapshot stably.
-      return data.replace(
+      // 'xxxx' already exists.") - strip those too so such messages snapshot stably. Absolute
+      // URLs (e.g. a webhook `url`) embed the instance's host, so swap that for a placeholder
+      // to keep snapshots valid against any instance.
+      const withoutIds = data.replace(
         /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,
         "00000000-0000-0000-0000-000000000000",
       );
+      const baseUrl = process.env.UMBRACO_BASE_URL;
+      return baseUrl
+        ? withoutIds.replaceAll(normalizeBaseUrl(baseUrl), "<UMBRACO_BASE_URL>")
+        : withoutIds;
     }
     if (Array.isArray(data)) {
       return data.map((item) => this.normalizeIds(item));
@@ -83,6 +89,10 @@ export class AutomationTestHelper {
       }
       if (normalized.exportedAt) {
         normalized.exportedAt = "NORMALIZED_DATE";
+      }
+      // exportedFrom.version is the installed Automate build (e.g. "18.4.0+6323387").
+      if (normalized.product === "Umbraco.Automate" && normalized.version) {
+        normalized.version = "NORMALIZED_VERSION";
       }
       for (const key of Object.keys(normalized)) {
         // Recurse into every remaining value (not just objects/arrays) so a plain string

@@ -5,7 +5,7 @@ exports[`create-workspace should create a workspace 1`] = `
   "content": [],
   "structuredContent": {
     "id": "00000000-0000-0000-0000-000000000000",
-    "location": "https://localhost:44320/umbraco/automate/management/api/v1/workspaces/00000000-0000-0000-0000-000000000000",
+    "location": "<UMBRACO_BASE_URL>/umbraco/automate/management/api/v1/workspaces/00000000-0000-0000-0000-000000000000",
     "success": true,
   },
 }

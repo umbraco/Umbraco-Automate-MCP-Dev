@@ -4,20 +4,23 @@ import {
   createSnapshotResult,
   WorkspaceBuilder,
   WorkspaceGroupBuilder,
+  WorkspaceTestHelper,
 } from "./setup.js";
 import createWorkspaceGroupTool from "../post/create-workspace-group.js";
 
 const TEST_ALIAS = "_testCreateWorkspaceGroup";
 
-/** Normalizes any embedded guid in a Location header URL for snapshotting. */
+/** Normalizes any embedded guid and the instance host in a Location header URL for snapshotting. */
 function normalizeLocation(result: ReturnType<typeof createSnapshotResult>) {
   const structuredContent = result.structuredContent as
     | { location?: string }
     | undefined;
   if (structuredContent?.location) {
-    structuredContent.location = structuredContent.location.replace(
-      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g,
-      "00000000-0000-0000-0000-000000000000"
+    structuredContent.location = WorkspaceTestHelper.normalizeBaseUrl(
+      structuredContent.location.replace(
+        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g,
+        "00000000-0000-0000-0000-000000000000"
+      )
     );
   }
   return result;

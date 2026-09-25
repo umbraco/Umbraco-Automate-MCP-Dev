@@ -4,7 +4,7 @@ exports[`get-automation-webhook-url should return the inbound webhook URL for an
 {
   "content": [],
   "structuredContent": {
-    "url": "https://localhost:44320/automate/webhook/00000000-0000-0000-0000-000000000000",
+    "url": "<UMBRACO_BASE_URL>/automate/webhook/00000000-0000-0000-0000-000000000000",
   },
 }
 `;

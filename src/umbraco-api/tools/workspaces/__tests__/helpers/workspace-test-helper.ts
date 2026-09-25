@@ -1,8 +1,14 @@
 import { getUmbracoAutomateManagementAPI } from "../../../../api/generated/umbracoAutomateManagementApi.js";
-import { CAPTURE_RAW_HTTP_RESPONSE } from "@umbraco-cms/mcp-server-sdk";
+import { CAPTURE_RAW_HTTP_RESPONSE, normalizeBaseUrl } from "@umbraco-cms/mcp-server-sdk";
 import type { WorkspaceItemResponseModel } from "../../../../api/generated/umbracoAutomateManagementApi.js";
 
 export class WorkspaceTestHelper {
+  /** Swaps the instance's base URL for a placeholder so absolute URLs snapshot on any instance. */
+  static normalizeBaseUrl(value: string): string {
+    const baseUrl = process.env.UMBRACO_BASE_URL;
+    return baseUrl ? value.replaceAll(normalizeBaseUrl(baseUrl), "<UMBRACO_BASE_URL>") : value;
+  }
+
   static async findByAlias(alias: string): Promise<WorkspaceItemResponseModel | undefined> {
     const client = getUmbracoAutomateManagementAPI();
     const response: any = await client.getWorkspaces(
@@ -49,6 +55,10 @@ export class WorkspaceTestHelper {
       }
       if (normalized.workspaceId) {
         normalized.workspaceId = "00000000-0000-0000-0000-000000000000";
+      }
+      // The test API user's key, which differs on every instance.
+      if (normalized.serviceAccountKey) {
+        normalized.serviceAccountKey = "00000000-0000-0000-0000-000000000000";
       }
       if (normalized.parentId) {
         normalized.parentId = "00000000-0000-0000-0000-000000000000";
