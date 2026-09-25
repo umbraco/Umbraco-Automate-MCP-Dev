@@ -62,15 +62,6 @@ import {
   UMBRACO_TARGET_MAJOR,
 } from "./config/index.js";
 
-// Initialize the SDK's fetch client for real Umbraco API calls.
-// This enables the Orval-generated client to authenticate via client_credentials.
-const baseUrl = process.env.UMBRACO_BASE_URL || "https://localhost:44320";
-const clientId = process.env.UMBRACO_CLIENT_ID || "";
-const clientSecret = process.env.UMBRACO_CLIENT_SECRET || "";
-if (clientId) {
-  initializeUmbracoFetch({ baseUrl, clientId, clientSecret });
-}
-
 // Configure the API client for use with toolkit helpers
 // This connects your generated Orval client to executeGetApiCall, executeVoidApiCall, etc.
 configureApiClient(() => getUmbracoAutomateManagementAPI());
@@ -82,8 +73,32 @@ configureApiClient(() => getUmbracoAutomateManagementAPI());
 // Clear config cache to ensure fresh config for each server start
 clearConfigCache();
 
+// Captured before loadServerConfig: it re-reads ./.env with `override: true`, which would
+// otherwise let a .env in the working directory beat variables the MCP client passed in.
+const startupAuth = {
+  baseUrl: process.env.UMBRACO_BASE_URL,
+  clientId: process.env.UMBRACO_CLIENT_ID,
+  clientSecret: process.env.UMBRACO_CLIENT_SECRET,
+};
+
 // Load server configuration (includes filtering settings from env vars)
 const serverConfig = await loadServerConfig(true);
+
+// Initialize the SDK's fetch client for real Umbraco API calls.
+// This enables the Orval-generated client to authenticate via client_credentials.
+// Precedence: --umbraco-* CLI flag, then an explicit --env file, then the environment
+// (which already wins over ./.env - see load-env.ts).
+const { auth, configSources } = serverConfig.umbraco;
+const resolveAuth = (field: keyof typeof startupAuth): string =>
+  configSources[field] === "cli" || configSources.envFile === "cli"
+    ? auth[field]
+    : startupAuth[field] || auth[field] || "";
+const baseUrl = resolveAuth("baseUrl");
+const clientId = resolveAuth("clientId");
+const clientSecret = resolveAuth("clientSecret");
+if (clientId) {
+  initializeUmbracoFetch({ baseUrl, clientId, clientSecret });
+}
 
 // Create collection config loader with our registries
 const configLoader = createCollectionConfigLoader({
