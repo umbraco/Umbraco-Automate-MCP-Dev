@@ -1,10 +1,20 @@
 # Contributing / Development
 
 Working on this repo. If you just want to *use* the MCP server against your own Umbraco
-instance, see [README.md](README.md) instead.
+instance, see [README.md](README.md) instead — none of the scripts below exist in the
+published npm package.
 
-This repo builds `automate-mcp-server`, an MCP server for Umbraco Automate built on
+This repo builds `@umbraco-automate/mcp-dev`, an MCP server for Umbraco Automate built on
 `@umbraco-cms/mcp-server-sdk`. It exposes the Umbraco Automate Management API as MCP tools.
+
+## Branches
+
+| Umbraco | Branches | Package version |
+|---------|----------|-----------------|
+| **18** | **`main` (releases), `dev` (integration)** | **18.x** |
+| 17 | `v17/main` (releases), `v17/dev` (integration) | 17.x |
+
+Umbraco 17 work goes on `v17/dev` and never merges into `main`/`dev`.
 
 ## Prerequisites
 
