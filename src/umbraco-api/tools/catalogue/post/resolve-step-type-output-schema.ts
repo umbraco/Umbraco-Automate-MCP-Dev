@@ -26,7 +26,6 @@ import {
 } from "@umbraco-cms/mcp-server-sdk";
 import { z } from "zod";
 import type { getUmbracoAutomateManagementAPI } from "../../../api/generated/umbracoAutomateManagementApi.js";
-import { postCatalogueStepTypesByAliasOutputSchemaResponse } from "../../../api/generated/umbracoAutomateManagementApi.zod.js";
 
 type ApiClient = ReturnType<typeof getUmbracoAutomateManagementAPI>;
 
@@ -43,7 +42,10 @@ const inputSchema = z.object({
     ),
 });
 
-const outputSchema = postCatalogueStepTypesByAliasOutputSchemaResponse;
+// Any JSON schema object. Not the generated response schema: Umbraco 17's spec describes
+// it with additionalProperties, which generates a z.record, and an MCP outputSchema has to
+// be an object schema - with a record every call fails before reaching the handler.
+const outputSchema = z.looseObject({});
 
 const resolveStepTypeOutputSchemaTool = {
   name: "resolve-step-type-output-schema",
