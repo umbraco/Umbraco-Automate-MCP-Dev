@@ -22,10 +22,14 @@ what you're doing.
 | Umbraco | Umbraco Automate | Package |
 |---------|------------------|---------|
 | 18 | 18.x | `@umbraco-automate/mcp-dev` (18.x) |
-| **17** | **17.x** | **`@umbraco-automate/mcp-dev@17`** |
+| **17** | **17.x** | **`@umbraco-automate/mcp-dev@lts-17-beta`** |
 
 Install the version that matches your site's Umbraco major — the API client and the version check
 differ between them.
+
+The Umbraco 17 line is published under its own `lts-17` dist-tags, so it never takes over `latest`
+or `beta` from the Umbraco 18 line. It is in beta, so install `@lts-17-beta`. A range such as `@17`
+doesn't match prereleases and won't find a version until 17.0.0 is released.
 
 Every Automate 17.x release works. A few features arrived partway through the line (17.N ships the
 same features as 18.N); on older versions the tools refuse them with a clear message, or fall back:
@@ -59,7 +63,7 @@ Add to your `.mcp.json` (or `claude_desktop_config.json`):
   "mcpServers": {
     "umbraco-automate": {
       "command": "npx",
-      "args": ["-y", "@umbraco-automate/mcp-dev@17"],
+      "args": ["-y", "@umbraco-automate/mcp-dev@lts-17-beta"],
       "env": {
         "UMBRACO_BASE_URL": "https://your-site.example.com",
         "UMBRACO_CLIENT_ID": "your-client-id",
@@ -80,7 +84,7 @@ The server speaks MCP over stdio. Run it however your client spawns servers:
 UMBRACO_BASE_URL=https://your-site.example.com \
 UMBRACO_CLIENT_ID=your-client-id \
 UMBRACO_CLIENT_SECRET=your-client-secret \
-npx -y @umbraco-automate/mcp-dev@17
+npx -y @umbraco-automate/mcp-dev@lts-17-beta
 ```
 
 ### Local Umbraco with a self-signed certificate
@@ -94,14 +98,14 @@ Without wiring up a client:
 
 ```bash
 # List every tool this server exposes
-npx -y @umbraco-automate/mcp-dev@17 --list-tools
+npx -y @umbraco-automate/mcp-dev@lts-17-beta --list-tools
 
 # Show resolved configuration and where each value came from
-npx -y @umbraco-automate/mcp-dev@17 --debug-config
+npx -y @umbraco-automate/mcp-dev@lts-17-beta --debug-config
 
 # Call a tool directly
 UMBRACO_BASE_URL=... UMBRACO_CLIENT_ID=... UMBRACO_CLIENT_SECRET=... \
-  npx -y @umbraco-automate/mcp-dev@17 --call list-automations --call-args '{}'
+  npx -y @umbraco-automate/mcp-dev@lts-17-beta --call list-automations --call-args '{}'
 ```
 
 `--describe-tool <name>` prints a single tool's full input schema.
