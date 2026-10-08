@@ -46,6 +46,12 @@ it. When a regenerated spec gains an endpoint or field, find the first version t
 Umbraco.Automate NuGet packages' DLLs and the client sources in `Umbraco.Automate.Web.StaticAssets`'
 source maps), add it to the table, and make older versions fail clearly or fall back.
 
+The other direction is handled for you: `withLenientOutputSchemas` (`tools/lenient-output-schemas.ts`,
+applied in `src/index.ts` and `src/collections.ts`) opens every object in every output schema to
+unknown keys. A field a *newer* Automate adds to a response (e.g. 17.5's `visibleWhen` on settings
+fields) passes through instead of failing client-side validation, while known fields keep their
+types and required/optional state. A field the tools rely on still needs a minimum in the table.
+
 Check new tools through a real MCP client, not only their handler tests: handler tests skip the
 server's output-schema validation (Umbraco 17's spec turns some responses into `z.record`, which is
 not a valid MCP `outputSchema`).

@@ -28,7 +28,10 @@ import metricsCollection from "./umbraco-api/tools/metrics/index.js";
 import runsCollection from "./umbraco-api/tools/runs/index.js";
 import versionHistoryCollection from "./umbraco-api/tools/version-history/index.js";
 import workspacesCollection from "./umbraco-api/tools/workspaces/index.js";
+import { withLenientOutputSchemas } from "./umbraco-api/tools/lenient-output-schemas.js";
 
+// Open output objects to unknown keys, so fields a newer Automate adds don't fail
+// client-side validation (see lenient-output-schemas.ts).
 export const collections = [
   umbracoServerCollection,
   approvalsCollection,
@@ -39,7 +42,7 @@ export const collections = [
   runsCollection,
   versionHistoryCollection,
   workspacesCollection,
-];
+].map(withLenientOutputSchemas);
 
 export { allModes, allModeNames } from "./config/mode-registry.js";
 export { allSliceNames } from "./config/slice-registry.js";
