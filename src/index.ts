@@ -45,6 +45,7 @@ import metricsCollection from "./umbraco-api/tools/metrics/index.js";
 import runsCollection from "./umbraco-api/tools/runs/index.js";
 import versionHistoryCollection from "./umbraco-api/tools/version-history/index.js";
 import workspacesCollection from "./umbraco-api/tools/workspaces/index.js";
+import { withLenientOutputSchemas } from "./umbraco-api/tools/lenient-output-schemas.js";
 
 // Import MCP client manager (for chaining to other MCP servers)
 import { mcpClientManager } from "./umbraco-api/mcp-client.js";
@@ -117,6 +118,8 @@ const filterConfig: CollectionConfiguration = configLoader.loadFromConfig(server
 // CLI Introspection (runs before server start, exits immediately)
 // ============================================================================
 
+// Open output objects to unknown keys, so fields a newer Automate adds don't fail
+// client-side validation (see lenient-output-schemas.ts).
 const collections = [
   umbracoServerCollection,
   approvalsCollection,
@@ -127,7 +130,7 @@ const collections = [
   runsCollection,
   versionHistoryCollection,
   workspacesCollection,
-];
+].map(withLenientOutputSchemas);
 
 // handleCliCommands checks --list-tools, --describe-tool, --generate-context, --call.
 // If any flag is set it prints output and calls process.exit(0).
