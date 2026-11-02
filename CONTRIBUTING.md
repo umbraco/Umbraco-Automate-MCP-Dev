@@ -18,7 +18,7 @@ Umbraco 17 work goes on `v17/dev` and never merges into `main`/`dev`.
 
 ## Prerequisites
 
-- Node.js 22+
+- Node.js 22.23.4+, 24.22.1+ or 26.12.1+ (CVE-2026-111497)
 - .NET SDK 10.0 and SQL Server reachable at `localhost:1433` — **only if you're running the
   bundled `demo-site/`** (see below). Pointing this server at an existing Umbraco Automate
   instance instead needs neither.
