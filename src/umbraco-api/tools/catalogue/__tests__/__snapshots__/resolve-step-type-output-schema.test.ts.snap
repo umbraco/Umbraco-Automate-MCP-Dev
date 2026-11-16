@@ -6,6 +6,7 @@ exports[`resolve-step-type-output-schema should resolve the output schema for a 
   "structuredContent": {
     "properties": {
       "message": {
+        "description": "The message that was logged.",
         "type": "string",
       },
     },
