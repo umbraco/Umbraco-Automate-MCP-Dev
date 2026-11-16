@@ -13,6 +13,11 @@
  * everything else as it was: known fields keep their types and required/optional
  * state, so responses from older Automate releases validate exactly as before,
  * and input schemas stay strict.
+ *
+ * The one exception is the reverse case: a field the generated client marks
+ * required but that an earlier Automate release in the same major doesn't send
+ * (see FIELDS_NEWER_AUTOMATE_ADDED). Those are made optional, so a client built
+ * against a newer spec still accepts responses from older instances.
  */
 
 import type { ToolCollectionExport, ToolDefinition } from "@umbraco-cms/mcp-server-sdk";
@@ -22,6 +27,27 @@ type AnySchema = z.core.$ZodType;
 type Def = Record<string, any>;
 
 const lenient = new WeakMap<AnySchema, AnySchema>();
+
+/**
+ * Response fields the generated client marks required that Automate releases
+ * before 18.6 / 17.6 don't return. Required, they would fail output validation
+ * on those instances, so they are made optional wherever they appear.
+ */
+export const FIELDS_NEWER_AUTOMATE_ADDED = new Set([
+  // settings field descriptors (catalogue settingsSchema.fields[])
+  "valueKind",
+  // catalogue step/trigger items
+  "outcomes",
+  "hasDynamicOutcomes",
+  // run step runs (stepRuns[])
+  "logEntries",
+]);
+
+function optionalIfAddedLater(key: string, schema: AnySchema): AnySchema {
+  return FIELDS_NEWER_AUTOMATE_ADDED.has(key) && schema._zod.optin !== "optional"
+    ? z.optional(schema as z.ZodType)
+    : schema;
+}
 
 /** Child schemas held in a def, by the def key that holds them. */
 const SINGLE_CHILD_KEYS = ["element", "innerType", "keyType", "valueType", "left", "right", "in", "out"];
@@ -33,7 +59,10 @@ function rebuild(schema: AnySchema): AnySchema {
 
   if (def.type === "object") {
     next.shape = Object.fromEntries(
-      Object.entries(def.shape as Record<string, AnySchema>).map(([key, value]) => [key, loosen(value)]),
+      Object.entries(def.shape as Record<string, AnySchema>).map(([key, value]) => [
+        key,
+        optionalIfAddedLater(key, loosen(value)),
+      ]),
     );
     next.catchall = def.catchall ? loosen(def.catchall) : z.unknown();
   } else if (def.type === "lazy") {

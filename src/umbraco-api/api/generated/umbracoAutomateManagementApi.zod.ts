@@ -472,6 +472,7 @@ export const getAutomationsByIdRunsQueryParams = zod.object({
 
 
 
+
 export const getAutomationsByIdRunsResponse = zod.object({
   "total": zod.int(),
   "items": zod.array(zod.object({
@@ -484,6 +485,7 @@ export const getAutomationsByIdRunsResponse = zod.object({
   "initiatedBy": zod.string().min(1),
   "correlationId": zod.string().nullish(),
   "error": zod.string().nullish(),
+  "triggerAlias": zod.string().nullish(),
   "stepRuns": zod.array(zod.object({
   "id": zod.guid(),
   "stepId": zod.guid(),
@@ -493,7 +495,15 @@ export const getAutomationsByIdRunsResponse = zod.object({
   "completedUtc": zod.iso.datetime({"local":true,"offset":true}).nullish(),
   "error": zod.string().nullish(),
   "retryCount": zod.int(),
-  "durationMs": zod.number().nullish()
+  "durationMs": zod.number().nullish(),
+  "branchOutcome": zod.string().nullish(),
+  "iterationIndex": zod.int().nullish(),
+  "iterationTotal": zod.int().nullish(),
+  "logEntries": zod.array(zod.object({
+  "timestampUtc": zod.iso.datetime({"local":true,"offset":true}),
+  "level": zod.enum(['Debug', 'Info', 'Warning', 'Error']),
+  "message": zod.string().min(1)
+}))
 }))
 }))
 })
@@ -705,6 +715,8 @@ export const getCatalogueActionsQueryParams = zod.object({
 
 
 
+
+
 export const getCatalogueActionsResponseItem = zod.object({
   "alias": zod.string().min(1),
   "name": zod.string().min(1),
@@ -717,6 +729,7 @@ export const getCatalogueActionsResponseItem = zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
+  "valueKind": zod.enum(['String', 'Scalar', 'Collection']),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
   "defaultValue": zod.unknown().nullish(),
@@ -724,11 +737,22 @@ export const getCatalogueActionsResponseItem = zod.object({
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
-  "supportsBindings": zod.boolean()
+  "supportsBindings": zod.boolean(),
+  "visibleWhen": zod.object({
+  "key": zod.string(),
+  "values": zod.array(zod.string())
+}).nullish()
 }))
 }).nullish(),
   "outputSchema": zod.record(zod.string(), zod.unknown().nullable()).nullish(),
   "hasDynamicOutputSchema": zod.boolean(),
+  "outcomes": zod.array(zod.object({
+  "key": zod.string().min(1),
+  "label": zod.string().min(1),
+  "isDefault": zod.boolean(),
+  "description": zod.string().nullish()
+})),
+  "hasDynamicOutcomes": zod.boolean(),
   "type": zod.string().min(1)
 })
 export const getCatalogueActionsResponse = zod.array(getCatalogueActionsResponseItem)
@@ -750,6 +774,7 @@ export const getCatalogueConnectionTypesResponseItem = zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
+  "valueKind": zod.enum(['String', 'Scalar', 'Collection']),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
   "defaultValue": zod.unknown().nullish(),
@@ -757,11 +782,17 @@ export const getCatalogueConnectionTypesResponseItem = zod.object({
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
-  "supportsBindings": zod.boolean()
+  "supportsBindings": zod.boolean(),
+  "visibleWhen": zod.object({
+  "key": zod.string(),
+  "values": zod.array(zod.string())
+}).nullish()
 }))
 }).nullish()
 })
 export const getCatalogueConnectionTypesResponse = zod.array(getCatalogueConnectionTypesResponseItem)
+
+
 
 
 
@@ -782,6 +813,7 @@ export const getCatalogueControlFlowsResponseItem = zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
+  "valueKind": zod.enum(['String', 'Scalar', 'Collection']),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
   "defaultValue": zod.unknown().nullish(),
@@ -789,11 +821,22 @@ export const getCatalogueControlFlowsResponseItem = zod.object({
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
-  "supportsBindings": zod.boolean()
+  "supportsBindings": zod.boolean(),
+  "visibleWhen": zod.object({
+  "key": zod.string(),
+  "values": zod.array(zod.string())
+}).nullish()
 }))
 }).nullish(),
   "outputSchema": zod.record(zod.string(), zod.unknown().nullable()).nullish(),
   "hasDynamicOutputSchema": zod.boolean(),
+  "outcomes": zod.array(zod.object({
+  "key": zod.string().min(1),
+  "label": zod.string().min(1),
+  "isDefault": zod.boolean(),
+  "description": zod.string().nullish()
+})),
+  "hasDynamicOutcomes": zod.boolean(),
   "type": zod.string().min(1)
 })
 export const getCatalogueControlFlowsResponse = zod.array(getCatalogueControlFlowsResponseItem)
@@ -814,6 +857,7 @@ export const getCatalogueNotificationChannelsResponseItem = zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
+  "valueKind": zod.enum(['String', 'Scalar', 'Collection']),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
   "defaultValue": zod.unknown().nullish(),
@@ -821,7 +865,11 @@ export const getCatalogueNotificationChannelsResponseItem = zod.object({
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
-  "supportsBindings": zod.boolean()
+  "supportsBindings": zod.boolean(),
+  "visibleWhen": zod.object({
+  "key": zod.string(),
+  "values": zod.array(zod.string())
+}).nullish()
 }))
 }).nullish()
 })
@@ -831,6 +879,8 @@ export const getCatalogueNotificationChannelsResponse = zod.array(getCatalogueNo
 export const getCatalogueStepTypesQueryParams = zod.object({
   "type": zod.string().optional()
 })
+
+
 
 
 
@@ -850,6 +900,7 @@ export const getCatalogueStepTypesResponseItem = zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
+  "valueKind": zod.enum(['String', 'Scalar', 'Collection']),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
   "defaultValue": zod.unknown().nullish(),
@@ -857,14 +908,46 @@ export const getCatalogueStepTypesResponseItem = zod.object({
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
-  "supportsBindings": zod.boolean()
+  "supportsBindings": zod.boolean(),
+  "visibleWhen": zod.object({
+  "key": zod.string(),
+  "values": zod.array(zod.string())
+}).nullish()
 }))
 }).nullish(),
   "outputSchema": zod.record(zod.string(), zod.unknown().nullable()).nullish(),
   "hasDynamicOutputSchema": zod.boolean(),
+  "outcomes": zod.array(zod.object({
+  "key": zod.string().min(1),
+  "label": zod.string().min(1),
+  "isDefault": zod.boolean(),
+  "description": zod.string().nullish()
+})),
+  "hasDynamicOutcomes": zod.boolean(),
   "type": zod.string().min(1)
 })
 export const getCatalogueStepTypesResponse = zod.array(getCatalogueStepTypesResponseItem)
+
+
+export const postCatalogueStepTypesByAliasOutcomesParams = zod.object({
+  "alias": zod.string()
+})
+
+export const postCatalogueStepTypesByAliasOutcomesBody = zod.object({
+  "settings": zod.record(zod.string(), zod.unknown().nullable())
+})
+
+
+
+
+
+export const postCatalogueStepTypesByAliasOutcomesResponseItem = zod.object({
+  "key": zod.string().min(1),
+  "label": zod.string().min(1),
+  "isDefault": zod.boolean(),
+  "description": zod.string().nullish()
+})
+export const postCatalogueStepTypesByAliasOutcomesResponse = zod.array(postCatalogueStepTypesByAliasOutcomesResponseItem)
 
 
 export const postCatalogueStepTypesByAliasOutputSchemaParams = zod.object({
@@ -888,6 +971,8 @@ export const getCatalogueTriggersQueryParams = zod.object({
 
 
 
+
+
 export const getCatalogueTriggersResponseItem = zod.object({
   "alias": zod.string().min(1),
   "name": zod.string().min(1),
@@ -900,6 +985,7 @@ export const getCatalogueTriggersResponseItem = zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
+  "valueKind": zod.enum(['String', 'Scalar', 'Collection']),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
   "defaultValue": zod.unknown().nullish(),
@@ -907,11 +993,22 @@ export const getCatalogueTriggersResponseItem = zod.object({
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
-  "supportsBindings": zod.boolean()
+  "supportsBindings": zod.boolean(),
+  "visibleWhen": zod.object({
+  "key": zod.string(),
+  "values": zod.array(zod.string())
+}).nullish()
 }))
 }).nullish(),
   "outputSchema": zod.record(zod.string(), zod.unknown().nullable()).nullish(),
   "hasDynamicOutputSchema": zod.boolean(),
+  "outcomes": zod.array(zod.object({
+  "key": zod.string().min(1),
+  "label": zod.string().min(1),
+  "isDefault": zod.boolean(),
+  "description": zod.string().nullish()
+})),
+  "hasDynamicOutcomes": zod.boolean(),
   "type": zod.string().min(1),
   "supportsManualRun": zod.boolean()
 })
@@ -932,6 +1029,7 @@ export const getCatalogueWebhookAuthenticatorsResponseItem = zod.object({
   "key": zod.string().min(1),
   "label": zod.string(),
   "description": zod.string().nullish(),
+  "valueKind": zod.enum(['String', 'Scalar', 'Collection']),
   "editorUiAlias": zod.string().nullish(),
   "editorConfig": zod.string().nullish(),
   "defaultValue": zod.unknown().nullish(),
@@ -939,7 +1037,11 @@ export const getCatalogueWebhookAuthenticatorsResponseItem = zod.object({
   "isSensitive": zod.boolean(),
   "isRequired": zod.boolean(),
   "group": zod.string().nullish(),
-  "supportsBindings": zod.boolean()
+  "supportsBindings": zod.boolean(),
+  "visibleWhen": zod.object({
+  "key": zod.string(),
+  "values": zod.array(zod.string())
+}).nullish()
 }))
 }).nullish()
 })
@@ -1127,6 +1229,7 @@ export const getRunsByIdParams = zod.object({
 
 
 
+
 export const getRunsByIdResponse = zod.object({
   "id": zod.guid(),
   "automationId": zod.guid(),
@@ -1137,6 +1240,7 @@ export const getRunsByIdResponse = zod.object({
   "initiatedBy": zod.string().min(1),
   "correlationId": zod.string().nullish(),
   "error": zod.string().nullish(),
+  "triggerAlias": zod.string().nullish(),
   "stepRuns": zod.array(zod.object({
   "id": zod.guid(),
   "stepId": zod.guid(),
@@ -1146,7 +1250,15 @@ export const getRunsByIdResponse = zod.object({
   "completedUtc": zod.iso.datetime({"local":true,"offset":true}).nullish(),
   "error": zod.string().nullish(),
   "retryCount": zod.int(),
-  "durationMs": zod.number().nullish()
+  "durationMs": zod.number().nullish(),
+  "branchOutcome": zod.string().nullish(),
+  "iterationIndex": zod.int().nullish(),
+  "iterationTotal": zod.int().nullish(),
+  "logEntries": zod.array(zod.object({
+  "timestampUtc": zod.iso.datetime({"local":true,"offset":true}),
+  "level": zod.enum(['Debug', 'Info', 'Warning', 'Error']),
+  "message": zod.string().min(1)
+}))
 }))
 })
 
@@ -1165,6 +1277,19 @@ export const postRunsByIdResumeParams = zod.object({
 export const postRunsByIdResumeResponse = zod.void()
 
 
+export const getRunsByIdStepRunsByStepRunIdDataParams = zod.object({
+  "id": zod.guid(),
+  "stepRunId": zod.guid()
+})
+
+export const getRunsByIdStepRunsByStepRunIdDataResponse = zod.object({
+  "input": zod.string().nullish(),
+  "inputTruncated": zod.boolean(),
+  "output": zod.string().nullish(),
+  "outputTruncated": zod.boolean()
+})
+
+
 export const postRunsByIdSuspendParams = zod.object({
   "id": zod.guid()
 })
@@ -1177,6 +1302,16 @@ export const postRunsByIdTerminateParams = zod.object({
 })
 
 export const postRunsByIdTerminateResponse = zod.void()
+
+
+export const getRunsByIdTriggerDataParams = zod.object({
+  "id": zod.guid()
+})
+
+export const getRunsByIdTriggerDataResponse = zod.object({
+  "triggerData": zod.string().nullish(),
+  "triggerDataTruncated": zod.boolean()
+})
 
 
 export const getVersionHistoryByEntityTypeByEntityIdParams = zod.object({
