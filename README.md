@@ -7,6 +7,10 @@ back to earlier versions — 62 Automate tools across 8 collections, plus a serv
 
 Built on [`@umbraco-cms/mcp-server-sdk`](https://www.npmjs.com/package/@umbraco-cms/mcp-server-sdk).
 
+> **Renamed:** this package was previously published as `@umbraco-automate/mcp-dev`. If your MCP
+> client config still names it, change it to `@umbraco-automate/mcp` (Umbraco 18) or
+> `@umbraco-automate/mcp@lts-17-beta` (Umbraco 17). The command (`automate-mcp-server`) is unchanged.
+
 ## Requirements
 
 - **Node.js 22.23.4+, 24.22.1+ or 26.12.1+**. Earlier releases are affected by [CVE-2026-111497](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases) (Brotli decoder out-of-bounds write), which Node's built-in `fetch` reaches when it decompresses a Brotli response from Umbraco. Upgrading Node.js is the only fix.
@@ -114,6 +118,10 @@ UMBRACO_BASE_URL=... UMBRACO_CLIENT_ID=... UMBRACO_CLIENT_SECRET=... \
 
 Every option is an environment variable, and most also have a CLI flag (`--help` lists them).
 
+CLI flags win over environment variables, and environment variables (including your MCP
+client's `env` block) win over a `.env` file in the working directory. A file passed with
+`--env <path>` overrides both the environment and `./.env`.
+
 ### Connection
 
 | Variable | Required | Purpose |
@@ -135,7 +143,7 @@ Every option is an environment variable, and most also have a CLI flag (`--help`
 | `UMBRACO_INCLUDE_TOOLS` / `UMBRACO_EXCLUDE_TOOLS` | Individual tools by name |
 | `UMBRACO_INCLUDE_SLICES` / `UMBRACO_EXCLUDE_SLICES` | By operation type, e.g. `delete` |
 | `UMBRACO_READONLY` | Block every write operation |
-| `UMBRACO_DRY_RUN` | Log writes instead of performing them |
+| `UMBRACO_DRY_RUN` | Log writes instead of performing them; write tools return a preview instead of their normal result |
 
 Available modes:
 
@@ -199,6 +207,7 @@ Set `DISABLE_MCP_CHAINING=true` to turn this off and run Automate tools only.
 | Version mismatch warning, first tool call blocked | Instance isn't Umbraco 17 — use `@umbraco-automate/mcp` 18.x for Umbraco 18, or set `UMBRACO_EXPECTED_MAJOR` |
 | `404` on Automate tools | Umbraco Automate isn't installed on the instance |
 | A tool you expected isn't listed | Check `UMBRACO_TOOL_MODES` and the include/exclude variables with `--debug-config` |
+| A value in `.env` seems to be ignored | The same variable is also set in your MCP client's `env` block or your shell, and that wins over `./.env`. Remove one of them, or pass the file with `--env <path>` |
 
 ## Contributing
 
