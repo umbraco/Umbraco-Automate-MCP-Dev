@@ -56,6 +56,49 @@ describe("create-automation", () => {
     expect(createSnapshotResult(result, createdId)).toMatchSnapshot();
   });
 
+  // SDK 1.0.0-beta.47 ran URL checks on every input string and rejected '?' / '&' / '%'
+  // in free text; beta.48 (Umbraco-MCP-Base#456) only checks the request path.
+  it("should accept '?', '&' and '%' in the name and description", async () => {
+    const context = createMockRequestHandlerExtra();
+    const name = "_Test Q&A? Create";
+    const description = "Runs when? Joost & Co publish 50% of pages";
+
+    const result = await createAutomationTool.handler(
+      {
+        alias: TEST_ALIAS,
+        name,
+        description,
+        workspaceId: workspace.getId(),
+        groupId: undefined,
+      },
+      context,
+    );
+
+    expect(result.isError).toBeFalsy();
+    createdId = (result.structuredContent as { id: string } | undefined)?.id;
+    const stored = await AutomationTestHelper.findByAlias(TEST_ALIAS);
+    expect({ name: stored?.name, description: stored?.description }).toEqual({ name, description });
+  });
+
+  it("should still reject control characters in the description", async () => {
+    const context = createMockRequestHandlerExtra();
+
+    const result = await createAutomationTool.handler(
+      {
+        alias: TEST_ALIAS,
+        name: "_Test Create Automation",
+        description: "line one\u0000line two",
+        workspaceId: workspace.getId(),
+        groupId: undefined,
+      },
+      context,
+    );
+
+    expect(result.isError).toBe(true);
+    expect(JSON.stringify(result.content)).toMatch(/control character/i);
+    expect(await AutomationTestHelper.findByAlias(TEST_ALIAS)).toBeUndefined();
+  });
+
   it("should return an error when the alias already exists", async () => {
     const context = createMockRequestHandlerExtra();
 

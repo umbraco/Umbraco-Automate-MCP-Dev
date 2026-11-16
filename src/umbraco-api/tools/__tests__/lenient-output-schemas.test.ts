@@ -2,6 +2,8 @@ import { McpServer, type ToolCallback } from "@modelcontextprotocol/sdk/server/m
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import {
+  configureDryRunMode,
+  getRegisteredOutputSchema,
   useDraft202012ToolSchemas,
   type ToolCollectionExport,
   type ToolDefinition,
@@ -61,7 +63,11 @@ async function connect(collection: ToolCollectionExport, payload: unknown = {}) 
   for (const tool of toolsOf(collection)) {
     server.registerTool(
       tool.name,
-      { description: tool.description, inputSchema: tool.inputSchema, outputSchema: tool.outputSchema },
+      {
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        outputSchema: getRegisteredOutputSchema(tool),
+      },
       (async () => ({
         content: [{ type: "text", text: JSON.stringify(payload) }],
         structuredContent: payload,
@@ -169,6 +175,22 @@ describe("withLenientOutputSchemas", () => {
     expect((webhookUrl?.outputSchema?.properties as any)?.note?.description).toBe(
       "Present when the URL was derived rather than reported by Umbraco.",
     );
+  });
+
+  it("should keep dry-run hiding mutation tools' output schemas", async () => {
+    // getRegisteredOutputSchema reads the marker withDryRun sets on the tool;
+    // the lenient copy must carry it over.
+    configureDryRunMode(true);
+    try {
+      const { client, tools } = await connect(withLenientOutputSchemas(automationsCollection));
+      await client.close();
+
+      const byName = (name: string) => tools.find((t) => t.name === name);
+      expect(byName("create-automation")?.outputSchema).toBeUndefined();
+      expect(byName("get-automation-webhook-url")?.outputSchema).toBeDefined();
+    } finally {
+      configureDryRunMode(false);
+    }
   });
 
   it("should not change the tool definitions it wraps", () => {
