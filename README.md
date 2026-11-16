@@ -9,7 +9,7 @@ Built on [`@umbraco-cms/mcp-server-sdk`](https://www.npmjs.com/package/@umbraco-
 
 > **Renamed:** this package was previously published as `@umbraco-automate/mcp-dev`. If your MCP
 > client config still names it, change it to `@umbraco-automate/mcp` (Umbraco 18) or
-> `@umbraco-automate/mcp@lts-17-beta` (Umbraco 17). The command (`automate-mcp-server`) is unchanged.
+> `@umbraco-automate/mcp@lts-17` (Umbraco 17). The command (`automate-mcp-server`) is unchanged.
 
 ## Requirements
 
@@ -26,13 +26,12 @@ what you're doing.
 | Umbraco | Umbraco Automate | Package |
 |---------|------------------|---------|
 | **18** | **18.x** | **`@umbraco-automate/mcp`** |
-| 17 | 17.x | `@umbraco-automate/mcp@lts-17-beta` |
+| 17 | 17.x | `@umbraco-automate/mcp@lts-17` |
 
 Install the version that matches your site's Umbraco major — the API client and the version check
 differ between them.
 
-The Umbraco 17 line is in beta and published under the `lts-17-beta` dist-tag. A range such as
-`@17` doesn't match prereleases and won't find a version until 17.0.0 is released.
+The Umbraco 17 line is published under the `lts-17` dist-tag, so it never takes over `latest`.
 
 Every Automate 18.x release works. A few features arrived partway through the line (18.N ships the
 same features as 17.N); on older versions the tools refuse them with a clear message, or fall back:
@@ -202,7 +201,7 @@ Set `DISABLE_MCP_CHAINING=true` to turn this off and run Automate tools only.
 |---------|--------------|
 | `401` on every tool | Wrong `UMBRACO_CLIENT_ID` / `UMBRACO_CLIENT_SECRET`, or the API user lacks permissions |
 | Self-signed certificate errors | Local HTTPS instance — set `NODE_TLS_REJECT_UNAUTHORIZED=0` |
-| Version mismatch warning, first tool call blocked | Instance isn't Umbraco 18 — use `@umbraco-automate/mcp@lts-17-beta` for Umbraco 17, or set `UMBRACO_EXPECTED_MAJOR` |
+| Version mismatch warning, first tool call blocked | Instance isn't Umbraco 18 — use `@umbraco-automate/mcp@lts-17` for Umbraco 17, or set `UMBRACO_EXPECTED_MAJOR` |
 | `404` on Automate tools | Umbraco Automate isn't installed on the instance |
 | A tool you expected isn't listed | Check `UMBRACO_TOOL_MODES` and the include/exclude variables with `--debug-config` |
 | A value in `.env` seems to be ignored | The same variable is also set in your MCP client's `env` block or your shell, and that wins over `./.env`. Remove one of them, or pass the file with `--env <path>` |
