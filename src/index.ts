@@ -28,6 +28,7 @@ import {
   CAPTURE_RAW_HTTP_RESPONSE,
   SERVER_INFORMATION_PATH,
   useDraft202012ToolSchemas,
+  getRegisteredOutputSchema,
   type CollectionConfiguration,
   type HttpResponse,
 } from "@umbraco-cms/mcp-server-sdk";
@@ -75,8 +76,9 @@ configureApiClient(() => getUmbracoAutomateManagementAPI());
 // Clear config cache to ensure fresh config for each server start
 clearConfigCache();
 
-// Captured before loadServerConfig: it re-reads ./.env with `override: true`, which would
-// otherwise let a .env in the working directory beat variables the MCP client passed in.
+// Captured before loadServerConfig, so variables the MCP client passed in win over a .env in
+// the working directory. SDK 1.0.0-beta.48 no longer lets ./.env override them either
+// (Umbraco-MCP-Base#410; only an explicit --env file does), so this guards older SDKs only.
 const startupAuth = {
   baseUrl: process.env.UMBRACO_BASE_URL,
   clientId: process.env.UMBRACO_CLIENT_ID,
@@ -248,7 +250,9 @@ for (const collection of collections) {
     server.registerTool(tool.name, {
       description: tool.description,
       inputSchema: tool.inputSchema,
-      outputSchema: tool.outputSchema,
+      // In dry-run, a mutation tool returns a preview rather than its real
+      // result, so its outputSchema must not be advertised (or enforced).
+      outputSchema: getRegisteredOutputSchema(tool),
       annotations,
     }, tool.handler as ToolCallback<typeof tool.inputSchema>);
 

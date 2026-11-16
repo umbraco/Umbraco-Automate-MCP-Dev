@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 
 ## Overview
 
-`@umbraco-automate/mcp-dev` - an MCP server for Umbraco Automate, built on `@umbraco-cms/mcp-server-sdk`
+`@umbraco-automate/mcp` - an MCP server for Umbraco Automate, built on `@umbraco-cms/mcp-server-sdk`
 and published to npm. User-facing docs are in `README.md`; repo setup is in `CONTRIBUTING.md`.
 
 ## Umbraco 17 line (`v17/main`, `v17/dev`)
@@ -24,7 +24,7 @@ Mirrors the Umbraco CMS MCP's `v17/*` branches:
   (3.1) and `/umbraco/openapi/oauth2-redirect.html`.
 - `orval.config.ts` reads the spec from `UMBRACO_BASE_URL`, the same instance the target-major
   transformer queries, so `npm run generate` can't mix one install's spec with another's version.
-- The demo site is Umbraco.Cms 17.7.0, Umbraco.Automate 17.4.0, Clean 7.0.8. Give it its own database
+- The demo site is Umbraco.Cms 17.7.0, Umbraco.Automate 17.6.0, Clean 7.0.8. Give it its own database
   (e.g. `UmbracoDbV17`) - Umbraco can't migrate down, so never point it at a database a v18 site has
   used. To run it beside a v18 site, start it on other ports (e.g. 44321/52269).
 
@@ -50,7 +50,9 @@ The other direction is handled for you: `withLenientOutputSchemas` (`tools/lenie
 applied in `src/index.ts` and `src/collections.ts`) opens every object in every output schema to
 unknown keys. A field a *newer* Automate adds to a response (e.g. 17.5's `visibleWhen` on settings
 fields) passes through instead of failing client-side validation, while known fields keep their
-types and required/optional state. A field the tools rely on still needs a minimum in the table.
+types and required/optional state - except the fields in `FIELDS_NEWER_AUTOMATE_ADDED`: the
+generated client marks them required, but Automate releases before 17.6 / 18.6 don't send them, so
+they are made optional. A field the tools rely on still needs a minimum in the table.
 
 Check new tools through a real MCP client, not only their handler tests: handler tests skip the
 server's output-schema validation (Umbraco 17's spec turns some responses into `z.record`, which is
@@ -191,7 +193,7 @@ Integration tests require an API user in Umbraco. **You must create this manuall
 `npm run build` runs `umbraco-mcp-generate-types` as a `postbuild` step. This walks the compiled `dist/collections.js`, runs every tool's input/output Zod schema through codegen, and writes a typed registry to `dist/tool-types.d.ts`. The `./tool-types` subpath in `package.json#exports` makes this importable by anyone who depends on this package and wants to chain to it with type safety:
 
 ```ts
-import type { McpDevTools } from "@umbraco-automate/mcp-dev/tool-types";
+import type { McpDevTools } from "@umbraco-automate/mcp/tool-types";
 ```
 
 If your MCP is private/internal and no other MCP will chain to it, you can remove the `postbuild` script and the `./tool-types` export — neither is required for the server to run.

@@ -14,6 +14,7 @@ exports[`get-run-by-id should return the full detail of a run by id, including i
     "startedUtc": "NORMALIZED_DATE",
     "status": "Running",
     "stepRuns": [],
+    "triggerAlias": "umbracoAutomate.manual",
   },
 }
 `;

@@ -1,4 +1,4 @@
-# @umbraco-automate/mcp-dev
+# @umbraco-automate/mcp
 
 An [MCP](https://modelcontextprotocol.io) server for **Umbraco Automate**. Point it at an Umbraco
 instance and your AI assistant can build and publish automations, wire up their steps and
@@ -6,6 +6,10 @@ triggers, manage connections and workspaces, inspect and control runs, handle ap
 back to earlier versions — 62 Automate tools across 8 collections, plus a server-info tool.
 
 Built on [`@umbraco-cms/mcp-server-sdk`](https://www.npmjs.com/package/@umbraco-cms/mcp-server-sdk).
+
+> **Renamed:** this package was previously published as `@umbraco-automate/mcp-dev`. If your MCP
+> client config still names it, change it to `@umbraco-automate/mcp` (Umbraco 18) or
+> `@umbraco-automate/mcp@lts-17-beta` (Umbraco 17). The command (`automate-mcp-server`) is unchanged.
 
 ## Requirements
 
@@ -21,8 +25,8 @@ what you're doing.
 
 | Umbraco | Umbraco Automate | Package |
 |---------|------------------|---------|
-| 18 | 18.x | `@umbraco-automate/mcp-dev` (18.x) |
-| **17** | **17.x** | **`@umbraco-automate/mcp-dev@lts-17-beta`** |
+| 18 | 18.x | `@umbraco-automate/mcp` (18.x) |
+| **17** | **17.x** | **`@umbraco-automate/mcp@lts-17-beta`** |
 
 Install the version that matches your site's Umbraco major — the API client and the version check
 differ between them.
@@ -63,7 +67,7 @@ Add to your `.mcp.json` (or `claude_desktop_config.json`):
   "mcpServers": {
     "umbraco-automate": {
       "command": "npx",
-      "args": ["-y", "@umbraco-automate/mcp-dev@lts-17-beta"],
+      "args": ["-y", "@umbraco-automate/mcp@lts-17-beta"],
       "env": {
         "UMBRACO_BASE_URL": "https://your-site.example.com",
         "UMBRACO_CLIENT_ID": "your-client-id",
@@ -84,7 +88,7 @@ The server speaks MCP over stdio. Run it however your client spawns servers:
 UMBRACO_BASE_URL=https://your-site.example.com \
 UMBRACO_CLIENT_ID=your-client-id \
 UMBRACO_CLIENT_SECRET=your-client-secret \
-npx -y @umbraco-automate/mcp-dev@lts-17-beta
+npx -y @umbraco-automate/mcp@lts-17-beta
 ```
 
 ### Local Umbraco with a self-signed certificate
@@ -98,14 +102,14 @@ Without wiring up a client:
 
 ```bash
 # List every tool this server exposes
-npx -y @umbraco-automate/mcp-dev@lts-17-beta --list-tools
+npx -y @umbraco-automate/mcp@lts-17-beta --list-tools
 
 # Show resolved configuration and where each value came from
-npx -y @umbraco-automate/mcp-dev@lts-17-beta --debug-config
+npx -y @umbraco-automate/mcp@lts-17-beta --debug-config
 
 # Call a tool directly
 UMBRACO_BASE_URL=... UMBRACO_CLIENT_ID=... UMBRACO_CLIENT_SECRET=... \
-  npx -y @umbraco-automate/mcp-dev@lts-17-beta --call list-automations --call-args '{}'
+  npx -y @umbraco-automate/mcp@lts-17-beta --call list-automations --call-args '{}'
 ```
 
 `--describe-tool <name>` prints a single tool's full input schema.
@@ -113,6 +117,10 @@ UMBRACO_BASE_URL=... UMBRACO_CLIENT_ID=... UMBRACO_CLIENT_SECRET=... \
 ## Configuration
 
 Every option is an environment variable, and most also have a CLI flag (`--help` lists them).
+
+CLI flags win over environment variables, and environment variables (including your MCP
+client's `env` block) win over a `.env` file in the working directory. A file passed with
+`--env <path>` overrides both the environment and `./.env`.
 
 ### Connection
 
@@ -135,7 +143,7 @@ Every option is an environment variable, and most also have a CLI flag (`--help`
 | `UMBRACO_INCLUDE_TOOLS` / `UMBRACO_EXCLUDE_TOOLS` | Individual tools by name |
 | `UMBRACO_INCLUDE_SLICES` / `UMBRACO_EXCLUDE_SLICES` | By operation type, e.g. `delete` |
 | `UMBRACO_READONLY` | Block every write operation |
-| `UMBRACO_DRY_RUN` | Log writes instead of performing them |
+| `UMBRACO_DRY_RUN` | Log writes instead of performing them; write tools return a preview instead of their normal result |
 
 Available modes:
 
@@ -196,9 +204,10 @@ Set `DISABLE_MCP_CHAINING=true` to turn this off and run Automate tools only.
 |---------|--------------|
 | `401` on every tool | Wrong `UMBRACO_CLIENT_ID` / `UMBRACO_CLIENT_SECRET`, or the API user lacks permissions |
 | Self-signed certificate errors | Local HTTPS instance — set `NODE_TLS_REJECT_UNAUTHORIZED=0` |
-| Version mismatch warning, first tool call blocked | Instance isn't Umbraco 17 — use `@umbraco-automate/mcp-dev` 18.x for Umbraco 18, or set `UMBRACO_EXPECTED_MAJOR` |
+| Version mismatch warning, first tool call blocked | Instance isn't Umbraco 17 — use `@umbraco-automate/mcp` 18.x for Umbraco 18, or set `UMBRACO_EXPECTED_MAJOR` |
 | `404` on Automate tools | Umbraco Automate isn't installed on the instance |
 | A tool you expected isn't listed | Check `UMBRACO_TOOL_MODES` and the include/exclude variables with `--debug-config` |
+| A value in `.env` seems to be ignored | The same variable is also set in your MCP client's `env` block or your shell, and that wins over `./.env`. Remove one of them, or pass the file with `--env <path>` |
 
 ## Contributing
 
