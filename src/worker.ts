@@ -176,6 +176,11 @@ export class UmbracoMcpAgent extends McpAgent<HostedMcpEnv, unknown, AuthProps> 
   server!: McpServer;
 
   async init() {
+    // `createPerRequestServer` throws `UmbracoSignInUnavailableError` when this
+    // session has no usable Umbraco sign-in (it no longer returns a degraded
+    // `authentication-expired` server). That fails the Durable Object's start;
+    // `createSiteRoutingApiHandler` (below) then answers `401 invalid_token`,
+    // which sends the client back to sign-in.
     this.server = await createPerRequestServer(
       serverOptions,
       this.env,
@@ -236,6 +241,8 @@ const provider = new OAuthProvider({
   authorizeEndpoint: "/authorize",
   tokenEndpoint: "/token",
   clientRegistrationEndpoint: "/register",
+  // Advertise and accept S256 only (the hosted authorize handler also enforces it).
+  allowPlainPKCE: false,
 });
 
 export default createWorkerExport(provider, options);

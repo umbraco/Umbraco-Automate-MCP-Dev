@@ -11,12 +11,27 @@ import { customInstance } from '../client.js';
  */
 export type ActionItemResponseModelOutputSchema = null | { [key: string]: unknown };
 
+export type EditableModelValueKindModel = typeof EditableModelValueKindModel[keyof typeof EditableModelValueKindModel];
+
+
+export const EditableModelValueKindModel = {
+  String: 'String',
+  Scalar: 'Scalar',
+  Collection: 'Collection',
+} as const;
+
+export interface EditableModelFieldVisibilityModel {
+  key: string;
+  values: string[];
+}
+
 export interface EditableModelFieldDescriptorModel {
   /** @minLength 1 */
   key: string;
   label: string;
   /** @nullable */
   description?: string | null;
+  valueKind: EditableModelValueKindModel;
   /** @nullable */
   editorUiAlias?: string | null;
   /** @nullable */
@@ -28,10 +43,21 @@ export interface EditableModelFieldDescriptorModel {
   /** @nullable */
   group?: string | null;
   supportsBindings: boolean;
+  visibleWhen?: null | EditableModelFieldVisibilityModel;
 }
 
 export interface EditableModelSchemaModel {
   fields: EditableModelFieldDescriptorModel[];
+}
+
+export interface StepOutcomeResponseModel {
+  /** @minLength 1 */
+  key: string;
+  /** @minLength 1 */
+  label: string;
+  isDefault: boolean;
+  /** @nullable */
+  description?: string | null;
 }
 
 export interface ActionItemResponseModel {
@@ -51,9 +77,21 @@ export interface ActionItemResponseModel {
   /** @nullable */
   outputSchema?: ActionItemResponseModelOutputSchema;
   hasDynamicOutputSchema: boolean;
+  outcomes: StepOutcomeResponseModel[];
+  hasDynamicOutcomes: boolean;
   /** @minLength 1 */
   type: string;
 }
+
+export type ActionLogLevelModel = typeof ActionLogLevelModel[keyof typeof ActionLogLevelModel];
+
+
+export const ActionLogLevelModel = {
+  Debug: 'Debug',
+  Info: 'Info',
+  Warning: 'Warning',
+  Error: 'Error',
+} as const;
 
 export type ApprovalOutcomeModel = typeof ApprovalOutcomeModel[keyof typeof ApprovalOutcomeModel];
 
@@ -397,6 +435,13 @@ export const StepRunStatusModel = {
   Cancelled: 'Cancelled',
 } as const;
 
+export interface StepRunLogEntryResponseModel {
+  timestampUtc: string;
+  level: ActionLogLevelModel;
+  /** @minLength 1 */
+  message: string;
+}
+
 export interface StepRunResponseModel {
   id: string;
   stepId: string;
@@ -412,6 +457,13 @@ export interface StepRunResponseModel {
   retryCount: number;
   /** @nullable */
   durationMs?: number | null;
+  /** @nullable */
+  branchOutcome?: string | null;
+  /** @nullable */
+  iterationIndex?: number | null;
+  /** @nullable */
+  iterationTotal?: number | null;
+  logEntries: StepRunLogEntryResponseModel[];
 }
 
 export interface AutomationRunResponseModel {
@@ -429,6 +481,8 @@ export interface AutomationRunResponseModel {
   correlationId?: string | null;
   /** @nullable */
   error?: string | null;
+  /** @nullable */
+  triggerAlias?: string | null;
   stepRuns: StepRunResponseModel[];
 }
 
@@ -513,6 +567,8 @@ export interface ControlFlowItemResponseModel {
   /** @nullable */
   outputSchema?: ControlFlowItemResponseModelOutputSchema;
   hasDynamicOutputSchema: boolean;
+  outcomes: StepOutcomeResponseModel[];
+  hasDynamicOutcomes: boolean;
   /** @minLength 1 */
   type: string;
 }
@@ -677,6 +733,12 @@ export interface ProblemDetails {
   instance?: string | null;
 }
 
+export type ResolveOutcomesRequestModelSettings = { [key: string]: unknown };
+
+export interface ResolveOutcomesRequestModel {
+  settings: ResolveOutcomesRequestModelSettings;
+}
+
 export type ResolveOutputSchemaRequestModelSettings = { [key: string]: unknown };
 
 export interface ResolveOutputSchemaRequestModel {
@@ -689,6 +751,21 @@ export interface RunSummaryModel {
   totalRuns: number;
   byStatus: RunSummaryModelByStatus;
   successRate: number;
+}
+
+export interface RunTriggerDataResponseModel {
+  /** @nullable */
+  triggerData?: string | null;
+  triggerDataTruncated: boolean;
+}
+
+export interface StepRunDataResponseModel {
+  /** @nullable */
+  input?: string | null;
+  inputTruncated: boolean;
+  /** @nullable */
+  output?: string | null;
+  outputTruncated: boolean;
 }
 
 /**
@@ -713,6 +790,8 @@ export interface StepTypeItemResponseModel {
   /** @nullable */
   outputSchema?: StepTypeItemResponseModelOutputSchema;
   hasDynamicOutputSchema: boolean;
+  outcomes: StepOutcomeResponseModel[];
+  hasDynamicOutcomes: boolean;
   /** @minLength 1 */
   type: string;
 }
@@ -740,6 +819,8 @@ export interface TriggerItemResponseModel {
   /** @nullable */
   outputSchema?: TriggerItemResponseModelOutputSchema;
   hasDynamicOutputSchema: boolean;
+  outcomes: StepOutcomeResponseModel[];
+  hasDynamicOutcomes: boolean;
   /** @minLength 1 */
   type: string;
 }
@@ -1157,6 +1238,18 @@ const getCatalogueStepTypes = (
       options);
     }
 
+const postCatalogueStepTypesByAliasOutcomes = (
+    alias: string,
+    resolveOutcomesRequestModel: ResolveOutcomesRequestModel,
+ options?: SecondParameter<typeof customInstance<StepOutcomeResponseModel[]>>,) => {
+      return customInstance<StepOutcomeResponseModel[]>(
+      {url: `/umbraco/automate/management/api/v1/catalogue/step-types/${alias}/outcomes`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: resolveOutcomesRequestModel
+    },
+      options);
+    }
+
 const postCatalogueStepTypesByAliasOutputSchema = (
     alias: string,
     resolveOutputSchemaRequestModel: ResolveOutputSchemaRequestModel,
@@ -1305,6 +1398,16 @@ const postRunsByIdResume = (
       options);
     }
 
+const getRunsByIdStepRunsByStepRunIdData = (
+    id: string,
+    stepRunId: string,
+ options?: SecondParameter<typeof customInstance<StepRunDataResponseModel>>,) => {
+      return customInstance<StepRunDataResponseModel>(
+      {url: `/umbraco/automate/management/api/v1/runs/${id}/step-runs/${stepRunId}/data`, method: 'GET'
+    },
+      options);
+    }
+
 const postRunsByIdSuspend = (
     id: string,
  options?: SecondParameter<typeof customInstance<unknown>>,) => {
@@ -1319,6 +1422,15 @@ const postRunsByIdTerminate = (
  options?: SecondParameter<typeof customInstance<unknown>>,) => {
       return customInstance<unknown>(
       {url: `/umbraco/automate/management/api/v1/runs/${id}/terminate`, method: 'POST'
+    },
+      options);
+    }
+
+const getRunsByIdTriggerData = (
+    id: string,
+ options?: SecondParameter<typeof customInstance<RunTriggerDataResponseModel>>,) => {
+      return customInstance<RunTriggerDataResponseModel>(
+      {url: `/umbraco/automate/management/api/v1/runs/${id}/trigger-data`, method: 'GET'
     },
       options);
     }
@@ -1485,7 +1597,7 @@ const putWorkspacesByIdGroupsByGroupId = (
       options);
     }
 
-return {postApprovalsByRunIdStepsByStepIdDecision,getApprovalsPending,getAutomations,postAutomations,getAutomationsById,deleteAutomationsById,putAutomationsById,getAutomationsByIdAncestors,getAutomationsByIdExport,putAutomationsByIdImport,postAutomationsByIdPublish,postAutomationsByIdReEnable,getAutomationsByIdRuns,postAutomationsByIdTrigger,postAutomationsByIdUnpublish,getAutomationsByIdWebhookUrl,getAutomationsGroupsByGroupId,postAutomationsImport,postAutomationsImportValidate,getCatalogueActions,getCatalogueConnectionTypes,getCatalogueControlFlows,getCatalogueNotificationChannels,getCatalogueStepTypes,postCatalogueStepTypesByAliasOutputSchema,getCatalogueTriggers,getCatalogueWebhookAuthenticators,getConnections,postConnections,getConnectionsById,deleteConnectionsById,putConnectionsById,postConnectionsByIdTest,getMetrics,getMetricsByAutomation,getRuns,getRunsById,postRunsByIdReplay,postRunsByIdResume,postRunsByIdSuspend,postRunsByIdTerminate,getVersionHistoryByEntityTypeByEntityId,getVersionHistoryByEntityTypeByEntityIdByEntityVersion,postVersionHistoryByEntityTypeByEntityIdByEntityVersionRollback,getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersion,getVersionHistorySupportedTypes,getWorkspaces,postWorkspaces,getWorkspacesById,deleteWorkspacesById,putWorkspacesById,getWorkspacesByIdGroups,postWorkspacesByIdGroups,getWorkspacesByIdGroupsByGroupId,deleteWorkspacesByIdGroupsByGroupId,putWorkspacesByIdGroupsByGroupId}};
+return {postApprovalsByRunIdStepsByStepIdDecision,getApprovalsPending,getAutomations,postAutomations,getAutomationsById,deleteAutomationsById,putAutomationsById,getAutomationsByIdAncestors,getAutomationsByIdExport,putAutomationsByIdImport,postAutomationsByIdPublish,postAutomationsByIdReEnable,getAutomationsByIdRuns,postAutomationsByIdTrigger,postAutomationsByIdUnpublish,getAutomationsByIdWebhookUrl,getAutomationsGroupsByGroupId,postAutomationsImport,postAutomationsImportValidate,getCatalogueActions,getCatalogueConnectionTypes,getCatalogueControlFlows,getCatalogueNotificationChannels,getCatalogueStepTypes,postCatalogueStepTypesByAliasOutcomes,postCatalogueStepTypesByAliasOutputSchema,getCatalogueTriggers,getCatalogueWebhookAuthenticators,getConnections,postConnections,getConnectionsById,deleteConnectionsById,putConnectionsById,postConnectionsByIdTest,getMetrics,getMetricsByAutomation,getRuns,getRunsById,postRunsByIdReplay,postRunsByIdResume,getRunsByIdStepRunsByStepRunIdData,postRunsByIdSuspend,postRunsByIdTerminate,getRunsByIdTriggerData,getVersionHistoryByEntityTypeByEntityId,getVersionHistoryByEntityTypeByEntityIdByEntityVersion,postVersionHistoryByEntityTypeByEntityIdByEntityVersionRollback,getVersionHistoryByEntityTypeByEntityIdByFromEntityVersionCompareByToEntityVersion,getVersionHistorySupportedTypes,getWorkspaces,postWorkspaces,getWorkspacesById,deleteWorkspacesById,putWorkspacesById,getWorkspacesByIdGroups,postWorkspacesByIdGroups,getWorkspacesByIdGroupsByGroupId,deleteWorkspacesByIdGroupsByGroupId,putWorkspacesByIdGroupsByGroupId}};
 export type PostApprovalsByRunIdStepsByStepIdDecisionResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postApprovalsByRunIdStepsByStepIdDecision']>>>
 export type GetApprovalsPendingResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getApprovalsPending']>>>
 export type GetAutomationsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getAutomations']>>>
@@ -1510,6 +1622,7 @@ export type GetCatalogueConnectionTypesResult = NonNullable<Awaited<ReturnType<R
 export type GetCatalogueControlFlowsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getCatalogueControlFlows']>>>
 export type GetCatalogueNotificationChannelsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getCatalogueNotificationChannels']>>>
 export type GetCatalogueStepTypesResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getCatalogueStepTypes']>>>
+export type PostCatalogueStepTypesByAliasOutcomesResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postCatalogueStepTypesByAliasOutcomes']>>>
 export type PostCatalogueStepTypesByAliasOutputSchemaResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postCatalogueStepTypesByAliasOutputSchema']>>>
 export type GetCatalogueTriggersResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getCatalogueTriggers']>>>
 export type GetCatalogueWebhookAuthenticatorsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getCatalogueWebhookAuthenticators']>>>
@@ -1525,8 +1638,10 @@ export type GetRunsResult = NonNullable<Awaited<ReturnType<ReturnType<typeof get
 export type GetRunsByIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getRunsById']>>>
 export type PostRunsByIdReplayResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postRunsByIdReplay']>>>
 export type PostRunsByIdResumeResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postRunsByIdResume']>>>
+export type GetRunsByIdStepRunsByStepRunIdDataResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getRunsByIdStepRunsByStepRunIdData']>>>
 export type PostRunsByIdSuspendResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postRunsByIdSuspend']>>>
 export type PostRunsByIdTerminateResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postRunsByIdTerminate']>>>
+export type GetRunsByIdTriggerDataResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getRunsByIdTriggerData']>>>
 export type GetVersionHistoryByEntityTypeByEntityIdResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getVersionHistoryByEntityTypeByEntityId']>>>
 export type GetVersionHistoryByEntityTypeByEntityIdByEntityVersionResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['getVersionHistoryByEntityTypeByEntityIdByEntityVersion']>>>
 export type PostVersionHistoryByEntityTypeByEntityIdByEntityVersionRollbackResult = NonNullable<Awaited<ReturnType<ReturnType<typeof getUmbracoAutomateManagementAPI>['postVersionHistoryByEntityTypeByEntityIdByEntityVersionRollback']>>>

@@ -2,6 +2,8 @@ import { McpServer, type ToolCallback } from "@modelcontextprotocol/sdk/server/m
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import {
+  configureDryRunMode,
+  getRegisteredOutputSchema,
   useDraft202012ToolSchemas,
   type ToolCollectionExport,
   type ToolDefinition,
@@ -10,6 +12,7 @@ import { collections } from "../../../collections.js";
 import { withLenientOutputSchemas } from "../lenient-output-schemas.js";
 import catalogueCollection from "../catalogue/index.js";
 import automationsCollection from "../automations/index.js";
+import runsCollection from "../runs/index.js";
 
 // The settings field shape Automate 17.4 / 18.4 return for a catalogue item.
 const settingsField = {
@@ -61,7 +64,11 @@ async function connect(collection: ToolCollectionExport, payload: unknown = {}) 
   for (const tool of toolsOf(collection)) {
     server.registerTool(
       tool.name,
-      { description: tool.description, inputSchema: tool.inputSchema, outputSchema: tool.outputSchema },
+      {
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        outputSchema: getRegisteredOutputSchema(tool),
+      },
       (async () => ({
         content: [{ type: "text", text: JSON.stringify(payload) }],
         structuredContent: payload,
@@ -77,10 +84,15 @@ async function connect(collection: ToolCollectionExport, payload: unknown = {}) 
   return { client, tools };
 }
 
-async function callWith(collection: ToolCollectionExport, toolName: string, payload: unknown) {
+async function callWith(
+  collection: ToolCollectionExport,
+  toolName: string,
+  payload: unknown,
+  args: Record<string, unknown> = {},
+) {
   const { client } = await connect(collection, payload);
   try {
-    return await client.callTool({ name: toolName, arguments: {} });
+    return await client.callTool({ name: toolName, arguments: args });
   } finally {
     await client.close();
   }
@@ -139,6 +151,30 @@ describe("withLenientOutputSchemas", () => {
     expect(result.structuredContent).toEqual(payload);
   });
 
+  it("should still accept run step runs from Automate versions that predate logEntries", async () => {
+    const stepRun = {
+      id: "6f1c5a9e-3b2d-4c8e-9f0a-1b2c3d4e5f60",
+      stepId: "7a2d6b0f-4c3e-4d9f-8a1b-2c3d4e5f6071",
+      actionAlias: "sendEmail",
+      status: "Completed",
+      retryCount: 0,
+    };
+    const payload = {
+      id: "8b3e7c1a-5d4f-4e0a-9b2c-3d4e5f607182",
+      automationId: "9c4f8d2b-6e5a-4f1b-8c3d-4e5f60718293",
+      automationVersion: 1,
+      status: "Completed",
+      initiatedBy: "user",
+      stepRuns: [stepRun],
+    };
+
+    const result = await callWith(withLenientOutputSchemas(runsCollection), "get-run-by-id", payload, {
+      id: payload.id,
+    });
+
+    expect(result.structuredContent).toEqual(payload);
+  });
+
   it("should still reject a response missing a required field", async () => {
     const { alias: _, ...withoutAlias } = catalogueItem(settingsField);
 
@@ -169,6 +205,22 @@ describe("withLenientOutputSchemas", () => {
     expect((webhookUrl?.outputSchema?.properties as any)?.note?.description).toBe(
       "Present when the URL was derived rather than reported by Umbraco.",
     );
+  });
+
+  it("should keep dry-run hiding mutation tools' output schemas", async () => {
+    // getRegisteredOutputSchema reads the marker withDryRun sets on the tool;
+    // the lenient copy must carry it over.
+    configureDryRunMode(true);
+    try {
+      const { client, tools } = await connect(withLenientOutputSchemas(automationsCollection));
+      await client.close();
+
+      const byName = (name: string) => tools.find((t) => t.name === name);
+      expect(byName("create-automation")?.outputSchema).toBeUndefined();
+      expect(byName("get-automation-webhook-url")?.outputSchema).toBeDefined();
+    } finally {
+      configureDryRunMode(false);
+    }
   });
 
   it("should not change the tool definitions it wraps", () => {
