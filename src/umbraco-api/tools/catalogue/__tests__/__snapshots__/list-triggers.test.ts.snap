@@ -6,38 +6,253 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
   "structuredContent": {
     "items": [
       {
+        "alias": "umbracoAutomate.applicationStarted",
+        "connectionTypeAlias": null,
+        "description": "Fires when the Umbraco application starts, including every restart or app pool recycle. In a load-balanced setup it fires on each server unless "Only run on the main server" is enabled.",
+        "group": "Core",
+        "hasDynamicOutcomes": false,
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-power",
+        "name": "Application Started",
+        "outcomes": [],
+        "outputSchema": {
+          "$defs": {
+            "dateTime": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "timeSpan": {
+              "properties": {
+                "days": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "hours": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "microseconds": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "milliseconds": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "minutes": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "nanoseconds": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "seconds": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "ticks": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "totalDays": {
+                  "readOnly": true,
+                  "type": "number",
+                },
+                "totalHours": {
+                  "readOnly": true,
+                  "type": "number",
+                },
+                "totalMicroseconds": {
+                  "readOnly": true,
+                  "type": "number",
+                },
+                "totalMilliseconds": {
+                  "readOnly": true,
+                  "type": "number",
+                },
+                "totalMinutes": {
+                  "readOnly": true,
+                  "type": "number",
+                },
+                "totalNanoseconds": {
+                  "readOnly": true,
+                  "type": "number",
+                },
+                "totalSeconds": {
+                  "readOnly": true,
+                  "type": "number",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "properties": {
+            "isRestarting": {
+              "type": "boolean",
+            },
+            "serverRole": {
+              "type": "string",
+            },
+            "startedAt": {
+              "properties": {
+                "date": {
+                  "$ref": "#/$defs/dateTime",
+                  "readOnly": true,
+                },
+                "dateTime": {
+                  "$ref": "#/$defs/dateTime",
+                  "readOnly": true,
+                },
+                "day": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "dayOfWeek": {
+                  "enum": [
+                    "Sunday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                  ],
+                  "readOnly": true,
+                },
+                "dayOfYear": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "hour": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "localDateTime": {
+                  "$ref": "#/$defs/dateTime",
+                  "readOnly": true,
+                },
+                "microsecond": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "millisecond": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "minute": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "month": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "nanosecond": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "offset": {
+                  "$ref": "#/$defs/timeSpan",
+                  "readOnly": true,
+                },
+                "second": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "ticks": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "timeOfDay": {
+                  "$ref": "#/$defs/timeSpan",
+                  "readOnly": true,
+                },
+                "totalOffsetMinutes": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "utcDateTime": {
+                  "$ref": "#/$defs/dateTime",
+                  "readOnly": true,
+                },
+                "utcTicks": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+                "year": {
+                  "readOnly": true,
+                  "type": "integer",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": false,
+              "description": "In a load-balanced setup every server starts independently, so this automation would run once per server. Enable to only run when the main (scheduling publisher) server starts. Most reliable when server roles are configured explicitly — with automatic election a server's role may not yet be known at startup, in which case it still runs.",
+              "editorConfig": null,
+              "editorUiAlias": "Umb.PropertyEditorUi.Toggle",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "onlyRunOnMainServer",
+              "label": "Only run on the main server",
+              "sortOrder": 0,
+              "supportsBindings": false,
+              "valueKind": "Scalar",
+              "visibleWhen": null,
+            },
+          ],
+        },
+        "supportsManualRun": false,
+        "type": "trigger",
+      },
+      {
         "alias": "umbracoAutomate.contentBatchPublished",
         "connectionTypeAlias": null,
         "description": "Fires once when one or more content items are published, with all items as a collection.",
         "group": "Content",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-documents",
         "name": "Content Batch Published",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "count": {
+              "description": "The total number of items in the collection.",
               "type": "integer",
             },
             "items": {
+              "description": "The collection of items from the notification.",
               "items": {
                 "properties": {
                   "contentKey": {
+                    "description": "The content item's unique key.",
                     "format": "uuid",
                     "type": "string",
                   },
                   "contentName": {
+                    "description": "The content item's name.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "contentTypeAlias": {
+                    "description": "The content type alias.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "contentTypeKey": {
+                    "description": "The content type's unique key.",
                     "format": "uuid",
                     "type": [
                       "string",
@@ -45,6 +260,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
                     ],
                   },
                   "cultures": {
+                    "description": "The cultures published in this event. Null for invariant content.",
                     "items": {
                       "type": "string",
                     },
@@ -75,6 +291,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Content Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -92,6 +310,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -103,34 +323,42 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires once when one or more content items are saved, with all items as a collection.",
         "group": "Content",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-documents",
         "name": "Content Batch Saved",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "count": {
+              "description": "The total number of items in the collection.",
               "type": "integer",
             },
             "items": {
+              "description": "The collection of items from the notification.",
               "items": {
                 "properties": {
                   "contentKey": {
+                    "description": "The content item's unique key.",
                     "format": "uuid",
                     "type": "string",
                   },
                   "contentName": {
+                    "description": "The content item's name.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "contentTypeAlias": {
+                    "description": "The content type alias.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "contentTypeKey": {
+                    "description": "The content type's unique key.",
                     "format": "uuid",
                     "type": [
                       "string",
@@ -138,6 +366,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
                     ],
                   },
                   "cultures": {
+                    "description": "The cultures edited in this save. Null for invariant content.",
                     "items": {
                       "type": "string",
                     },
@@ -147,6 +376,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
                     ],
                   },
                   "isNew": {
+                    "description": "Whether this save represents a newly-created content item.",
                     "type": "boolean",
                   },
                 },
@@ -171,6 +401,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Content Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -188,6 +420,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -199,34 +433,42 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires once when one or more content items are unpublished, with all items as a collection.",
         "group": "Content",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-documents",
         "name": "Content Batch Unpublished",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "count": {
+              "description": "The total number of items in the collection.",
               "type": "integer",
             },
             "items": {
+              "description": "The collection of items from the notification.",
               "items": {
                 "properties": {
                   "contentKey": {
+                    "description": "The content item's unique key.",
                     "format": "uuid",
                     "type": "string",
                   },
                   "contentName": {
+                    "description": "The content item's name.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "contentTypeAlias": {
+                    "description": "The content type alias.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "contentTypeKey": {
+                    "description": "The content type's unique key.",
                     "format": "uuid",
                     "type": [
                       "string",
@@ -234,6 +476,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
                     ],
                   },
                   "cultures": {
+                    "description": "The cultures that were published before the item was unpublished. Null for invariant content.",
                     "items": {
                       "type": "string",
                     },
@@ -264,6 +507,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Content Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -281,6 +526,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -292,28 +539,34 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when content is published.",
         "group": "Content",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-document",
         "name": "Content Published",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "contentKey": {
+              "description": "The content item's unique key.",
               "format": "uuid",
               "type": "string",
             },
             "contentName": {
+              "description": "The content item's name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "contentTypeAlias": {
+              "description": "The content type alias.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "contentTypeKey": {
+              "description": "The content type's unique key.",
               "format": "uuid",
               "type": [
                 "string",
@@ -321,6 +574,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               ],
             },
             "cultures": {
+              "description": "The cultures published in this event. Null for invariant content.",
               "items": {
                 "type": "string",
               },
@@ -346,6 +600,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Content Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -363,6 +619,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -374,28 +632,34 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when content is saved (created or updated).",
         "group": "Content",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-save",
         "name": "Content Saved",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "contentKey": {
+              "description": "The content item's unique key.",
               "format": "uuid",
               "type": "string",
             },
             "contentName": {
+              "description": "The content item's name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "contentTypeAlias": {
+              "description": "The content type alias.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "contentTypeKey": {
+              "description": "The content type's unique key.",
               "format": "uuid",
               "type": [
                 "string",
@@ -403,6 +667,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               ],
             },
             "cultures": {
+              "description": "The cultures edited in this save. Null for invariant content.",
               "items": {
                 "type": "string",
               },
@@ -412,6 +677,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               ],
             },
             "isNew": {
+              "description": "Whether this save represents a newly-created content item.",
               "type": "boolean",
             },
           },
@@ -431,6 +697,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Content Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -448,6 +716,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -459,28 +729,34 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when content is unpublished.",
         "group": "Content",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-globe",
         "name": "Content Unpublished",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "contentKey": {
+              "description": "The content item's unique key.",
               "format": "uuid",
               "type": "string",
             },
             "contentName": {
+              "description": "The content item's name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "contentTypeAlias": {
+              "description": "The content type alias.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "contentTypeKey": {
+              "description": "The content type's unique key.",
               "format": "uuid",
               "type": [
                 "string",
@@ -488,6 +764,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               ],
             },
             "cultures": {
+              "description": "The cultures that were published before the item was unpublished. Null for invariant content.",
               "items": {
                 "type": "string",
               },
@@ -513,6 +790,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Content Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -530,6 +809,409 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
+            },
+          ],
+        },
+        "supportsManualRun": false,
+        "type": "trigger",
+      },
+      {
+        "alias": "umbracoAutomate.elementBatchSaved",
+        "connectionTypeAlias": null,
+        "description": "Fires once when one or more Library elements are saved, with all items as a collection.",
+        "group": "Library",
+        "hasDynamicOutcomes": false,
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-plugin",
+        "name": "Element Batch Saved",
+        "outcomes": [],
+        "outputSchema": {
+          "properties": {
+            "count": {
+              "description": "The total number of items in the collection.",
+              "type": "integer",
+            },
+            "items": {
+              "description": "The collection of items from the notification.",
+              "items": {
+                "properties": {
+                  "contentTypeAlias": {
+                    "description": "The element type alias.",
+                    "type": [
+                      "string",
+                      "null",
+                    ],
+                  },
+                  "contentTypeKey": {
+                    "description": "The element type's unique key.",
+                    "format": "uuid",
+                    "type": [
+                      "string",
+                      "null",
+                    ],
+                  },
+                  "cultures": {
+                    "description": "The cultures edited in this save. Null for invariant elements.",
+                    "items": {
+                      "type": "string",
+                    },
+                    "type": [
+                      "array",
+                      "null",
+                    ],
+                  },
+                  "elementKey": {
+                    "description": "The element's unique key.",
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "elementName": {
+                    "description": "The element's name.",
+                    "type": [
+                      "string",
+                      "null",
+                    ],
+                  },
+                  "isNew": {
+                    "description": "Whether this save represents a newly-created element.",
+                    "type": "boolean",
+                  },
+                },
+                "type": "object",
+              },
+              "type": "array",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": null,
+              "description": "Only fire for these element types. Leave blank to match all.",
+              "editorConfig": "[
+    { "alias": "onlyPickElementTypes", "value": true }
+]",
+              "editorUiAlias": "Umb.Automate.DocumentTypePicker",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "elementTypes",
+              "label": "Element Types",
+              "sortOrder": 0,
+              "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
+            },
+            {
+              "defaultValue": "SkipOnCycle",
+              "description": "How to handle saves performed by another automation.",
+              "editorConfig": "[{ "alias": "items", "value": [
+    { "name": "Always run", "value": "Run" },
+    { "name": "Skip if this would loop", "value": "SkipOnCycle" },
+    { "name": "Skip entirely", "value": "SkipAlways" }
+] }]",
+              "editorUiAlias": "Umb.PropertyEditorUi.Dropdown",
+              "group": "#uaFieldGroups_advancedLabel",
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "onAutomationOriginatedEvent",
+              "label": "When triggered by another automation",
+              "sortOrder": 0,
+              "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
+            },
+          ],
+        },
+        "supportsManualRun": false,
+        "type": "trigger",
+      },
+      {
+        "alias": "umbracoAutomate.elementPublished",
+        "connectionTypeAlias": null,
+        "description": "Fires when a Library element is published.",
+        "group": "Library",
+        "hasDynamicOutcomes": false,
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-globe",
+        "name": "Element Published",
+        "outcomes": [],
+        "outputSchema": {
+          "properties": {
+            "contentTypeAlias": {
+              "description": "The element type alias.",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "contentTypeKey": {
+              "description": "The element type's unique key.",
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "cultures": {
+              "description": "The cultures published in this event. Null for invariant elements.",
+              "items": {
+                "type": "string",
+              },
+              "type": [
+                "array",
+                "null",
+              ],
+            },
+            "elementKey": {
+              "description": "The element's unique key.",
+              "format": "uuid",
+              "type": "string",
+            },
+            "elementName": {
+              "description": "The element's name.",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": null,
+              "description": "Only fire for these element types. Leave blank to match all.",
+              "editorConfig": "[
+    { "alias": "onlyPickElementTypes", "value": true }
+]",
+              "editorUiAlias": "Umb.Automate.DocumentTypePicker",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "elementTypes",
+              "label": "Element Types",
+              "sortOrder": 0,
+              "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
+            },
+            {
+              "defaultValue": "SkipOnCycle",
+              "description": "How to handle publishes performed by another automation.",
+              "editorConfig": "[{ "alias": "items", "value": [
+    { "name": "Always run", "value": "Run" },
+    { "name": "Skip if this would loop", "value": "SkipOnCycle" },
+    { "name": "Skip entirely", "value": "SkipAlways" }
+] }]",
+              "editorUiAlias": "Umb.PropertyEditorUi.Dropdown",
+              "group": "#uaFieldGroups_advancedLabel",
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "onAutomationOriginatedEvent",
+              "label": "When triggered by another automation",
+              "sortOrder": 0,
+              "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
+            },
+          ],
+        },
+        "supportsManualRun": false,
+        "type": "trigger",
+      },
+      {
+        "alias": "umbracoAutomate.elementSaved",
+        "connectionTypeAlias": null,
+        "description": "Fires when a Library element is saved (created or updated).",
+        "group": "Library",
+        "hasDynamicOutcomes": false,
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-save",
+        "name": "Element Saved",
+        "outcomes": [],
+        "outputSchema": {
+          "properties": {
+            "contentTypeAlias": {
+              "description": "The element type alias.",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "contentTypeKey": {
+              "description": "The element type's unique key.",
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "cultures": {
+              "description": "The cultures edited in this save. Null for invariant elements.",
+              "items": {
+                "type": "string",
+              },
+              "type": [
+                "array",
+                "null",
+              ],
+            },
+            "elementKey": {
+              "description": "The element's unique key.",
+              "format": "uuid",
+              "type": "string",
+            },
+            "elementName": {
+              "description": "The element's name.",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "isNew": {
+              "description": "Whether this save represents a newly-created element.",
+              "type": "boolean",
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": null,
+              "description": "Only fire for these element types. Leave blank to match all.",
+              "editorConfig": "[
+    { "alias": "onlyPickElementTypes", "value": true }
+]",
+              "editorUiAlias": "Umb.Automate.DocumentTypePicker",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "elementTypes",
+              "label": "Element Types",
+              "sortOrder": 0,
+              "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
+            },
+            {
+              "defaultValue": "SkipOnCycle",
+              "description": "How to handle saves performed by another automation.",
+              "editorConfig": "[{ "alias": "items", "value": [
+    { "name": "Always run", "value": "Run" },
+    { "name": "Skip if this would loop", "value": "SkipOnCycle" },
+    { "name": "Skip entirely", "value": "SkipAlways" }
+] }]",
+              "editorUiAlias": "Umb.PropertyEditorUi.Dropdown",
+              "group": "#uaFieldGroups_advancedLabel",
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "onAutomationOriginatedEvent",
+              "label": "When triggered by another automation",
+              "sortOrder": 0,
+              "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
+            },
+          ],
+        },
+        "supportsManualRun": false,
+        "type": "trigger",
+      },
+      {
+        "alias": "umbracoAutomate.elementUnpublished",
+        "connectionTypeAlias": null,
+        "description": "Fires when a Library element is unpublished.",
+        "group": "Library",
+        "hasDynamicOutcomes": false,
+        "hasDynamicOutputSchema": false,
+        "icon": "icon-globe",
+        "name": "Element Unpublished",
+        "outcomes": [],
+        "outputSchema": {
+          "properties": {
+            "contentTypeAlias": {
+              "description": "The element type alias.",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "contentTypeKey": {
+              "description": "The element type's unique key.",
+              "format": "uuid",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+            "cultures": {
+              "description": "The cultures that were published before the element was unpublished. Null for invariant elements.",
+              "items": {
+                "type": "string",
+              },
+              "type": [
+                "array",
+                "null",
+              ],
+            },
+            "elementKey": {
+              "description": "The element's unique key.",
+              "format": "uuid",
+              "type": "string",
+            },
+            "elementName": {
+              "description": "The element's name.",
+              "type": [
+                "string",
+                "null",
+              ],
+            },
+          },
+          "type": "object",
+        },
+        "settingsSchema": {
+          "fields": [
+            {
+              "defaultValue": null,
+              "description": "Only fire for these element types. Leave blank to match all.",
+              "editorConfig": "[
+    { "alias": "onlyPickElementTypes", "value": true }
+]",
+              "editorUiAlias": "Umb.Automate.DocumentTypePicker",
+              "group": null,
+              "isRequired": false,
+              "isSensitive": false,
+              "key": "elementTypes",
+              "label": "Element Types",
+              "sortOrder": 0,
+              "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
+            },
+            {
+              "defaultValue": "SkipOnCycle",
+              "description": "How to handle unpublishes performed by another automation.",
+              "editorConfig": "[{ "alias": "items", "value": [
+    { "name": "Always run", "value": "Run" },
+    { "name": "Skip if this would loop", "value": "SkipOnCycle" },
+    { "name": "Skip entirely", "value": "SkipAlways" }
+] }]",
+              "editorUiAlias": "Umb.PropertyEditorUi.Dropdown",
+              "group": "#uaFieldGroups_advancedLabel",
+              "isRequired": true,
+              "isSensitive": false,
+              "key": "onAutomationOriginatedEvent",
+              "label": "When triggered by another automation",
+              "sortOrder": 0,
+              "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -541,9 +1223,11 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when the automation is triggered manually.",
         "group": "Core",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-hand-pointer",
         "name": "Manual Trigger",
+        "outcomes": [],
         "outputSchema": null,
         "settingsSchema": null,
         "supportsManualRun": true,
@@ -554,34 +1238,42 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires once when one or more media items are permanently deleted, with all items as a collection.",
         "group": "Media",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-delete",
         "name": "Media Batch Deleted",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "count": {
+              "description": "The total number of items in the collection.",
               "type": "integer",
             },
             "items": {
+              "description": "The collection of items from the notification.",
               "items": {
                 "properties": {
                   "mediaKey": {
+                    "description": "The media item's unique key.",
                     "format": "uuid",
                     "type": "string",
                   },
                   "mediaName": {
+                    "description": "The media item's name.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "mediaTypeAlias": {
+                    "description": "The media type alias.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "mediaTypeKey": {
+                    "description": "The media type's unique key.",
                     "format": "uuid",
                     "type": [
                       "string",
@@ -610,6 +1302,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Media Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -627,6 +1321,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -638,37 +1334,46 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires once when one or more media items are saved, with all items as a collection.",
         "group": "Media",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-pictures-alt",
         "name": "Media Batch Saved",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "count": {
+              "description": "The total number of items in the collection.",
               "type": "integer",
             },
             "items": {
+              "description": "The collection of items from the notification.",
               "items": {
                 "properties": {
                   "isNew": {
+                    "description": "Whether this save represents a newly-created media item.",
                     "type": "boolean",
                   },
                   "mediaKey": {
+                    "description": "The media item's unique key.",
                     "format": "uuid",
                     "type": "string",
                   },
                   "mediaName": {
+                    "description": "The media item's name.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "mediaTypeAlias": {
+                    "description": "The media type alias.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "mediaTypeKey": {
+                    "description": "The media type's unique key.",
                     "format": "uuid",
                     "type": [
                       "string",
@@ -697,6 +1402,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Media Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -714,6 +1421,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -725,34 +1434,42 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires once when one or more media items are moved to the recycle bin, with all items as a collection.",
         "group": "Media",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-trash",
         "name": "Media Batch Trashed",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "count": {
+              "description": "The total number of items in the collection.",
               "type": "integer",
             },
             "items": {
+              "description": "The collection of items from the notification.",
               "items": {
                 "properties": {
                   "mediaKey": {
+                    "description": "The media item's unique key.",
                     "format": "uuid",
                     "type": "string",
                   },
                   "mediaName": {
+                    "description": "The media item's name.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "mediaTypeAlias": {
+                    "description": "The media type alias.",
                     "type": [
                       "string",
                       "null",
                     ],
                   },
                   "mediaTypeKey": {
+                    "description": "The media type's unique key.",
                     "format": "uuid",
                     "type": [
                       "string",
@@ -760,6 +1477,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
                     ],
                   },
                   "originalPath": {
+                    "description": "The path the media item occupied before it was moved to the recycle bin.",
                     "type": [
                       "string",
                       "null",
@@ -787,6 +1505,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Media Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -804,6 +1524,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -815,28 +1537,34 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when media is permanently deleted.",
         "group": "Media",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-delete",
         "name": "Media Deleted",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "mediaKey": {
+              "description": "The media item's unique key.",
               "format": "uuid",
               "type": "string",
             },
             "mediaName": {
+              "description": "The media item's name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "mediaTypeAlias": {
+              "description": "The media type alias.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "mediaTypeKey": {
+              "description": "The media type's unique key.",
               "format": "uuid",
               "type": [
                 "string",
@@ -860,6 +1588,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Media Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -877,6 +1607,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -888,31 +1620,38 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when media is saved (created or updated).",
         "group": "Media",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-picture",
         "name": "Media Saved",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "isNew": {
+              "description": "Whether this save represents a newly-created media item.",
               "type": "boolean",
             },
             "mediaKey": {
+              "description": "The media item's unique key.",
               "format": "uuid",
               "type": "string",
             },
             "mediaName": {
+              "description": "The media item's name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "mediaTypeAlias": {
+              "description": "The media type alias.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "mediaTypeKey": {
+              "description": "The media type's unique key.",
               "format": "uuid",
               "type": [
                 "string",
@@ -936,6 +1675,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Media Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -953,6 +1694,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -964,28 +1707,34 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when media is moved to the recycle bin.",
         "group": "Media",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-trash",
         "name": "Media Trashed",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "mediaKey": {
+              "description": "The media item's unique key.",
               "format": "uuid",
               "type": "string",
             },
             "mediaName": {
+              "description": "The media item's name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "mediaTypeAlias": {
+              "description": "The media type alias.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "mediaTypeKey": {
+              "description": "The media type's unique key.",
               "format": "uuid",
               "type": [
                 "string",
@@ -993,6 +1742,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               ],
             },
             "originalPath": {
+              "description": "The path the media item occupied before it was moved to the recycle bin.",
               "type": [
                 "string",
                 "null",
@@ -1015,6 +1765,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Media Types",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -1032,6 +1784,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1043,9 +1797,11 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when a member is deleted.",
         "group": "Members",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-delete",
         "name": "Member Deleted",
+        "outcomes": [],
         "outputSchema": {
           "$defs": {
             "guid": {
@@ -1055,12 +1811,14 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
           },
           "properties": {
             "email": {
+              "description": "The member's email address.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "memberGroupKeys": {
+              "description": "The keys of the member groups this member belonged to at delete time.",
               "items": {
                 "$ref": "#/$defs/guid",
               },
@@ -1068,20 +1826,24 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
             },
             "memberKey": {
               "$ref": "#/$defs/guid",
+              "description": "The member's unique key.",
             },
             "memberName": {
+              "description": "The member's display name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "memberTypeAlias": {
+              "description": "The member type alias.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "memberTypeKey": {
+              "description": "The member type's unique key.",
               "format": "uuid",
               "type": [
                 "string",
@@ -1089,6 +1851,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               ],
             },
             "username": {
+              "description": "The member's username.",
               "type": [
                 "string",
                 "null",
@@ -1111,6 +1874,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Member Types",
               "sortOrder": 1,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": null,
@@ -1124,6 +1889,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Member Groups",
               "sortOrder": 2,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -1141,6 +1908,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 100,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1152,9 +1921,11 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when a member is saved (created or updated).",
         "group": "Members",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-user",
         "name": "Member Saved",
+        "outcomes": [],
         "outputSchema": {
           "$defs": {
             "guid": {
@@ -1164,15 +1935,18 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
           },
           "properties": {
             "email": {
+              "description": "The member's email address.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "isNew": {
+              "description": "Whether this save represents a newly-created member.",
               "type": "boolean",
             },
             "memberGroupKeys": {
+              "description": "The keys of the member groups this member belongs to.",
               "items": {
                 "$ref": "#/$defs/guid",
               },
@@ -1180,20 +1954,24 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
             },
             "memberKey": {
               "$ref": "#/$defs/guid",
+              "description": "The member's unique key.",
             },
             "memberName": {
+              "description": "The member's display name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "memberTypeAlias": {
+              "description": "The member type alias.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "memberTypeKey": {
+              "description": "The member type's unique key.",
               "format": "uuid",
               "type": [
                 "string",
@@ -1201,6 +1979,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               ],
             },
             "username": {
+              "description": "The member's username.",
               "type": [
                 "string",
                 "null",
@@ -1223,6 +2002,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Member Types",
               "sortOrder": 1,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": null,
@@ -1236,6 +2017,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Member Groups",
               "sortOrder": 2,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -1253,6 +2036,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 100,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1264,15 +2049,19 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires on a configurable CRON schedule.",
         "group": "Core",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-time",
         "name": "Scheduled Trigger",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "cronExpression": {
+              "description": "The CRON expression that was evaluated.",
               "type": "string",
             },
             "firedAtUtc": {
+              "description": "The UTC timestamp when the trigger fired.",
               "format": "date-time",
               "type": "string",
             },
@@ -1293,6 +2082,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "#uaFields_scheduledTriggerSettingsCronExpressionLabel",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": null,
@@ -1306,6 +2097,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "#uaFields_scheduledTriggerSettingsTimeZoneLabel",
               "sortOrder": 1,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "Flexible",
@@ -1319,6 +2112,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "#uaFields_scheduledTriggerSettingsTimingLabel",
               "sortOrder": 2,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1330,9 +2125,11 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when a back-office user is deleted.",
         "group": "Users",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-delete",
         "name": "User Deleted",
+        "outcomes": [],
         "outputSchema": {
           "$defs": {
             "guid": {
@@ -1342,12 +2139,14 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
           },
           "properties": {
             "email": {
+              "description": "The user's email address.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "userGroupKeys": {
+              "description": "The keys of the user groups this user belonged to at delete time.",
               "items": {
                 "$ref": "#/$defs/guid",
               },
@@ -1355,14 +2154,17 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
             },
             "userKey": {
               "$ref": "#/$defs/guid",
+              "description": "The user's unique key.",
             },
             "userName": {
+              "description": "The user's display name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "username": {
+              "description": "The user's username.",
               "type": [
                 "string",
                 "null",
@@ -1385,6 +2187,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "User Groups",
               "sortOrder": 1,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -1402,6 +2206,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 100,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1413,34 +2219,41 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when a back-office user account is locked.",
         "group": "Users",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-lock",
         "name": "User Locked",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "affectedUserId": {
+              "description": "The affected user id (the user the event is about). May be null on a failed login.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "dateTimeUtc": {
+              "description": "The UTC timestamp at which the event was raised by the CMS.",
               "format": "date-time",
               "type": "string",
             },
             "ipAddress": {
+              "description": "The source IP address of the request.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "performingUserId": {
+              "description": "The performing user id (the user who initiated the action). "-1" when no back-office user is the actor.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "userGroupKeys": {
+              "description": "The keys of the user groups the affected user belongs to.",
               "items": {
                 "format": "uuid",
                 "type": "string",
@@ -1464,6 +2277,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "User Groups",
               "sortOrder": 1,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -1481,6 +2296,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 100,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1492,34 +2309,41 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when a back-office login attempt fails.",
         "group": "Users",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-lock",
         "name": "User Login Failed",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "affectedUserId": {
+              "description": "The affected user id (the user the event is about). May be null on a failed login.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "dateTimeUtc": {
+              "description": "The UTC timestamp at which the event was raised by the CMS.",
               "format": "date-time",
               "type": "string",
             },
             "ipAddress": {
+              "description": "The source IP address of the request.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "performingUserId": {
+              "description": "The performing user id (the user who initiated the action). "-1" when no back-office user is the actor.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "userGroupKeys": {
+              "description": "The keys of the user groups the affected user belongs to.",
               "items": {
                 "format": "uuid",
                 "type": "string",
@@ -1543,6 +2367,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "User Groups",
               "sortOrder": 1,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -1560,6 +2386,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 100,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1571,34 +2399,41 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when a back-office user successfully logs in.",
         "group": "Users",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-unlocked",
         "name": "User Login Success",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "affectedUserId": {
+              "description": "The affected user id (the user the event is about). May be null on a failed login.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "dateTimeUtc": {
+              "description": "The UTC timestamp at which the event was raised by the CMS.",
               "format": "date-time",
               "type": "string",
             },
             "ipAddress": {
+              "description": "The source IP address of the request.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "performingUserId": {
+              "description": "The performing user id (the user who initiated the action). "-1" when no back-office user is the actor.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "userGroupKeys": {
+              "description": "The keys of the user groups the affected user belongs to.",
               "items": {
                 "format": "uuid",
                 "type": "string",
@@ -1622,6 +2457,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "User Groups",
               "sortOrder": 1,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -1639,6 +2476,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 100,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1650,34 +2489,41 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when a back-office user's password is changed.",
         "group": "Users",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-key",
         "name": "User Password Changed",
+        "outcomes": [],
         "outputSchema": {
           "properties": {
             "affectedUserId": {
+              "description": "The affected user id (the user the event is about). May be null on a failed login.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "dateTimeUtc": {
+              "description": "The UTC timestamp at which the event was raised by the CMS.",
               "format": "date-time",
               "type": "string",
             },
             "ipAddress": {
+              "description": "The source IP address of the request.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "performingUserId": {
+              "description": "The performing user id (the user who initiated the action). "-1" when no back-office user is the actor.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "userGroupKeys": {
+              "description": "The keys of the user groups the affected user belongs to.",
               "items": {
                 "format": "uuid",
                 "type": "string",
@@ -1701,6 +2547,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "User Groups",
               "sortOrder": 1,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -1718,6 +2566,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 100,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1729,9 +2579,11 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when a back-office user is saved (created or updated).",
         "group": "Users",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-user",
         "name": "User Saved",
+        "outcomes": [],
         "outputSchema": {
           "$defs": {
             "guid": {
@@ -1741,15 +2593,18 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
           },
           "properties": {
             "email": {
+              "description": "The user's email address.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "isNew": {
+              "description": "Whether this save represents a newly-created user.",
               "type": "boolean",
             },
             "userGroupKeys": {
+              "description": "The keys of the user groups this user belongs to.",
               "items": {
                 "$ref": "#/$defs/guid",
               },
@@ -1757,14 +2612,17 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
             },
             "userKey": {
               "$ref": "#/$defs/guid",
+              "description": "The user's unique key.",
             },
             "userName": {
+              "description": "The user's display name.",
               "type": [
                 "string",
                 "null",
               ],
             },
             "username": {
+              "description": "The user's username.",
               "type": [
                 "string",
                 "null",
@@ -1787,6 +2645,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "User Groups",
               "sortOrder": 1,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": "SkipOnCycle",
@@ -1804,6 +2664,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "When triggered by another automation",
               "sortOrder": 100,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },
@@ -1815,9 +2677,11 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
         "connectionTypeAlias": null,
         "description": "Fires when an HTTP request is received at this automation's webhook URL.",
         "group": "Core",
+        "hasDynamicOutcomes": false,
         "hasDynamicOutputSchema": false,
         "icon": "icon-webhook",
         "name": "Webhook",
+        "outcomes": [],
         "outputSchema": {
           "$defs": {
             "dictionaryOfStringAndString": {
@@ -1829,6 +2693,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
           },
           "properties": {
             "body": {
+              "description": "The raw request body as a string.",
               "type": [
                 "string",
                 "null",
@@ -1836,8 +2701,10 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
             },
             "headers": {
               "$ref": "#/$defs/dictionaryOfStringAndString",
+              "description": "The request headers as key-value pairs.",
             },
             "method": {
+              "description": "The HTTP method (e.g. "POST").",
               "type": [
                 "string",
                 "null",
@@ -1845,6 +2712,7 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
             },
             "query": {
               "$ref": "#/$defs/dictionaryOfStringAndString",
+              "description": "The query string parameters as key-value pairs.",
             },
           },
           "type": "object",
@@ -1863,6 +2731,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Allowed Method",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": {
@@ -1879,6 +2749,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Authentication",
               "sortOrder": 0,
               "supportsBindings": false,
+              "valueKind": "Scalar",
+              "visibleWhen": null,
             },
             {
               "defaultValue": null,
@@ -1896,6 +2768,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Test request body",
               "sortOrder": 100,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
             {
               "defaultValue": null,
@@ -1913,6 +2787,8 @@ exports[`list-catalogue-triggers should list available trigger definitions 1`] =
               "label": "Test request headers",
               "sortOrder": 110,
               "supportsBindings": false,
+              "valueKind": "String",
+              "visibleWhen": null,
             },
           ],
         },

@@ -102,7 +102,9 @@ Custom fields defined in `config/server-config.ts`.
   applied in `src/index.ts` and `src/collections.ts`) opens every object in every output schema to
   unknown keys, so a field a newer Automate adds to a response (e.g. 18.5's `visibleWhen` on settings
   fields) passes through instead of failing client-side validation. Known fields keep their types and
-  required/optional state; input schemas stay strict.
+  required/optional state, except the fields in `FIELDS_NEWER_AUTOMATE_ADDED`: the generated client
+  marks them required, but Automate releases before 18.6 / 17.6 don't send them, so they are made
+  optional. Input schemas stay strict.
 
 ## Testing
 
